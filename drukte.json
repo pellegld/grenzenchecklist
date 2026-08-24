@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "lastVerified": "2026-08-24",
+    "scope": "Frankrijk en de noord-zuidas door Europa. De Franse prognoses zijn de enige die per dag en per richting worden gepubliceerd; ze bepalen ook grotendeels de drukte op de aanvoerroutes door Belgie, Duitsland en Zwitserland.",
+    "disclaimer": "Indicatief. Bison Fute publiceert per jaar een nieuwe kalender; datums zonder bron komen uit de regels hieronder en zijn dus een afleiding, geen prognose.",
+    "sources": [
+      { "label": "Bison Fute — calendrier", "url": "https://www.bison-fute.gouv.fr/calendrier-bison-fute,11601.html" },
+      { "label": "ANWB verkeersverwachting", "url": "https://www.anwb.nl/verkeer/vakantie" }
+    ]
+  },
+
+  "niveaus": {
+    "rustig":   { "label": "Rustig",          "tag": "",          "kleur": "rgba(238,242,248,.05)", "ink": "var(--muted)",      "legenda": "rgba(238,242,248,.16)" },
+    "matig":    { "label": "Enige drukte",    "tag": "matig",     "kleur": "#2f7d5c",              "ink": "#dff3e9",           "legenda": "#2f7d5c" },
+    "druk":     { "label": "Druk",            "tag": "druk",      "kleur": "#c99a2e",              "ink": "#2a1f05",           "legenda": "#c99a2e" },
+    "zeerdruk": { "label": "Zeer druk",       "tag": "zeer druk", "kleur": "#c96a37",              "ink": "#2a1206",           "legenda": "#c96a37" },
+    "zwart":    { "label": "Zwarte zaterdag", "tag": "zwart",     "kleur": "#8f2f2a",              "ink": "#ffe4e0",           "legenda": "#8f2f2a" }
+  },
+
+  "dagen": {
+    "2026-07-03": { "heen": "druk",     "terug": "rustig", "tekst": "Eerste vertrekgolf: de Franse zomervakantie begint." },
+    "2026-07-04": { "heen": "zeerdruk", "terug": "matig",  "tekst": "Eerste grote vertrekzaterdag richting het zuiden." },
+    "2026-07-11": { "heen": "zeerdruk", "terug": "matig",  "tekst": "Vertrekzaterdag; ook Nederlandse en Duitse scholen komen op gang." },
+    "2026-07-14": { "heen": "matig",    "terug": "matig",  "tekst": "Quatorze Juillet: nationale feestdag, veel binnenlands verkeer." },
+    "2026-07-18": { "heen": "zeerdruk", "terug": "druk",   "tekst": "Vertrekzaterdag in het hoogseizoen." },
+    "2026-07-25": { "heen": "zeerdruk", "terug": "druk",   "tekst": "Rood in beide richtingen: het chasse-croise komt op gang.", "bron": "Bison Fute 2026" },
+    "2026-07-31": { "heen": "zwart",    "terug": "druk",   "tekst": "Zwart in het zuidwesten, rood elders. Vrijdagavond vertrekken helpt niet meer.", "bron": "Bison Fute 2026" },
+    "2026-08-01": { "heen": "zwart",    "terug": "zeerdruk", "tekst": "De drukste dag van het jaar. Juli-gangers rijden naar huis terwijl augustus-gangers vertrekken, op dezelfde Autoroute du Soleil. Vertrek vrijdagavond voor 16 uur, of wacht tot maandag.", "bron": "Bison Fute 2026" },
+    "2026-08-02": { "heen": "zeerdruk", "terug": "druk",   "tekst": "De staart van het chasse-croise." },
+    "2026-08-08": { "heen": "zeerdruk", "terug": "druk",   "tekst": "Vertrekzaterdag; nog volop hoogseizoen." },
+    "2026-08-14": { "heen": "druk",     "terug": "druk",   "tekst": "Brugdag voor Maria-Hemelvaart." },
+    "2026-08-15": { "heen": "zeerdruk", "terug": "zeerdruk", "tekst": "Maria-Hemelvaart: feestdag in Frankrijk, Belgie, Oostenrijk, Italie, Spanje en Portugal. Druk in beide richtingen.", "bron": "Bison Fute 2026" },
+    "2026-08-16": { "heen": "druk",     "terug": "zeerdruk", "tekst": "Terugreisgolf na het lange weekend." },
+    "2026-08-22": { "heen": "druk",     "terug": "zeerdruk", "tekst": "De terugreis wordt drukker dan de heenreis." },
+    "2026-08-29": { "heen": "matig",    "terug": "zwart",   "tekst": "Grote terugkeerzaterdag: heel Frankrijk rijdt tegelijk noordwaarts.", "bron": "Bison Fute 2026" },
+    "2026-08-30": { "heen": "rustig",   "terug": "zeerdruk", "tekst": "Laatste zondag voor de scholen beginnen." },
+    "2026-12-19": { "heen": "druk",     "terug": "rustig", "tekst": "Begin kerstvakantie; ook de eerste wintersportgolf naar de Alpen." },
+    "2026-12-26": { "heen": "zeerdruk", "terug": "matig",  "tekst": "Wisseldag wintersport: iedereen rijdt tegelijk de Alpen in." },
+    "2027-01-02": { "heen": "druk",     "terug": "zeerdruk", "tekst": "Terugkeer van de kerstvakantie plus een nieuwe wintersportgolf." }
+  },
+
+  "regels": [
+    { "id": "zomerzaterdag", "van": "07-01", "tot": "08-31", "weekdagen": [6],
+      "niveau": "zeerdruk",
+      "tekst": "Zaterdag in het hoogseizoen: wisseldag voor vrijwel alle Franse en Italiaanse vakantiehuizen. Tussen 9 en 13 uur is het het ergst." },
+    { "id": "zomervrijdag", "van": "07-01", "tot": "08-31", "weekdagen": [5],
+      "niveau": "druk",
+      "tekst": "Vrijdag in het hoogseizoen: de avondspits loopt door in de vertrekgolf." },
+    { "id": "zomerzondag", "van": "07-01", "tot": "08-31", "weekdagen": [0],
+      "niveau": "matig",
+      "tekst": "Zondag is rustiger dan zaterdag, maar in Frankrijk, Duitsland en Zwitserland rijden er wel nauwelijks vrachtwagens." },
+    { "id": "zomermidweek", "van": "07-01", "tot": "08-31", "weekdagen": [1, 2, 3, 4],
+      "niveau": "rustig",
+      "tekst": "Doordeweeks is zelfs in augustus goed te doen op de lange afstand." },
+    { "id": "wintersportzaterdag", "van": "02-07", "tot": "03-08", "weekdagen": [6],
+      "niveau": "druk",
+      "tekst": "Wisselzaterdag in de skivakanties: de aanvoerroutes naar de Alpen zitten vol, met files voor de tunnels." },
+    { "id": "kerstwissel", "van": "12-19", "tot": "01-04", "weekdagen": [5, 6, 0],
+      "niveau": "druk",
+      "tekst": "Kerstvakantie en wintersport vallen samen: op de weekenddagen rijdt heel Noordwest-Europa tegelijk naar de Alpen." },
+    { "id": "meivakantie", "van": "04-25", "tot": "05-10", "weekdagen": [5, 6],
+      "niveau": "matig",
+      "tekst": "Meivakantie en de Franse brugdagen rond Hemelvaart." }
+  ]
+}

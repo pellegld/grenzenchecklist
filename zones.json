@@ -1,0 +1,419 @@
+{
+  "_meta": {
+    "researchDate": "2026-08-19",
+    "scope": "Milieuzones en toegangsverboden op stadsniveau, voor de steden die op internationale autoroutes liggen. Bewust niet uitputtend: Frankrijk, Duitsland, Italie en Spanje hebben er samen honderden. Ontbreekt jouw bestemming, controleer dan de gemeentesite.",
+    "detectie": "Een zone wordt gemeld als de route binnen radiusKm van het opgegeven middelpunt komt. Dat is een benadering van de werkelijke zonegrens, geen exacte toets: ringwegen lopen soms net buiten de zone.",
+    "sources": [
+      { "label": "Urban Access Regulations in Europe", "url": "https://urbanaccessregulations.eu/" },
+      { "label": "Crit'Air - officiele Franse bestelsite", "url": "https://www.certificat-air.gouv.fr/" },
+      { "label": "ADAC - Umweltzonen", "url": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/" }
+    ]
+  },
+  "zones": [
+    {
+      "id": "fr-paris", "city": "Parijs", "cc": "FR", "name": "ZFE Grand Paris", "type": "milieuzone",
+      "lat": 48.857, "lon": 2.352, "radiusKm": 12,
+      "threshold": { "diesel": 5, "petrol": 4 },
+      "rule": "Crit'Air 3, 4, 5 en niet-geclassificeerde voertuigen zijn geweerd. Toegelaten zijn Crit'Air 0, 1 en 2: diesel vanaf 2011 en benzine vanaf 2006.",
+      "note": "De zone ligt binnen de A86 en beslaat veel meer dan alleen Parijs. Parijs verlengde de gewenningsfase: in 2026 wordt er niet beboet, maar de regel bestaat wel en kan elk moment gehandhaafd worden.",
+      "sourceUrl": "https://www.certificat-air.gouv.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "fr-grenoble", "city": "Grenoble", "cc": "FR", "name": "ZFE Grenoble-Alpes Metropole", "type": "milieuzone",
+      "lat": 45.188, "lon": 5.724, "radiusKm": 8,
+      "threshold": { "diesel": 5, "petrol": 4 },
+      "rule": "Crit'Air 3, 4, 5 en niet-geclassificeerd zijn geweerd — even streng als Parijs.",
+      "note": "Grenoble handhaaft wel actief, anders dan Parijs.",
+      "sourceUrl": "https://www.grenoblealpesmetropole.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "fr-strasbourg", "city": "Straatsburg", "cc": "FR", "name": "ZFE-m Eurometropole de Strasbourg", "type": "milieuzone",
+      "lat": 48.573, "lon": 7.752, "radiusKm": 10,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "In 2026 zijn Crit'Air 1, 2 en 3 toegelaten; alleen Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "Let op de datum: het verbod op Crit'Air 3 is uitgesteld en gaat pas in op 1 januari 2027. Rijd je na die datum, reken dan op diesel vanaf 2011 en benzine vanaf 2006. De zone beslaat de hele Eurometropole, 33 gemeenten.",
+      "sourceUrl": "https://www.strasbourg.eu/zfe",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "fr-lyon", "city": "Lyon", "cc": "FR", "name": "ZFE Metropole de Lyon", "type": "milieuzone",
+      "lat": 45.764, "lon": 4.836, "radiusKm": 8,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "Een verscherping naar Crit'Air 3 staat op de rol voor 2026-2027; controleer vlak voor vertrek.",
+      "sourceUrl": "https://www.grandlyon.com/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "fr-marseille", "city": "Marseille", "cc": "FR", "name": "ZFE Aix-Marseille-Provence", "type": "milieuzone",
+      "lat": 43.297, "lon": 5.381, "radiusKm": 8,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "",
+      "sourceUrl": "https://www.marseille.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "fr-toulouse", "city": "Toulouse", "cc": "FR", "name": "ZFE Toulouse Metropole", "type": "milieuzone",
+      "lat": 43.605, "lon": 1.444, "radiusKm": 7,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "",
+      "sourceUrl": "https://www.toulouse-metropole.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "fr-nice", "city": "Nice", "cc": "FR", "name": "ZFE Nice Cote d'Azur", "type": "milieuzone",
+      "lat": 43.700, "lon": 7.265, "radiusKm": 7,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "Het exacte niveau kon ik niet hard bevestigen; dit is het gangbare niveau voor de minder strenge Franse ZFE's.",
+      "sourceUrl": "https://www.nicecotedazur.org/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "fr-montpellier", "city": "Montpellier", "cc": "FR", "name": "ZFE Montpellier Mediterranee Metropole", "type": "milieuzone",
+      "lat": 43.611, "lon": 3.877, "radiusKm": 7,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "Het exacte niveau kon ik niet hard bevestigen.",
+      "sourceUrl": "https://www.montpellier3m.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "fr-rouen", "city": "Rouen", "cc": "FR", "name": "ZFE Metropole Rouen Normandie", "type": "milieuzone",
+      "lat": 49.443, "lon": 1.099, "radiusKm": 7,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "Het exacte niveau kon ik niet hard bevestigen.",
+      "sourceUrl": "https://www.metropole-rouen-normandie.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "fr-reims", "city": "Reims", "cc": "FR", "name": "ZFE Grand Reims", "type": "milieuzone",
+      "lat": 49.258, "lon": 4.032, "radiusKm": 6,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "Ligt pal aan de A4 richting het zuiden. Het exacte niveau kon ik niet hard bevestigen.",
+      "sourceUrl": "https://www.grandreims.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "fr-saintetienne", "city": "Saint-Etienne", "cc": "FR", "name": "ZFE Saint-Etienne Metropole", "type": "milieuzone",
+      "lat": 45.439, "lon": 4.387, "radiusKm": 6,
+      "threshold": { "diesel": 4, "petrol": 2 },
+      "rule": "Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.",
+      "note": "Het exacte niveau kon ik niet hard bevestigen.",
+      "sourceUrl": "https://www.saint-etienne-metropole.fr/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+
+    {
+      "id": "be-brussel", "city": "Brussel", "cc": "BE", "name": "LEZ Brussels Hoofdstedelijk Gewest", "type": "milieuzone",
+      "lat": 50.847, "lon": 4.353, "radiusKm": 9,
+      "threshold": { "diesel": 6, "petrol": 3 },
+      "rule": "Sinds 1 januari 2026 zijn diesels tot en met Euro 5 en benzine tot en met Euro 2 geweerd.",
+      "note": "De zone beslaat het hele gewest, dus ook de ring aan de binnenkant. Buitenlandse kentekens moeten zich vooraf gratis registreren, ook als het voertuig ruim voldoet.",
+      "sourceUrl": "https://lez.brussels/mytax/nl/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "be-antwerpen", "city": "Antwerpen", "cc": "BE", "name": "LEZ Antwerpen", "type": "milieuzone",
+      "lat": 51.220, "lon": 4.402, "radiusKm": 5,
+      "threshold": { "diesel": 5, "petrol": 2 },
+      "rule": "Diesel vanaf Euro 5 en benzine vanaf Euro 2 zijn toegelaten; ouder mag tegen betaling een dagpas kopen.",
+      "note": "Soepeler dan Brussel. Registratie voor buitenlandse kentekens is apart van die van Brussel.",
+      "sourceUrl": "https://www.slimnaarantwerpen.be/nl/lez",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "be-gent", "city": "Gent", "cc": "BE", "name": "LEZ Gent", "type": "milieuzone",
+      "lat": 51.054, "lon": 3.725, "radiusKm": 3,
+      "threshold": { "diesel": 5, "petrol": 2 },
+      "rule": "Diesel vanaf Euro 5 en benzine vanaf Euro 2 binnen de R40-ring.",
+      "note": "Kleine zone, alleen de binnenstad binnen de R40. Aparte registratie.",
+      "sourceUrl": "https://stad.gent/nl/mobiliteit-openbare-werken/lage-emissiezone",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+
+    {
+      "id": "nl-amsterdam", "city": "Amsterdam", "cc": "NL", "name": "Milieuzone Amsterdam", "type": "milieuzone",
+      "lat": 52.372, "lon": 4.895, "radiusKm": 6,
+      "threshold": { "diesel": 4, "petrol": null },
+      "rule": "Dieselpersonenauto's minimaal emissieklasse 4. Benzine wordt niet geweerd.",
+      "note": "Daarnaast geldt een zero-emissiezone voor bestel- en vrachtauto's.",
+      "sourceUrl": "https://www.milieuzones.nl/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "nl-utrecht", "city": "Utrecht", "cc": "NL", "name": "Milieuzone Utrecht", "type": "milieuzone",
+      "lat": 52.091, "lon": 5.122, "radiusKm": 4,
+      "threshold": { "diesel": 4, "petrol": null },
+      "rule": "Dieselpersonenauto's minimaal emissieklasse 4.",
+      "note": "", "sourceUrl": "https://www.milieuzones.nl/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "nl-denhaag", "city": "Den Haag", "cc": "NL", "name": "Milieuzone Den Haag", "type": "milieuzone",
+      "lat": 52.078, "lon": 4.288, "radiusKm": 4,
+      "threshold": { "diesel": 4, "petrol": null },
+      "rule": "Dieselpersonenauto's minimaal emissieklasse 4.",
+      "note": "", "sourceUrl": "https://www.milieuzones.nl/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "nl-arnhem", "city": "Arnhem", "cc": "NL", "name": "Milieuzone Arnhem", "type": "milieuzone",
+      "lat": 51.985, "lon": 5.899, "radiusKm": 3,
+      "threshold": { "diesel": 4, "petrol": null },
+      "rule": "Dieselpersonenauto's minimaal emissieklasse 4.",
+      "note": "", "sourceUrl": "https://www.milieuzones.nl/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+
+    {
+      "id": "de-berlin", "city": "Berlijn", "cc": "DE", "name": "Umweltzone Berlin", "type": "milieuzone",
+      "lat": 52.520, "lon": 13.405, "radiusKm": 8,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist: diesel vanaf Euro 4 (of Euro 3 met roetfilter), benzine vanaf Euro 1 met geregelde katalysator.",
+      "note": "De zone ligt binnen de S-Bahn-ring.",
+      "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "de-hamburg", "city": "Hamburg", "cc": "DE", "name": "Doorrijverboden Hamburg", "type": "milieuzone",
+      "lat": 53.551, "lon": 9.994, "radiusKm": 6,
+      "threshold": { "diesel": 6, "petrol": null },
+      "rule": "Hamburg heeft geen klassieke Umweltzone maar straatgebonden dieselverboden; op enkele hoofdstraten mag alleen diesel vanaf Euro 6.",
+      "note": "Volg de bebording; het gaat om afzonderlijke straten, niet om een aaneengesloten gebied.",
+      "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "de-koeln", "city": "Keulen", "cc": "DE", "name": "Umweltzone Koln", "type": "milieuzone",
+      "lat": 50.938, "lon": 6.960, "radiusKm": 6,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist.",
+      "note": "", "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "de-duesseldorf", "city": "Dusseldorf", "cc": "DE", "name": "Umweltzone Dusseldorf", "type": "milieuzone",
+      "lat": 51.228, "lon": 6.773, "radiusKm": 6,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist.",
+      "note": "", "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "de-frankfurt", "city": "Frankfurt am Main", "cc": "DE", "name": "Umweltzone Frankfurt", "type": "milieuzone",
+      "lat": 50.111, "lon": 8.682, "radiusKm": 7,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist.",
+      "note": "", "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "de-stuttgart", "city": "Stuttgart", "cc": "DE", "name": "Umweltzone Stuttgart", "type": "milieuzone",
+      "lat": 48.776, "lon": 9.183, "radiusKm": 7,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist.",
+      "note": "Stuttgart kende jarenlang extra dieselverboden; die zijn grotendeels vervallen maar controleer de bebording.",
+      "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "de-muenchen", "city": "Munchen", "cc": "DE", "name": "Umweltzone Munchen", "type": "milieuzone",
+      "lat": 48.137, "lon": 11.575, "radiusKm": 6,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist binnen de Mittlerer Ring.",
+      "note": "Munchen kent daarnaast dieselverboden voor oudere norm binnen dezelfde ring.",
+      "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "de-freiburg", "city": "Freiburg", "cc": "DE", "name": "Umweltzone Freiburg", "type": "milieuzone",
+      "lat": 47.999, "lon": 7.842, "radiusKm": 5,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist.",
+      "note": "Ligt pal aan de A5 richting Bazel.",
+      "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "de-karlsruhe", "city": "Karlsruhe", "cc": "DE", "name": "Umweltzone Karlsruhe", "type": "milieuzone",
+      "lat": 49.007, "lon": 8.404, "radiusKm": 5,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist.",
+      "note": "", "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "de-heidelberg", "city": "Heidelberg", "cc": "DE", "name": "Umweltzone Heidelberg", "type": "milieuzone",
+      "lat": 49.399, "lon": 8.672, "radiusKm": 5,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist.",
+      "note": "", "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "de-ruhrgebiet", "city": "Ruhrgebied (Essen, Duisburg, Bochum)", "cc": "DE", "name": "Umweltzone Ruhrgebiet", "type": "milieuzone",
+      "lat": 51.451, "lon": 7.013, "radiusKm": 20,
+      "threshold": { "diesel": 4, "petrol": 1 },
+      "rule": "Groene Umweltplakette vereist in een groot aaneengesloten gebied.",
+      "note": "Dit is een van de grootste milieuzones van Europa; de A40 loopt er middendoor.",
+      "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+
+    {
+      "id": "it-milano-areab", "city": "Milaan", "cc": "IT", "name": "Area B Milaan", "type": "milieuzone",
+      "lat": 45.464, "lon": 9.190, "radiusKm": 7,
+      "threshold": { "diesel": 6, "petrol": 3 },
+      "rule": "Dieselauto's tot en met Euro 5 zijn geweerd. Actief maandag tot en met vrijdag van 07.30 tot 19.30; in het weekend en 's avonds mag je er wel in.",
+      "note": "Area B beslaat vrijwel de hele stad. Niet-ingezetenen hebben recht op circa vijf uitzonderingsdagen per jaar, die je vooraf moet registreren. Daarbinnen ligt Area C, een aparte betaalzone voor het historische centrum. Het benzineniveau kon ik niet hard bevestigen.",
+      "sourceUrl": "https://www.comune.milano.it/aree-b-c",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "it-milano-areac", "city": "Milaan", "cc": "IT", "name": "Area C Milaan", "type": "tolzone",
+      "lat": 45.464, "lon": 9.190, "radiusKm": 2,
+      "threshold": null,
+      "rule": "Betaalzone voor het historische centrum: circa 7,50 euro per dag, werkdagen overdag.",
+      "note": "Ligt binnen Area B; je moet dus aan beide voorwaarden voldoen.",
+      "sourceUrl": "https://www.comune.milano.it/aree-b-c",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "it-roma", "city": "Rome", "cc": "IT", "name": "ZTL Centro Storico", "type": "ztl",
+      "lat": 41.893, "lon": 12.483, "radiusKm": 3,
+      "threshold": null,
+      "rule": "Toegangsverbod voor het historische centrum buiten vergunninghouders, met camerahandhaving.",
+      "note": "Verblijf je in een hotel binnen de zone, laat het hotel je kenteken dan vooraf aanmelden. Elke passage telt als aparte overtreding.",
+      "sourceUrl": "https://romamobilita.it/it/servizi/ztl",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "it-firenze", "city": "Florence", "cc": "IT", "name": "ZTL Firenze", "type": "ztl",
+      "lat": 43.771, "lon": 11.254, "radiusKm": 2,
+      "threshold": null,
+      "rule": "Toegangsverbod voor het centrum met camerahandhaving.",
+      "note": "Berucht om het aantal boetes bij toeristen. Vertrouw je navigatie hier niet.",
+      "sourceUrl": "https://www.comune.fi.it/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "it-bologna", "city": "Bologna", "cc": "IT", "name": "ZTL en Area Verde Bologna", "type": "ztl",
+      "lat": 44.494, "lon": 11.343, "radiusKm": 4,
+      "threshold": null,
+      "rule": "Toegangsverbod voor het centrum, plus een regionale milieuzone met wisselende dieselverboden in de winter.",
+      "note": "Emilia-Romagna kent seizoensgebonden verboden van oktober tot april.",
+      "sourceUrl": "https://www.comune.bologna.it/", "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "it-torino", "city": "Turijn", "cc": "IT", "name": "ZTL en milieuzone Turijn", "type": "ztl",
+      "lat": 45.070, "lon": 7.687, "radiusKm": 4,
+      "threshold": null,
+      "rule": "Toegangsverbod voor het centrum, plus regionale dieselverboden in de winter.",
+      "note": "Piemonte kent net als Lombardije seizoensgebonden verboden.",
+      "sourceUrl": "http://www.comune.torino.it/", "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "it-verona", "city": "Verona", "cc": "IT", "name": "ZTL Verona", "type": "ztl",
+      "lat": 45.438, "lon": 10.993, "radiusKm": 2,
+      "threshold": null,
+      "rule": "Toegangsverbod voor het centrum met camerahandhaving.",
+      "note": "Ligt aan de doorgaande route over de Brenner.",
+      "sourceUrl": "https://www.comune.verona.it/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "it-pisa", "city": "Pisa", "cc": "IT", "name": "ZTL Pisa", "type": "ztl",
+      "lat": 43.716, "lon": 10.397, "radiusKm": 2,
+      "threshold": null,
+      "rule": "Toegangsverbod voor het centrum met camerahandhaving.",
+      "note": "", "sourceUrl": "https://www.comune.pisa.it/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+
+    {
+      "id": "es-madrid", "city": "Madrid", "cc": "ES", "name": "ZBE Madrid", "type": "milieuzone",
+      "lat": 40.417, "lon": -3.704, "radiusKm": 8,
+      "threshold": { "diesel": 4, "petrol": 3 },
+      "rule": "Minimaal het B-label: diesel vanaf Euro 4, benzine vanaf Euro 3.",
+      "note": "Binnen de ZBE ligt de strengere Zona de Especial Proteccion rond het centrum. Buitenlandse kentekens kunnen geen distintivo krijgen en moeten zich per stad aanmelden.",
+      "sourceUrl": "https://www.madrid.es/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "es-barcelona", "city": "Barcelona", "cc": "ES", "name": "ZBE Rondes Barcelona", "type": "milieuzone",
+      "lat": 41.385, "lon": 2.173, "radiusKm": 8,
+      "threshold": { "diesel": 4, "petrol": 3 },
+      "rule": "Minimaal het B-label: diesel vanaf Euro 4, benzine vanaf Euro 3. Werkdagen 07.00 tot 20.00.",
+      "note": "De zone ligt binnen de Ronda de Dalt en de Ronda Litoral en beslaat vrijwel de hele stad.",
+      "sourceUrl": "https://www.zbe.barcelona/", "lastVerified": "2026-08-19", "needsVerification": false
+    },
+
+    {
+      "id": "gb-london-ulez", "city": "Londen", "cc": "GB", "name": "ULEZ Groot-Londen", "type": "milieuzone",
+      "lat": 51.507, "lon": -0.128, "radiusKm": 25,
+      "threshold": { "diesel": 6, "petrol": 4 },
+      "rule": "Diesel vanaf Euro 6 en benzine vanaf Euro 4 rijden gratis; voldoe je niet, dan betaal je 12,50 pond per dag.",
+      "note": "De zone beslaat heel Groot-Londen, inclusief de route vanaf de haven. Voldoen betekent hier gratis, niet verboden. Binnen de ULEZ ligt de Congestion Charge van 15 pond per dag op werkdagen.",
+      "sourceUrl": "https://tfl.gov.uk/modes/driving/ultra-low-emission-zone",
+      "lastVerified": "2026-08-19", "needsVerification": false
+    },
+    {
+      "id": "gb-birmingham", "city": "Birmingham", "cc": "GB", "name": "Clean Air Zone Birmingham", "type": "milieuzone",
+      "lat": 52.480, "lon": -1.903, "radiusKm": 3,
+      "threshold": { "diesel": 6, "petrol": 4 },
+      "rule": "Voldoe je niet, dan betaal je per dag binnen de ring.",
+      "note": "", "sourceUrl": "https://www.gov.uk/guidance/driving-in-a-clean-air-zone",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "gb-bristol", "city": "Bristol", "cc": "GB", "name": "Clean Air Zone Bristol", "type": "milieuzone",
+      "lat": 51.454, "lon": -2.588, "radiusKm": 3,
+      "threshold": { "diesel": 6, "petrol": 4 },
+      "rule": "Voldoe je niet, dan betaal je per dag binnen de zone.",
+      "note": "", "sourceUrl": "https://www.gov.uk/guidance/driving-in-a-clean-air-zone",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "gb-bath", "city": "Bath", "cc": "GB", "name": "Clean Air Zone Bath", "type": "milieuzone",
+      "lat": 51.381, "lon": -2.359, "radiusKm": 2,
+      "threshold": { "diesel": 6, "petrol": 4 },
+      "rule": "Personenauto's zijn in Bath vrijgesteld; de heffing geldt voor bestel- en vrachtverkeer.",
+      "note": "Rijd je een gewone personenauto, dan hoef je hier meestal niets te doen.",
+      "sourceUrl": "https://www.gov.uk/guidance/driving-in-a-clean-air-zone",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+
+    {
+      "id": "pt-lisboa", "city": "Lissabon", "cc": "PT", "name": "ZER Avenida da Liberdade en Baixa", "type": "milieuzone",
+      "lat": 38.722, "lon": -9.139, "radiusKm": 3,
+      "threshold": { "diesel": 3, "petrol": 3 },
+      "rule": "In de strengste zone rond de Baixa geldt minimaal Euro 3.",
+      "note": "In de ruimere zone langs de Avenida da Liberdade volstaat een lagere norm. De drempels zijn de laatste jaren aangepast.",
+      "sourceUrl": "https://www.lisboa.pt/", "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "cz-praha", "city": "Praag", "cc": "CZ", "name": "Lage-emissiezone Praag", "type": "milieuzone",
+      "lat": 50.075, "lon": 14.437, "radiusKm": 4,
+      "threshold": null,
+      "rule": "De zone treft vooral vrachtverkeer; voor personenauto's speelt dit in de praktijk nauwelijks.",
+      "note": "Praag werkt al jaren aan een bredere milieuzone voor personenauto's. Controleer de actuele status.",
+      "sourceUrl": "https://www.praha.eu/", "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "se-stockholm", "city": "Stockholm", "cc": "SE", "name": "Miljozon klass 2 Stockholm", "type": "milieuzone",
+      "lat": 59.329, "lon": 18.069, "radiusKm": 4,
+      "threshold": { "diesel": 6, "petrol": 5 },
+      "rule": "Op een beperkt aantal straten geldt minimaal Euro 6 voor diesel en Euro 5 voor benzine.",
+      "note": "Het gaat om een handvol straten, niet om de hele binnenstad. Daarnaast geldt in heel Stockholm een congestieheffing die ook buitenlandse kentekens betalen.",
+      "sourceUrl": "https://trafik.stockholm/trafikregler/miljozoner/",
+      "lastVerified": "2026-08-19", "needsVerification": true
+    },
+    {
+      "id": "dk-kobenhavn", "city": "Kopenhagen", "cc": "DK", "name": "Miljozone Kobenhavn", "type": "milieuzone",
+      "lat": 55.676, "lon": 12.568, "radiusKm": 6,
+      "threshold": null,
+      "rule": "De Deense milieuzones richten zich op dieselbestelwagens, -bussen en -vrachtwagens. Gewone personenauto's vallen er in beginsel buiten.",
+      "note": "Rijd je een personenauto, dan hoef je hier meestal niets voor te doen.",
+      "sourceUrl": "https://miljoezoner.dk/", "lastVerified": "2026-08-19", "needsVerification": true
+    }
+  ]
+}

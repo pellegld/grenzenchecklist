@@ -1,0 +1,1888 @@
+{
+  "meta": {
+    "schemaVersion": 1,
+    "researchDate": "2026-08-19",
+    "appName": "Grenschecklist",
+    "correctionFormUrl": "",
+    "correctionFormNote": "Vul hier de URL van een meldformulier in om de melden-knop naar dat formulier te laten linken. Blijft dit leeg, dan kopieert de app de melding naar het klembord.",
+    "generalSources": [
+      {
+        "label": "ANWB - reisvoorbereiding en grenswijzer",
+        "url": "https://www.anwb.nl/vakantie/reisvoorbereiding"
+      },
+      {
+        "label": "VAB - op weg / mobiliteit",
+        "url": "https://magazine.vab.be/op-weg/mobiliteit/"
+      },
+      {
+        "label": "RAC - driving in Europe checklist",
+        "url": "https://www.rac.co.uk/drive/travel/advice/checklist/"
+      },
+      {
+        "label": "ADAC - Verkehrsvorschriften im Ausland",
+        "url": "https://www.adac.de/verkehr/recht/verkehrsvorschriften-ausland/"
+      },
+      {
+        "label": "Urban Access Regulations in Europe (milieuzones)",
+        "url": "https://urbanaccessregulations.eu/"
+      }
+    ],
+    "principle": {
+      "title": "Je kentekenland bepaalt vaak wat je moet hebben",
+      "text": "Binnen de EU geldt als hoofdregel dat de uitrustingseisen van het land waar je auto geregistreerd staat bindend zijn. Veel landen schrijven bijvoorbeeld een verbanddoos voor aan hun eigen auto's, maar beboeten een buitenlands kenteken daar niet voor. Gedragsregels - snelheid, alcohol, milieuzones, vignetten, winterbanden en verboden apparatuur - gelden daarentegen altijd voor iedereen die er rijdt. Deze app maakt dat onderscheid expliciet, dus zet je kentekenland goed."
+    }
+  },
+  "countries": [
+    {
+      "code": "BE",
+      "name": "België",
+      "flagStyle": "stripes-v",
+      "flagColors": [
+        "#000000",
+        "#FDDA24",
+        "#EF3340"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.anwb.nl/vakantie/belgie/reisvoorbereiding/milieuzones",
+      "sources": [
+        {
+          "label": "ANWB - milieuzones België",
+          "url": "https://www.anwb.nl/vakantie/belgie/reisvoorbereiding/milieuzones"
+        },
+        {
+          "label": "LEZ Brussel - officiële registratie",
+          "url": "https://lez.brussels/mytax/nl/"
+        },
+        {
+          "label": "Stad Gent - LEZ registratie buitenlandse nummerplaat",
+          "url": "https://stad.gent/nl/mobiliteit-openbare-werken/lage-emissiezone/registratie-lez-voertuig-met-buitenlandse-nummerplaat"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "registratie",
+        "actionAppliesTo": "foreign",
+        "emissionThreshold": {
+          "diesel": 6,
+          "petrol": 3,
+          "scope": "Brussel, de strengste zone",
+          "note": "Antwerpen en Gent hanteren eigen, iets soepelere drempels. De toegangseisen gelden voor iedereen, ook voor Belgische kentekens."
+        },
+        "required": true,
+        "name": "LEZ Brussel / Antwerpen / Gent - registratie, geen sticker",
+        "howToGet": "Registreer je buitenlandse kenteken vooraf en gratis, per stad apart: Brussel via lez.brussels (5 jaar geldig), Antwerpen via slimnaarantwerpen.be, Gent via stad.gent. Er is geen fysieke sticker.",
+        "note": "De registratieplicht geldt alleen voor buitenlandse kentekens; Belgische voertuigen staan al in de DIV-databank en hoeven zich niet aan te melden. Registreren is verplicht ook als je auto ruim aan de norm voldoet, en een registratie voor de ene stad geldt niet voor de andere. Sinds 1 januari 2026 voldoen Euro 5-diesels en Euro 2-benzine niet meer aan de toegangsvoorwaarden in Brussel. Brussel zou Nederlandse kentekens inmiddels vrijstellen van registratie omdat het de RDW-gegevens rechtstreeks kan raadplegen; voor Antwerpen en Gent is dat niet bevestigd, dus registreer daar voor de zekerheid wel.",
+        "appliesToForeign": true,
+        "fineIndication": "circa 150 euro voor niet-registreren; vanaf 3 maanden na een eerste overtreding tot 350 euro bij een niet-conform voertuig"
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet en geen snelwegtol voor personenauto's. Uitzondering: de Liefkenshoektunnel bij Antwerpen is betalend."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": "Geldt voor iedereen die in België rijdt, ook met een buitenlands kenteken."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Verplicht te dragen zodra je bij pech of ongeval uitstapt op een autosnelweg of autoweg. Bewaar het binnen handbereik in het interieur, niet in de kofferbak."
+        },
+        {
+          "item": "Brandblusser",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Verplicht in Belgisch geregistreerde auto's. Met een buitenlands kenteken word je hier niet voor beboet."
+        },
+        {
+          "item": "Verbanddoos",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Verplicht in Belgisch geregistreerde auto's. Voor buitenlandse kentekens geldt de regel van je eigen land."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "120 km/u",
+          "expressway": "120 km/u",
+          "rural": "70 km/u in Vlaanderen, 90 km/u in Wallonië",
+          "builtUp": "50 km/u; 30 km/u standaard in het hele Brussels Gewest en in veel stadskernen"
+        },
+        "wet": {
+          "note": "Geen aparte limieten bij regen."
+        },
+        "notes": "Let op het verschil tussen Vlaanderen (70) en Wallonië (90) buiten de bebouwde kom. Dat is de klassieke buitenlanderboete."
+      },
+      "quirks": [
+        "Voorrang van rechts geldt strikt en op veel meer kruispunten dan in Nederland, ook als jij op de doorgaande weg lijkt te rijden.",
+        "Radarverklikkers, dus aparte detectieapparaten, zijn verboden. Flitsapps die alleen zones aangeven worden getolereerd.",
+        "Een telefoon in de hand houden is al strafbaar, ook als je niet belt.",
+        "Dashcams mogen voor privégebruik, maar beelden publiceren waarop personen herkenbaar zijn botst met de privacywetgeving."
+      ],
+      "winterEquipment": {
+        "required": "nee",
+        "period": "",
+        "note": "Geen winterbandenplicht. Sneeuwkettingen alleen waar aangegeven; met kettingen geldt maximaal 50 km/u."
+      },
+      "needsVerification": false,
+      "tollPoints": [
+        {
+          "name": "Liefkenshoektunnel",
+          "lat": 51.283,
+          "lon": 4.283,
+          "radiusKm": 10,
+          "price": "7,00 euro enkele reis",
+          "priceEur": 7.0,
+          "note": "De enige plek in België waar je als personenauto tol betaalt: de R2 onder de Schelde ten noorden van Antwerpen. De Kennedytunnel er vlakbij is gratis maar staat vaak vast.",
+          "sourceUrl": "https://www.liefkenshoektunnel.be/nl/tarieven",
+          "needsVerification": true
+        }
+      ]
+    },
+    {
+      "code": "NL",
+      "name": "Nederland",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#AE1C28",
+        "#FFFFFF",
+        "#21468B"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.milieuzones.nl/",
+      "sources": [
+        {
+          "label": "Milieuzones.nl - officieel overzicht",
+          "url": "https://www.milieuzones.nl/"
+        },
+        {
+          "label": "ANWB - verkeer Nederland",
+          "url": "https://www.anwb.nl/verkeer/nederland"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "geen",
+        "emissionThreshold": {
+          "diesel": 4,
+          "petrol": null,
+          "scope": "groene milieuzone, de strengste",
+          "note": "In een gele zone volstaat diesel Euro 3. Benzineauto's worden in Nederlandse milieuzones voor personenauto's niet geweerd."
+        },
+        "required": true,
+        "name": "Milieuzone Amsterdam, Arnhem, Den Haag en Utrecht - kentekenherkenning",
+        "howToGet": "Geen sticker en geen registratie: handhaving gebeurt via kentekencamera's. Controleer vooraf je emissieklasse op milieuzones.nl.",
+        "note": "Voor dieselpersonenauto's geldt in een gele zone minimaal emissieklasse 3 en in een groene zone minimaal emissieklasse 4. Diverse steden hebben daarnaast een zero-emissiezone voor bestel- en vrachtauto's.",
+        "appliesToForeign": true,
+        "fineIndication": "circa 100 euro plus administratiekosten"
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet en geen snelwegtol. Wel tol bij de Westerscheldetunnel en de Kiltunnel."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet wettelijk verplicht in Nederland, maar je moet een gestrand voertuig wel veilig kunnen markeren. Neem hem mee: in vrijwel elk buurland is hij wel verplicht."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet verplicht in Nederland, wel zodra je de grens over gaat. Reken op een vest per inzittende."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger",
+            "camper"
+          ],
+          "text": "Met aanhanger of caravan geldt 90 km/u op de snelweg, ook waar 100 of 130 staat aangegeven."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "100 km/u tussen 06:00 en 19:00; daarbuiten 100, 120 of 130 km/u afhankelijk van de bebording",
+          "expressway": "100 km/u",
+          "rural": "80 km/u",
+          "builtUp": "50 km/u; 30 km/u in steeds meer stadsgebieden"
+        },
+        "wet": {
+          "note": "Geen aparte limieten bij regen."
+        },
+        "notes": "De borden zijn leidend; het dag- en nachtregime op de snelweg staat op de matrixborden."
+      },
+      "quirks": [
+        "Fietsers hebben een sterke positie en fietspaden kruisen vaak onverwacht de rijbaan bij afslaan.",
+        "Dashcams en flitsapps zijn toegestaan.",
+        "Ritsen is de norm bij een file, en rechts inhalen op de snelweg mag alleen als het verkeer stilstaat."
+      ],
+      "winterEquipment": {
+        "required": "nee",
+        "period": "",
+        "note": "Geen winterbandenplicht."
+      },
+      "needsVerification": false,
+      "tollPoints": [
+        {
+          "name": "Westerscheldetunnel",
+          "lat": 51.36,
+          "lon": 3.832,
+          "radiusKm": 12,
+          "price": "gratis voor personenauto's",
+          "priceEur": 0,
+          "note": "Sinds 2025 rijden voertuigen tot 3 meter hoog gratis door de tunnel. Ben je hoger dan 3 meter — camper, auto met hoge dakkoffer, bus — dan betaal je 18,20 euro, of 25,00 euro boven de 12 meter lengte.",
+          "sourceUrl": "https://www.westerscheldetunnel.nl/nl/tarieven-betaalmiddelen/tarieven/",
+          "needsVerification": false
+        },
+        {
+          "name": "Kiltunnel",
+          "lat": 51.764,
+          "lon": 4.642,
+          "radiusKm": 8,
+          "price": "tarief niet geverifieerd, reken op enkele euro's",
+          "note": "De N217 onder het Dordtsche Kil tussen Dordrecht en 's-Gravendeel. Kleine tunnel, maar wel betalen.",
+          "sourceUrl": "https://www.kiltunnel.nl/",
+          "needsVerification": true
+        }
+      ]
+    },
+    {
+      "code": "DE",
+      "name": "Duitsland",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#000000",
+        "#DD0000",
+        "#FFCE00"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/",
+      "sources": [
+        {
+          "label": "ADAC - Umweltzonen en Umweltplakette",
+          "url": "https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/"
+        },
+        {
+          "label": "ANWB - milieuzones Duitsland",
+          "url": "https://www.anwb.nl/vakantie/duitsland/reisvoorbereiding/milieuzones"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "sticker",
+        "emissionThreshold": {
+          "diesel": 4,
+          "petrol": 1,
+          "scope": "groene Umweltplakette",
+          "note": "Diesel Euro 3 met roetfilter krijgt ook een groene sticker. Benzine heeft een geregelde katalysator nodig; vrijwel alles vanaf 1993 voldoet."
+        },
+        "required": true,
+        "name": "Umweltplakette - de groene sticker voor de Umweltzonen",
+        "howToGet": "Bestel vooraf online of koop hem ter plaatse bij een keuringsstation zoals TÜV of DEKRA, bij een garage of bij de gemeente. Kost een paar euro, is voertuiggebonden en blijft geldig zolang de auto dezelfde is. Plakken op de binnenkant van de voorruit.",
+        "note": "In ongeveer 45 tot 50 Duitse steden geldt een Umweltzone en in vrijwel alle gevallen kom je er alleen in met de groene sticker; gele en rode stickers zijn praktisch waardeloos geworden. De verplichting geldt uitdrukkelijk ook voor buitenlandse kentekens.",
+        "appliesToForeign": true,
+        "fineIndication": "circa 100 euro"
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen tol of vignet voor personenauto's. De ooit geplande Pkw-Maut is definitief geschrapt."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Duitsland schrijft dit voor aan Duits geregistreerde auto's. Met een buitenlands kenteken geldt formeel je eigen landsregel, maar neem hem toch mee: je moet een gestrand voertuig wel kunnen markeren."
+        },
+        {
+          "item": "Verbanddoos volgens DIN 13164",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Verplicht in Duits geregistreerde auto's, inclusief houdbaarheidsdatum en sinds 2022 twee mondmaskers. Buitenlandse kentekens worden hier in de praktijk niet op beboet."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Een vest is verplicht in Duits geregistreerde auto's. Ongeacht het kenteken is het verstandig er een per inzittende te hebben."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger"
+          ],
+          "text": "Met aanhanger geldt 80 km/u op de Autobahn. De Duitse Tempo-100-ontheffing is voor buitenlandse combinaties in de praktijk niet te krijgen."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "geen algemene limiet, adviessnelheid 130 km/u; op een groot deel van het net gelden wel borden of dynamische limieten",
+          "expressway": "100 km/u tenzij anders aangegeven",
+          "rural": "100 km/u",
+          "builtUp": "50 km/u; 30 km/u in veel woonwijken"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten, maar bij zicht onder 50 meter geldt overal maximaal 50 km/u."
+        },
+        "notes": "De adviessnelheid van 130 km/u is geen limiet, maar bij een ongeval boven die snelheid kun je medeaansprakelijk worden gesteld."
+      },
+      "quirks": [
+        "Actieve radarverklikkers zijn verboden en een flitsapp gebruiken tijdens het rijden mag niet. Zet de flitsmeldingen in je navigatie-app uit voor je de grens over gaat.",
+        "Een dashcam mag aanwezig zijn, maar permanent opnemen en bewaren botst met de privacywetgeving. Alleen korte fragmenten rond een incident zijn verdedigbaar.",
+        "Op de Autobahn is rechts inhalen verboden, ook in druk verkeer, tenzij het verkeer echt stilstaat.",
+        "Bij file moet je een Rettungsgasse vormen tussen de linkerrijstrook en de rest. Nalaten wordt fors beboet."
+      ],
+      "winterEquipment": {
+        "required": "situatiegebonden",
+        "period": "het hele jaar door, zodra er sprake is van winterse omstandigheden zoals ijzel, sneeuw, sneeuwmodder of gladheid",
+        "note": "Er is geen datumperiode: de plicht geldt op het moment dat het winters is. Sinds oktober 2024 volstaat de M+S-aanduiding niet meer; de band moet het alpine-symbool 3PMSF dragen. Sneeuwkettingen zijn verplicht waar het ronde blauwe kettingbord staat."
+      },
+      "needsVerification": false,
+      "tollPoints": [
+        {
+          "name": "Warnowtunnel Rostock",
+          "lat": 54.142,
+          "lon": 12.083,
+          "radiusKm": 10,
+          "price": "tarief niet geverifieerd, circa 3 tot 12 euro afhankelijk van voertuig en seizoen",
+          "note": "De enige tolweg voor personenauto's in Duitsland, samen met de Herrentunnel. Verbindt de haven met de A19 richting Berlijn.",
+          "sourceUrl": "https://www.warnowquerung.de/",
+          "needsVerification": true
+        },
+        {
+          "name": "Herrentunnel Lübeck",
+          "lat": 53.9,
+          "lon": 10.783,
+          "radiusKm": 8,
+          "price": "tarief niet geverifieerd, circa 2 tot 4 euro",
+          "note": "De B75 onder de Trave richting Travemünde.",
+          "sourceUrl": "https://www.herrentunnel.de/",
+          "needsVerification": true
+        }
+      ]
+    },
+    {
+      "code": "FR",
+      "name": "Frankrijk",
+      "flagStyle": "stripes-v",
+      "flagColors": [
+        "#002395",
+        "#FFFFFF",
+        "#ED2939"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.certificat-air.gouv.fr/",
+      "sources": [
+        {
+          "label": "Crit'Air - officiële bestelsite van de Franse overheid",
+          "url": "https://www.certificat-air.gouv.fr/"
+        },
+        {
+          "label": "VAB - alles over het milieuvignet in Frankrijk (2026)",
+          "url": "https://magazine.vab.be/op-weg/mobiliteit/alles-over-het-milieuvignet-in-frankrijk/"
+        },
+        {
+          "label": "RAC - driving in France (2026)",
+          "url": "https://www.rac.co.uk/drive/travel/country/france/"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "sticker",
+        "emissionThreshold": {
+          "diesel": 5,
+          "petrol": 4,
+          "scope": "Parijs en Straatsburg op werkdagen, waar Crit'Air 3 geweerd wordt",
+          "note": "Parijs verlengde de gewenningsfase en beboet in 2026 niet. De meeste andere ZFE's weren alleen Crit'Air 4 en 5 — daar volstaat diesel Euro 4 of benzine Euro 2.",
+          "needsVerification": true
+        },
+        "required": true,
+        "name": "Crit'Air-vignet voor de ZFE-zones",
+        "howToGet": "Bestel uitsluitend via certificat-air.gouv.fr voor circa 3,11 euro plus verzendkosten. Bestel ruim voor vertrek, want de sticker komt per post en levering naar het buitenland duurt al snel een tot twee weken. Plakken rechtsonder op de binnenkant van de voorruit.",
+        "note": "Elf agglomeraties hebben een actieve ZFE: Parijs, Lyon, Marseille, Toulouse, Nice, Montpellier, Straatsburg, Grenoble, Rouen, Reims en Saint-Etienne. Het niveau verschilt per stad — zie de sectie Steden op je route. De Franse wet maakt geen onderscheid tussen Franse en buitenlandse kentekens en de plicht geldt ook als je alleen maar door de zone heen rijdt. Bij smogalarm gelden tijdelijke, strengere Crit'Air-drempels. Mocht je gelezen hebben dat de ZFE's zijn afgeschaft: het parlement nam die afschaffing in april 2026 aan, maar de Conseil constitutionnel vernietigde haar op 21 mei 2026 als cavalier legislatif. De zones bestaan dus gewoon.",
+        "appliesToForeign": true,
+        "fineIndication": "68 euro voor personenauto's, tot 135 euro voor zwaardere voertuigen"
+      },
+      "tollRoads": {
+        "type": "peage",
+        "perKm": 0.1,
+        "note": "De meeste autoroutes zijn tolweg; N-wegen zijn gratis maar langzamer."
+      },
+      "tollPoints": [
+        {
+          "name": "Mont Blanc-tunnel",
+          "lat": 45.855,
+          "lon": 6.88,
+          "radiusKm": 7,
+          "price": "ruim 56 euro enkele reis",
+          "priceEur": 56,
+          "note": "Naar Italië onder de Mont Blanc door. Een retour is voordeliger en zeven dagen geldig. Dit is een van de duurste tolpunten van Europa; de Fréjus of de Brenner zijn goedkoper.",
+          "sourceUrl": "https://www.tunnelmb.net/",
+          "needsVerification": false
+        },
+        {
+          "name": "Fréjus-tunnel",
+          "lat": 45.13,
+          "lon": 6.7,
+          "radiusKm": 7,
+          "price": "ruim 56 euro enkele reis",
+          "priceEur": 56,
+          "note": "De andere tunnel naar Italië, richting Turijn. Retour zeven dagen geldig.",
+          "sourceUrl": "https://www.sftrf.fr/",
+          "needsVerification": false
+        },
+        {
+          "name": "Viaduc de Millau",
+          "lat": 44.08,
+          "lon": 3.023,
+          "radiusKm": 15,
+          "price": "tarief niet geverifieerd, circa 11 euro, in de zomer circa 14 euro",
+          "note": "De A75 tussen Clermont-Ferrand en Béziers is gratis, behalve dit viaduct. Het zomertarief geldt van 15 juni tot 15 september. Bronnen spreken elkaar tegen over het exacte bedrag — controleer het bij de exploitant.",
+          "sourceUrl": "https://www.leviaducdemillau.com/",
+          "needsVerification": true
+        },
+        {
+          "name": "Eurotunnel LeShuttle",
+          "lat": 50.924,
+          "lon": 1.789,
+          "radiusKm": 20,
+          "price": "vanaf circa 70 euro enkele reis, sterk afhankelijk van moment en boekingstermijn",
+          "optional": true,
+          "note": "De autotrein naar Folkestone, 35 minuten. Geen tol maar een boeking: vroeg boeken scheelt gemakkelijk een factor drie. De veerboot uit Calais of Duinkerken is het alternatief.",
+          "sourceUrl": "https://www.leshuttle.com/nl/",
+          "needsVerification": true
+        }
+      ],
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet, maar de meeste autoroutes zijn tolwegen met afrekening per traject. Betalen kan met kaart of met een télépéage-badge; contant geld wordt op steeds meer stations niet meer aangenomen."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": "Geldt voor iedereen die in Frankrijk rijdt, ook met een buitenlands kenteken."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Moet binnen handbereik in het interieur liggen, niet in de kofferbak, want je moet het aantrekken voor je uitstapt. Wettelijk is er een vest voor de bestuurder vereist, maar iedereen die langs de weg uitstapt moet er een dragen. Reken dus op een per inzittende."
+        },
+        {
+          "item": "Alcoholtester",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Dit is geen verplichting meer. De plicht uit 2012 is op 22 mei 2020 formeel afgeschaft en omgezet in een aanbeveling, en er is nooit een boete voor ingevoerd. Je mag hem gerust thuislaten."
+        },
+        {
+          "item": "Reservelampjes",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet verplicht, wel handig, want een defect licht is wel beboetbaar."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger",
+            "camper"
+          ],
+          "text": "Weegt de combinatie meer dan 3,5 ton, dan geldt 110 km/u op de autoroute en moet je op wegen met drie rijstroken de rechterstrook houden."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u",
+          "expressway": "110 km/u",
+          "rural": "80 km/u; 90 km/u waar het departement dat heeft hersteld en aangeeft",
+          "builtUp": "50 km/u; 30 km/u in onder meer heel Parijs en Lyon en in veel andere binnensteden"
+        },
+        "wet": {
+          "motorway": "110 km/u",
+          "expressway": "100 km/u",
+          "rural": "80 km/u",
+          "builtUp": "50 km/u"
+        },
+        "notes": "Bij zicht onder 50 meter geldt overal maximaal 50 km/u. Bestuurders met een rijbewijs jonger dan drie jaar rijden maximaal 110 km/u op de autoroute."
+      },
+      "quirks": [
+        "Flitsapps en radarverklikkers zijn verboden: de functie moet uit staan en zelfs een apparaat met die functie aan boord kan tot inbeslagname en een boete tot 1500 euro leiden.",
+        "Dashcams mogen voor privégebruik, maar beelden delen waarop kentekens of personen herkenbaar zijn is problematisch onder de privacywetgeving.",
+        "Bij tolpoortjes zijn de rijstroken met een oranje t alleen voor abonnees met badge. Kies je die strook zonder badge, dan blokkeer je de doorgang en volgt een naheffing.",
+        "Priorité à droite bestaat nog steeds op sommige landwegen en in dorpskernen zonder haaientanden."
+      ],
+      "winterEquipment": {
+        "required": "seizoensgebonden",
+        "periodStart": "11-01",
+        "periodEnd": "03-31",
+        "period": "1 november tot en met 31 maart, in de gemeenten die onder de Loi Montagne II vallen - bergachtige delen van circa 34 departementen",
+        "note": "In die gemeenten moet je of winterbanden met het 3PMSF-symbool op alle vier de wielen hebben, of sneeuwkettingen of sneeuwsokken voor minimaal twee aandrijfwielen aan boord. Bij de zonegrens staan borden. De handhaving is soepel gebleven, maar de verplichting bestaat wel degelijk."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "LU",
+      "name": "Luxemburg",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#ED2939",
+        "#FFFFFF",
+        "#00A1DE"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.anwb.nl/vakantie/luxemburg/reisvoorbereiding",
+      "sources": [
+        {
+          "label": "ANWB - Luxemburg reisvoorbereiding",
+          "url": "https://www.anwb.nl/vakantie/luxemburg/reisvoorbereiding"
+        },
+        {
+          "label": "Radar (AVROTROS) - landen waar een dashcam verboden is",
+          "url": "https://radar.avrotros.nl/artikel/in-deze-vakantielanden-is-een-dashcam-verboden-60734"
+        }
+      ],
+      "environmentalZone": {
+        "required": false,
+        "note": "Geen milieuzone en geen milieusticker."
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet en geen tol voor personenauto's. Brandstof is er traditioneel goedkoper dan in de buurlanden, dus een logische tankstop."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": ""
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Moet in het interieur binnen handbereik liggen en gedragen worden zodra je buiten de bebouwde kom uitstapt."
+        },
+        {
+          "item": "Verbanddoos",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Voorgeschreven voor Luxemburgs geregistreerde auto's; buitenlandse kentekens volgen hun eigen landsregel."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u",
+          "expressway": "90 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "motorway": "110 km/u",
+          "expressway": "90 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "notes": "De snelweglimiet zakt bij regen naar 110 km/u en daar wordt actief op gecontroleerd."
+      },
+      "quirks": [
+        "Dashcams zijn verboden: filmen in de openbare ruimte mag niet en het apparaat kan in beslag worden genomen.",
+        "Radarverklikkers zijn verboden.",
+        "De alcohollimiet is 0,5 promille, en 0,2 promille voor bestuurders met minder dan twee jaar rijbewijs."
+      ],
+      "winterEquipment": {
+        "required": "situatiegebonden",
+        "period": "het hele jaar door, zodra er sprake is van winterse omstandigheden",
+        "note": "Bij ijzel, sneeuw of sneeuwmodder zijn winterbanden op alle wielen wettelijk verplicht. Er is geen vaste datumperiode."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "AT",
+      "name": "Oostenrijk",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#ED2939",
+        "#FFFFFF",
+        "#ED2939"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.asfinag.at/maut-vignette/vignette/",
+      "sources": [
+        {
+          "label": "ASFINAG - officiële vignetverkoop",
+          "url": "https://www.asfinag.at/maut-vignette/vignette/"
+        },
+        {
+          "label": "ANWB - winterbanden in het buitenland",
+          "url": "https://www.anwb.nl/auto/banden/winterbanden/winterbanden-in-het-buitenland"
+        },
+        {
+          "label": "Snowplaza - vignet Oostenrijk en Zwitserland 2026",
+          "url": "https://www.snowplaza.nl/weblog/vignet-oostenrijk-zwitserland-2026-dit-verandert-er-vanaf-nu-kleur-prijs-en-regels/"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "geen",
+        "euroBasedForCars": false,
+        "required": true,
+        "name": "IG-L-zones voor luchtkwaliteit en de Umweltzone rond Graz",
+        "howToGet": "Voor de meeste IG-L-zones heb je geen sticker nodig: het zijn snelheidsbeperkingen, meestal 100 km/u, en dieselverboden die met borden en camera's worden gehandhaafd. Voor de zone rond Graz kan een Pickerl vereist zijn.",
+        "note": "De bekendste IG-L-trajecten liggen op de A12 in het Inntal en de A13 Brennerautobahn. De limiet van 100 km/u daar is permanent en wordt streng gecontroleerd.",
+        "appliesToForeign": true,
+        "needsVerification": true,
+        "verificationNote": "De exacte stickerplicht rond Graz en de actuele IG-L-trajecten wisselen per jaar. Controleer bij ASFINAG of bij het Land Steiermark."
+      },
+      "tollVignette": {
+        "required": true,
+        "name": "Autobahnvignette",
+        "howToGet": "Digitaal via de ASFINAG-webshop of app, of als sticker bij tankstations en grenskantoren. Let op: bij online aankoop door particulieren geldt een wettelijke bedenktijd van 18 dagen voordat het vignet ingaat. Koop dus tijdig, of koop ter plaatse.",
+        "note": "2026 is het laatste jaar waarin de sticker, dit jaar vuurrood, nog bestaat; vanaf 2027 is het vignet uitsluitend digitaal. Indicatieve prijzen 2026: 1 dag circa 9,60 euro, 10 dagen circa 12,80 euro, 2 maanden circa 32 euro. Let op: het vignet dekt niet alles. Op de Sondermautstrecken betaal je bovenop het vignet een apart tarief per doorgang — zie de tolpunten hieronder.",
+        "appliesToForeign": true,
+        "fineIndication": "Ersatzmaut van circa 120 euro ter plaatse; bij weigering een fors hogere boete",
+        "needsVerification": true,
+        "verificationNote": "Prijzen worden jaarlijks geïndexeerd. Controleer het actuele tarief bij ASFINAG."
+      },
+      "tollPoints": [
+        {
+          "name": "A13 Brennerautobahn",
+          "lat": 47.1,
+          "lon": 11.47,
+          "radiusKm": 15,
+          "price": "12,50 euro enkele reis",
+          "priceEur": 12.5,
+          "note": "De klassieke route naar Italië. Ook met een geldig vignet betaal je dit apart. Betalen bij het tolstation of vooraf digitaal via videomaut.",
+          "sourceUrl": "https://www.asfinag.at/en/toll/section-toll/",
+          "needsVerification": false
+        },
+        {
+          "name": "A10 Tauern- en Katschbergtunnel",
+          "lat": 47.12,
+          "lon": 13.4,
+          "radiusKm": 22,
+          "price": "15,00 euro enkele reis",
+          "priceEur": 15,
+          "note": "De route richting Karinthië en Slovenië. De twee tunnels worden samen afgerekend.",
+          "sourceUrl": "https://www.asfinag.at/en/toll/section-toll/",
+          "needsVerification": false
+        },
+        {
+          "name": "S16 Arlbergtunnel",
+          "lat": 47.13,
+          "lon": 10.2,
+          "radiusKm": 12,
+          "price": "13,00 euro enkele reis",
+          "priceEur": 13,
+          "note": "Richting Vorarlberg en Zwitserland. De gratis Arlbergpas eroverheen is 's winters vaak dicht.",
+          "sourceUrl": "https://www.asfinag.at/en/toll/section-toll/",
+          "needsVerification": false
+        },
+        {
+          "name": "A11 Karawankentunnel",
+          "lat": 46.51,
+          "lon": 14.06,
+          "radiusKm": 12,
+          "price": "9,00 euro enkele reis",
+          "priceEur": 9,
+          "note": "De grensovergang naar Slovenië. Vergeet niet dat je daar ook nog een e-vinjeta nodig hebt.",
+          "sourceUrl": "https://www.asfinag.at/en/toll/section-toll/",
+          "needsVerification": false
+        },
+        {
+          "name": "A9 Gleinalmtunnel",
+          "lat": 47.24,
+          "lon": 15.17,
+          "radiusKm": 12,
+          "price": "tarief niet geverifieerd",
+          "note": "Sondermautstrecke op de route naar Graz. Ook de Bosrucktunnel verderop op de A9 is apart betalend.",
+          "sourceUrl": "https://www.asfinag.at/en/toll/section-toll/",
+          "needsVerification": true
+        },
+        {
+          "name": "Grossglockner Hochalpenstrasse",
+          "lat": 47.08,
+          "lon": 12.83,
+          "radiusKm": 12,
+          "price": "tarief niet geverifieerd, reken op enkele tientallen euro's",
+          "note": "Geen ASFINAG-weg maar een particuliere panoramaweg; 's winters gesloten. Geen doorgaande route, wel een dagtocht.",
+          "sourceUrl": "https://www.grossglockner.at/",
+          "needsVerification": true
+        },
+        {
+          "name": "Felbertauernstrasse",
+          "lat": 47.12,
+          "lon": 12.51,
+          "radiusKm": 12,
+          "price": "tarief niet geverifieerd",
+          "note": "Particuliere tolweg, het alternatief voor de Grossglockner richting Oost-Tirol.",
+          "sourceUrl": "https://www.felbertauernstrasse.at/",
+          "needsVerification": true
+        }
+      ],
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": "Oostenrijk handhaaft dit ook bij buitenlandse kentekens."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Moet in het interieur liggen en gedragen worden zodra je buiten de bebouwde kom uitstapt."
+        },
+        {
+          "item": "Verbanddoos",
+          "status": "required",
+          "enforceable": true,
+          "note": "Oostenrijk is een van de landen die dit ook bij buitenlandse voertuigen kan handhaven. Neem een complete, niet-verlopen set mee."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger"
+          ],
+          "text": "Met aanhanger geldt 100 km/u op de Autobahn in plaats van 130."
+        },
+        {
+          "applies": [
+            "camper"
+          ],
+          "text": "Weegt je camper meer dan 3,5 ton toegestane massa, dan geldt niet het vignet maar de GO-Maut per kilometer, met een verplichte GO-Box."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u, maar 100 km/u op alle IG-L-trajecten",
+          "expressway": "100 km/u",
+          "rural": "100 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Op delen van de A12 in het Inntal geldt tussen 22:00 en 05:00 een lagere limiet. Snelheidsboetes worden ter plaatse geind en kunnen fors oplopen."
+      },
+      "quirks": [
+        "Dashcams zijn verboden. Het gebruik kan een boete van enkele honderden euro's opleveren en bij publicatie van herkenbare beelden loopt dat op tot 10.000 euro.",
+        "Flitsapps en radarverklikkers zijn verboden. Alleen al een ingeschakeld apparaat aan boord hebben is strafbaar en het toestel kan in beslag worden genomen.",
+        "Bij file op de snelweg is een Rettungsgasse verplicht.",
+        "Op veel bergwegen heeft het opwaarts rijdende verkeer voorrang."
+      ],
+      "winterEquipment": {
+        "required": "seizoensgebonden",
+        "periodStart": "11-01",
+        "periodEnd": "04-15",
+        "period": "1 november tot en met 15 april, bij winterse omstandigheden",
+        "note": "Binnen die periode moet je bij sneeuw, sneeuwmodder of ijzel of winterbanden op alle vier de wielen hebben met minimaal 4 mm profiel, of sneeuwkettingen op minimaal twee aandrijfwielen. Bij het ronde blauwe kettingbord zijn kettingen altijd verplicht, ook op winterbanden."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "CH",
+      "name": "Zwitserland",
+      "flagStyle": "cross-centered",
+      "flagColors": [
+        "#D52B1E",
+        "#FFFFFF"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.evignette.ch/",
+      "sources": [
+        {
+          "label": "E-Vignette - officiële Zwitserse verkoop",
+          "url": "https://www.evignette.ch/"
+        },
+        {
+          "label": "Snowplaza - vignet Oostenrijk en Zwitserland 2026",
+          "url": "https://www.snowplaza.nl/weblog/vignet-oostenrijk-zwitserland-2026-dit-verandert-er-vanaf-nu-kleur-prijs-en-regels/"
+        },
+        {
+          "label": "HCC - flitsapps in Europa",
+          "url": "https://www2.hcc.nl/kennis/kennis/reviews/flitsapps-in-europa-handig-onderweg-maar-niet-overal-toegestaan"
+        }
+      ],
+      "environmentalZone": {
+        "required": false,
+        "note": "Geen milieuzones en geen milieusticker. Wel kennen veel steden uitgebreide 30 km/u-zones."
+      },
+      "tollVignette": {
+        "required": true,
+        "name": "Autobahnvignette - sticker of e-vignette",
+        "howToGet": "Digitaal via evignette.ch, gekoppeld aan het kenteken en direct geldig, of als sticker bij tankstations, postkantoren en aan de grens. Kost 40 Zwitserse frank.",
+        "note": "Er bestaat alleen een jaarvignet; een dag- of weekvariant is er niet. Het vignet van een kalenderjaar is geldig van 1 december van het voorgaande jaar tot en met 31 januari van het volgende jaar. De sticker voor 2026 is blauw. Een stickervignet moet echt op de ruit geplakt zitten, want los achter de voorruit gelegd telt niet. Goed nieuws tegenover Oostenrijk: het vignet dekt hier wél de grote alpentunnels. Door de Gotthard- en de San Bernardinotunnel rijd je zonder bijbetalen. Alleen de Grote Sint-Bernhard en de Munt la Schera vallen erbuiten, en de autotreinen door de bergen zijn ook apart betalen.",
+        "appliesToForeign": true,
+        "fineIndication": "200 frank boete plus alsnog 40 frank voor het vignet"
+      },
+      "tollPoints": [
+        {
+          "name": "Grote Sint-Bernhardtunnel",
+          "lat": 45.868,
+          "lon": 7.17,
+          "radiusKm": 8,
+          "price": "33,40 frank enkele reis, ongeveer 35 euro; retour 53,00 frank",
+          "priceEur": 35,
+          "note": "De tunnel naar Italië bij Aosta. Valt buiten het vignet. De gratis Grote Sint-Bernhardpas eroverheen is alleen in de zomer open.",
+          "sourceUrl": "https://www.letunnel.com/",
+          "needsVerification": false
+        },
+        {
+          "name": "Munt la Scheratunnel",
+          "lat": 46.64,
+          "lon": 10.22,
+          "radiusKm": 8,
+          "price": "17 frank in de zomer, 25 tot 35 frank in de winter",
+          "priceEur": 18,
+          "note": "De verbinding naar Livigno. Online kopen scheelt een paar frank, en het tarief wisselt per seizoen en weekdag.",
+          "sourceUrl": "https://www.engadin.com/",
+          "needsVerification": true
+        },
+        {
+          "name": "Autoverlad Lötschberg",
+          "lat": 46.494,
+          "lon": 7.673,
+          "radiusKm": 7,
+          "optional": true,
+          "price": "circa 27 tot 30 frank",
+          "note": "Autotrein Kandersteg - Goppenstein: je rijdt je auto op de trein. De snelle route naar Wallis als de passen dicht zijn.",
+          "sourceUrl": "https://www.bls.ch/autoverlad",
+          "needsVerification": true
+        },
+        {
+          "name": "Autoverlad Vereina",
+          "lat": 46.85,
+          "lon": 9.9,
+          "radiusKm": 7,
+          "optional": true,
+          "price": "circa 34 tot 39 frank",
+          "note": "Autotrein Klosters - Sagliains richting Engadin. In de winter vaak het enige alternatief voor de Flüelapas.",
+          "sourceUrl": "https://www.rhb.ch/autoverlad",
+          "needsVerification": true
+        },
+        {
+          "name": "Autoverlad Furka",
+          "lat": 46.59,
+          "lon": 8.45,
+          "radiusKm": 7,
+          "optional": true,
+          "price": "circa 27 tot 35 frank",
+          "note": "Autotrein Realp - Oberwald. De Furkapas eroverheen is 's winters gesloten.",
+          "sourceUrl": "https://www.matterhorngotthardbahn.ch/",
+          "needsVerification": true
+        },
+        {
+          "name": "Gotthard- en San Bernardinotunnel",
+          "lat": 46.567,
+          "lon": 8.583,
+          "radiusKm": 25,
+          "price": "geen extra kosten",
+          "priceEur": 0,
+          "note": "Deze twee zitten wél in het vignet, anders dan de Zwitserse tunnels naar Italië. Je betaalt niets extra. Reken in het hoogseizoen bij de Gotthard wel op wachttijd voor de tunnelmond; de San Bernardino is meestal rustiger.",
+          "sourceUrl": "https://www.astra.admin.ch/",
+          "needsVerification": false
+        }
+      ],
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": "Moet binnen handbereik liggen, niet onder de bagage."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet wettelijk verplicht in Zwitserland, wel dringend aanbevolen en in vrijwel alle buurlanden verplicht."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger"
+          ],
+          "text": "Met aanhanger geldt 80 km/u op de autosnelweg."
+        },
+        {
+          "applies": [
+            "camper"
+          ],
+          "text": "Weegt je camper meer dan 3,5 ton, dan geldt de zwaarverkeersheffing in plaats van het gewone vignet."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "120 km/u",
+          "expressway": "100 km/u",
+          "rural": "80 km/u",
+          "builtUp": "50 km/u; 30 km/u in grote delen van veel steden"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Zwitserland kent de strengste snelheidshandhaving van Europa. Ruim over de limiet, vanaf circa 25 km/u te veel buiten de bebouwde kom, leidt tot een strafrechtelijke procedure. Bij extreme overschrijding volgt inbeslagname van het voertuig en een boete die aan je inkomen wordt gekoppeld."
+      },
+      "quirks": [
+        "Flitsapps en radarverklikkers zijn verboden. Het bezit alleen al is strafbaar, ongeacht of je ze gebruikt. Verwijder de app of schakel de flitsfunctie volledig uit voor de grens.",
+        "Dashcams zijn juridisch zeer beperkt toegestaan; door de strenge privacywetgeving wordt het gebruik afgeraden.",
+        "Dimlicht is overdag op alle wegen verplicht, en in tunnels sowieso.",
+        "Zwitserland zit niet in de EU, dus voor de douane gelden aparte regels voor de hoeveelheid meegenomen goederen."
+      ],
+      "winterEquipment": {
+        "required": "situatiegebonden",
+        "period": "geen vaste periode",
+        "note": "Er is geen algemene winterbandenplicht, maar je bent verplicht je voertuig aan de omstandigheden aan te passen. Veroorzaak je met zomerbanden een ongeval of een blokkade, dan volgt een boete en kan je verzekeraar korten. Sneeuwkettingen zijn verplicht bij het ronde blauwe kettingbord."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "IT",
+      "name": "Italië",
+      "flagStyle": "stripes-v",
+      "flagColors": [
+        "#008C45",
+        "#F4F5F0",
+        "#CD212A"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://urbanaccessregulations.eu/countries-mainmenu-147/italy-mainmenu-81",
+      "sources": [
+        {
+          "label": "Urban Access Regulations - Italië, ZTL en milieuzones",
+          "url": "https://urbanaccessregulations.eu/countries-mainmenu-147/italy-mainmenu-81"
+        },
+        {
+          "label": "ANWB - Italië reisvoorbereiding",
+          "url": "https://www.anwb.nl/vakantie/italie/reisvoorbereiding"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "geen",
+        "emissionThreshold": {
+          "diesel": null,
+          "petrol": null,
+          "scope": "verschilt sterk per stad en regio",
+          "note": "Een ZTL is een toegangsverbod, geen emissiedrempel. De regionale milieuzones in Lombardije en Emilia-Romagna hanteren wel euronormen, maar die verschillen per gemeente en per seizoen.",
+          "needsVerification": true
+        },
+        "required": true,
+        "name": "ZTL - Zona a Traffico Limitato - en regionale milieuzones",
+        "howToGet": "Voor een ZTL koop je geen sticker: het is een toegangsverbod met camerahandhaving. Verblijf je in een hotel binnen de zone, laat het hotel je kenteken dan vooraf aanmelden. Dat is de enige betrouwbare manier om binnen te komen. Voor de milieuzones in Lombardije, waaronder Area B en Area C in Milaan, en in Emilia-Romagna gelden aparte, emissiegebonden regels met eigen registratie.",
+        "note": "Vrijwel elke historische binnenstad heeft een ZTL. De borden zijn klein, de camera's onzichtbaar en boetes komen maanden later via een incassobureau, vaak meerdere per bezoek omdat elke passage apart telt. Vertrouw je navigatie hier niet blind.",
+        "appliesToForeign": true,
+        "fineIndication": "circa 80 tot 120 euro per passage, plus administratie- en incassokosten"
+      },
+      "tollRoads": {
+        "type": "peage",
+        "perKm": 0.07,
+        "note": "Vrijwel het hele autostrada-net is tolweg. Kaartje trekken bij binnenkomst, betalen bij het verlaten."
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet, maar de autostrade zijn grotendeels tolwegen: je trekt een kaartje bij binnenkomst en betaalt bij het verlaten. Vermijd bij het afrekenen de gele Telepass-stroken, want die zijn alleen voor abonnees."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": ""
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Iedereen die buiten de bebouwde kom uitstapt op of naast de rijbaan moet een vest dragen. Bewaar ze binnen handbereik in het interieur, dus reken op een per inzittende."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger"
+          ],
+          "text": "Met aanhanger geldt 80 km/u op de autostrada en 70 km/u buiten de bebouwde kom."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u",
+          "expressway": "110 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "motorway": "110 km/u",
+          "expressway": "90 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "notes": "Bestuurders met een rijbewijs jonger dan drie jaar rijden maximaal 100 km/u op de autostrada en 90 km/u op de expressweg. Italië gebruikt op veel trajecten Tutor-systemen die je gemiddelde snelheid over kilometers meten, dus kort afremmen bij een camera helpt daar niet."
+      },
+      "quirks": [
+        "Dashcams zijn toegestaan, maar het publiceren van herkenbare beelden valt onder strenge privacyregels.",
+        "Flitsapps zijn toegestaan zolang ze alleen vaste flitspalen aangeven; apparaten die actief radar of laser detecteren zijn verboden.",
+        "Buiten de bebouwde kom is dimlicht overdag verplicht.",
+        "Op veel bergwegen en in tunnels gelden aparte, lagere limieten dan je op de kaart zou verwachten."
+      ],
+      "winterEquipment": {
+        "required": "seizoensgebonden",
+        "periodStart": "11-15",
+        "periodEnd": "04-15",
+        "period": "meestal 15 november tot en met 15 april, maar de exacte data worden per weg en per regio door de wegbeheerder vastgesteld",
+        "note": "Op de aangegeven wegen moet je of winterbanden hebben, of sneeuwkettingen aan boord. In Valle d'Aosta en delen van Zuid-Tirol is de regeling strenger en begint hij eerder. Let op de borden bij de opritten van de autostrade."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "ES",
+      "name": "Spanje",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#AA151B",
+        "#F1BF00",
+        "#AA151B"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.dgt.es/",
+      "sources": [
+        {
+          "label": "DGT - Dirección General de Tráfico",
+          "url": "https://www.dgt.es/"
+        },
+        {
+          "label": "Euro Weekly News - V16-uitzonderingen 2026",
+          "url": "https://euroweeklynews.com/2025/11/26/spains-new-v16-rule-sparks-confusion-these-cars-wont-have-to-carry-it-in-2026/"
+        },
+        {
+          "label": "Idealista - V16 verplicht sinds 1 januari 2026",
+          "url": "https://www.idealista.com/en/news/legal-advice-in-spain/2026/01/08/878404-the-v16-beacon-is-now-mandatory-in-spain-what-you-need-to-know-to-avoid-an-eu80"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "registratie",
+        "actionAppliesTo": "foreign",
+        "actionLocal": "sticker",
+        "emissionThreshold": {
+          "diesel": 4,
+          "petrol": 3,
+          "scope": "Madrid en Barcelona",
+          "note": "Dit komt overeen met het Spaanse B-label. Kleinere gemeenten hanteren vaak soepelere drempels."
+        },
+        "required": true,
+        "name": "ZBE - Zona de Bajas Emisiones - met het DGT-milieulabel",
+        "howToGet": "Het Spaanse distintivo ambiental is alleen voor Spaans geregistreerde voertuigen. Met een buitenlands kenteken meld je je per stad apart aan of vraag je een tijdelijke toegangsvergunning aan; Madrid en Barcelona hebben daar een eigen online formulier voor.",
+        "note": "Elke Spaanse gemeente boven 50.000 inwoners moet een ZBE hebben. De strengste zijn de Zona de Bajas Emisiones de Especial Protección in Madrid en de ZBE Rondes in Barcelona. De regels en de registratieprocedure verschillen per stad.",
+        "appliesToForeign": true,
+        "fineIndication": "circa 200 euro",
+        "needsVerification": true,
+        "verificationNote": "De registratieprocedure voor buitenlandse kentekens verschilt per gemeente en verandert regelmatig. Check de site van de specifieke stad die je bezoekt."
+      },
+      "tollRoads": {
+        "type": "peage",
+        "perKm": 0.1,
+        "note": "Alleen de resterende AP-wegen zijn tol; sinds 2021 zijn veel trajecten gratis geworden en de autovias zijn dat altijd al. Een schatting op basis van alle kilometers valt daardoor te hoog uit.",
+        "needsVerification": true
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet. Een deel van de autopistas, de AP-wegen, is tol; sinds 2021 zijn diverse trajecten gratis geworden. De autovías, de A-wegen, zijn tolvrij."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": "Voor buitenlandse kentekens blijft de klassieke driehoek gewoon geldig in 2026. Je hoeft geen V16 te kopen."
+        },
+        {
+          "item": "V16-noodbaken verbonden met DGT 3.0",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Sinds 1 januari 2026 verplicht voor Spaans geregistreerde voertuigen, waar het de gevarendriehoek vervangt. Buitenlandse kentekens zijn uitdrukkelijk uitgezonderd en mogen de driehoek blijven gebruiken. Koop er dus geen als je met een Nederlands of Belgisch kenteken rijdt."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Verplicht te dragen zodra je buiten de bebouwde kom uitstapt. Bewaar het in het interieur binnen handbereik."
+        },
+        {
+          "item": "Reservebril",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Staat er op je rijbewijs een brilcode, dan schrijft Spanje een reservebril voor. Voor buitenlandse rijbewijzen wordt hier in de praktijk niet op gehandhaafd, maar het is een goedkope verzekering."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger"
+          ],
+          "text": "Met aanhanger geldt 90 km/u op de autopista en de autovía."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "120 km/u",
+          "expressway": "120 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u; 30 km/u op straten met een rijstrook per richting en 20 km/u waar rijbaan en trottoir gelijkvloers zijn"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "De stedelijke limieten van 30 en 20 km/u gelden sinds 2021 en dekken het overgrote deel van de Spaanse straten."
+      },
+      "quirks": [
+        "Radarverklikkers zijn verboden; flitsapps die alleen vaste camera's aangeven zijn toegestaan.",
+        "Dashcams mogen, maar het delen van herkenbare beelden is beperkt door privacywetgeving.",
+        "Bij pech mag je vanaf 2026 in principe in de auto blijven zitten met een V16 op het dak. Met een driehoek moet je nog steeds uitstappen, dus doe dat alleen als het veilig is.",
+        "De alcohollimiet is 0,5 promille, en 0,3 promille voor bestuurders met minder dan twee jaar rijbewijs."
+      ],
+      "winterEquipment": {
+        "required": "nee",
+        "period": "",
+        "note": "Geen algemene winterbandenplicht. In de Pyreneeën, de Sierra Nevada en andere bergstreken kan de Guardia Civil sneeuwkettingen verplicht stellen; volg dan de borden en aanwijzingen."
+      },
+      "needsVerification": false,
+      "tollPoints": [
+        {
+          "name": "Túnel del Cadí",
+          "lat": 42.283,
+          "lon": 1.783,
+          "radiusKm": 12,
+          "price": "tarief niet geverifieerd, circa 12 euro enkele reis",
+          "note": "De C-16 door de Pyreneeën richting Andorra en La Seu d'Urgell. Losse tol, los van de autopista-tarieven.",
+          "sourceUrl": "https://www.tuneldelcadi.com/",
+          "needsVerification": true
+        }
+      ]
+    },
+    {
+      "code": "PT",
+      "name": "Portugal",
+      "flagStyle": "stripes-v",
+      "flagColors": [
+        "#046A38",
+        "#DA291C"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.portugaltolls.com/",
+      "sources": [
+        {
+          "label": "Portugal Tolls - officiële informatie over elektronische tol",
+          "url": "https://www.portugaltolls.com/"
+        },
+        {
+          "label": "Radar (AVROTROS) - landen waar een dashcam verboden is",
+          "url": "https://radar.avrotros.nl/artikel/in-deze-vakantielanden-is-een-dashcam-verboden-60734"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "geen",
+        "emissionThreshold": {
+          "diesel": 3,
+          "petrol": 3,
+          "scope": "Baixa in Lissabon, de strengste zone",
+          "note": "In de ruimere zone langs de Avenida da Liberdade volstaat een lagere norm.",
+          "needsVerification": true
+        },
+        "required": true,
+        "name": "ZER Avenida da Liberdade en Baixa in Lissabon",
+        "howToGet": "Geen sticker; toegang wordt bepaald door de leeftijd en euronorm van je voertuig en gehandhaafd met camera's.",
+        "note": "Lissabon is de enige stad met een echte emissiezone; daarbuiten speelt dit nauwelijks. De regels zijn relatief mild en treffen vooral zeer oude voertuigen.",
+        "appliesToForeign": true,
+        "needsVerification": true,
+        "verificationNote": "De toegangsdrempels van de Lissabonse ZER zijn de laatste jaren aangepast. Controleer de actuele euronorm bij de gemeente Lissabon."
+      },
+      "tollRoads": {
+        "type": "elektronisch",
+        "perKm": 0.09,
+        "note": "Op de ex-SCUT-snelwegen bestaan geen tolhuisjes; registreer je kenteken vooraf via EASYToll of portugaltolls.com.",
+        "needsVerification": true
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet, maar Portugal heeft een lastig tolsysteem. Op de zogenoemde ex-SCUT-snelwegen bestaan geen tolhuisjes en wordt uitsluitend elektronisch afgerekend via kentekenherkenning. Met een buitenlands kenteken moet je je voor gebruik registreren via EASYToll aan de grens of via portugaltolls.com, anders volgt achteraf een naheffing met boete.",
+        "appliesToForeign": true
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": ""
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Moet in het interieur liggen. Een vest in de kofferbak is expliciet niet voldoende, want je moet het aan hebben voor je uitstapt."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "120 km/u",
+          "expressway": "100 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Bestuurders met een rijbewijs jonger dan een jaar rijden maximaal 90 km/u en moeten een 90-sticker achterop voeren."
+      },
+      "quirks": [
+        "Dashcams zijn verboden in Portugal. Laat hem thuis of haal hem van de ruit.",
+        "Radarverklikkers zijn verboden; flitsapps die alleen zones aangeven zijn een grijs gebied.",
+        "De alcohollimiet is 0,5 promille, en 0,2 promille voor bestuurders met minder dan drie jaar rijbewijs.",
+        "De EASYToll-zuil bij de grensovergang is de makkelijkste manier om je kenteken aan een creditcard te koppelen."
+      ],
+      "winterEquipment": {
+        "required": "nee",
+        "period": "",
+        "note": "Geen winterbandenplicht. Alleen in de Serra da Estrela kunnen bij sneeuw kettingen verplicht worden gesteld."
+      },
+      "needsVerification": false,
+      "tollPoints": [
+        {
+          "name": "Ponte 25 de Abril",
+          "lat": 38.69,
+          "lon": -9.177,
+          "radiusKm": 8,
+          "price": "2,25 euro, klasse 1, tarief 2026",
+          "priceEur": 2.25,
+          "note": "De brug over de Taag bij Lissabon. Je betaalt alleen in noordelijke richting, de stad in.",
+          "sourceUrl": "https://www.lusoponte.pt/",
+          "needsVerification": true
+        },
+        {
+          "name": "Ponte Vasco da Gama",
+          "lat": 38.757,
+          "lon": -9.04,
+          "radiusKm": 10,
+          "price": "3,40 euro, klasse 1, tarief 2026",
+          "priceEur": 3.4,
+          "note": "De lange brug ten noordoosten van Lissabon, de route om de stad heen. Ook hier betaal je in één richting.",
+          "sourceUrl": "https://www.lusoponte.pt/",
+          "needsVerification": true
+        }
+      ]
+    },
+    {
+      "code": "HR",
+      "name": "Kroatië",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#FF0000",
+        "#FFFFFF",
+        "#171796"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.hak.hr/en",
+      "sources": [
+        {
+          "label": "HAK - Hrvatski autoklub, de Kroatische wegenwacht",
+          "url": "https://www.hak.hr/en"
+        },
+        {
+          "label": "ANWB - verplichte automaterialen Kroatië",
+          "url": "https://www.anwb.nl/webwinkel/c/259/auto/verplichte-automaterialen/kroatie"
+        }
+      ],
+      "environmentalZone": {
+        "required": false,
+        "note": "Geen milieuzones en geen milieusticker."
+      },
+      "tollRoads": {
+        "type": "peage",
+        "perKm": 0.08,
+        "note": "De autocesta is tolweg met tolpoortjes; in het hoogseizoen lange wachttijden richting de kust."
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet, maar de autocesta is een tolweg met kaartjes en tolpoortjes. Betalen kan met kaart of contant in euro's. In het hoogseizoen zijn de wachttijden bij de tolstations richting de kust berucht."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": "Bij een aanhanger zijn er twee vereist."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "Moet in het interieur liggen en gedragen worden bij het uitstappen langs de weg."
+        },
+        {
+          "item": "Verbanddoos",
+          "status": "required",
+          "enforceable": true,
+          "note": "Kroatië handhaaft dit ook bij buitenlandse kentekens."
+        },
+        {
+          "item": "Reservelampenset",
+          "status": "required",
+          "enforceable": true,
+          "note": "Alleen vereist als je verlichting vervangbare lampen heeft; auto's met volledig geïntegreerde ledverlichting zijn vrijgesteld."
+        },
+        {
+          "item": "Sleepkabel",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Traditioneel voorgeschreven, maar de handhaving bij buitenlandse kentekens is in de praktijk mild.",
+          "needsVerification": true
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger"
+          ],
+          "text": "Met aanhanger zijn twee gevarendriehoeken verplicht in plaats van één."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u",
+          "expressway": "110 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Bestuurders onder de 24 jaar hebben lagere limieten: 120 km/u op de autosnelweg, 100 op de expressweg en 80 buiten de bebouwde kom."
+      },
+      "quirks": [
+        "Van eind oktober tot eind maart is dimlicht overdag verplicht.",
+        "De alcohollimiet is 0,5 promille, maar 0,0 promille voor bestuurders onder de 24 jaar en voor beroepschauffeurs.",
+        "Dashcams zijn toegestaan.",
+        "Op de kustweg, de Jadranska magistrala, wisselen de limieten voortdurend en wordt er veel mobiel gecontroleerd."
+      ],
+      "winterEquipment": {
+        "required": "seizoensgebonden",
+        "periodStart": "11-15",
+        "periodEnd": "04-15",
+        "period": "15 november tot en met 15 april",
+        "note": "In die periode is winteruitrusting verplicht op de aangewezen wegen, ongeacht het weer: winterbanden op alle wielen, of zomerbanden met minimaal 4 mm profiel plus sneeuwkettingen aan boord. Op sommige bergtrajecten hoort ook een sneeuwschep bij de verplichte uitrusting."
+      },
+      "needsVerification": false,
+      "tollPoints": [
+        {
+          "name": "Učkatunnel",
+          "lat": 45.315,
+          "lon": 14.213,
+          "radiusKm": 10,
+          "price": "tarief niet geverifieerd, circa 4,50 tot 4,70 euro",
+          "note": "De tunnel onder de Učka tussen Rijeka en Istrië, op de A8. Aparte tol naast het gewone autocesta-tarief; de Krkbrug is sinds 2020 juist gratis.",
+          "sourceUrl": "https://www.bina-istra.com/",
+          "needsVerification": true
+        }
+      ]
+    },
+    {
+      "code": "SI",
+      "name": "Slovenië",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#FFFFFF",
+        "#0000FF",
+        "#FF0000"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://evinjeta.dars.si/",
+      "sources": [
+        {
+          "label": "DARS - officiële e-vinjeta",
+          "url": "https://evinjeta.dars.si/"
+        },
+        {
+          "label": "ANWB - Slovenië reisvoorbereiding",
+          "url": "https://www.anwb.nl/vakantie/slovenie/reisvoorbereiding"
+        }
+      ],
+      "environmentalZone": {
+        "required": false,
+        "note": "Geen landelijke milieuzone. Ljubljana heeft wel een autovrije binnenstad met paaltjes en camerahandhaving."
+      },
+      "tollVignette": {
+        "required": true,
+        "name": "E-vinjeta, digitaal en gekoppeld aan het kenteken",
+        "howToGet": "Koop online via evinjeta.dars.si of bij tankstations en kiosken vlak voor de grens. Volledig digitaal: er is geen sticker en er hoeft niets op de ruit.",
+        "note": "Verplicht op alle autocesta en hitra cesta. Let op de voertuigcategorie, want campers en hogere voertuigen vallen in categorie 2R2 met een duurder tarief dan gewone personenauto's in 2A. Indicatieve tarieven: week circa 16 euro, maand circa 32 euro, jaar circa 120 euro.",
+        "appliesToForeign": true,
+        "fineIndication": "300 tot 800 euro",
+        "needsVerification": true,
+        "verificationNote": "Tarieven worden periodiek aangepast. Controleer het actuele bedrag bij DARS."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": ""
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "In het interieur bewaren en dragen bij het uitstappen langs de weg."
+        },
+        {
+          "item": "Verbanddoos",
+          "status": "required",
+          "enforceable": true,
+          "note": "Slovenië handhaaft dit ook bij buitenlandse kentekens."
+        },
+        {
+          "item": "Reservelampenset",
+          "status": "required",
+          "enforceable": true,
+          "note": "Niet vereist bij volledig geïntegreerde ledverlichting."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "camper"
+          ],
+          "text": "Campers en voertuigen die boven de vooras hoger zijn dan 1,30 meter vallen in vignetcategorie 2R2, met een duidelijk hoger tarief dan gewone personenauto's. Koop je per ongeluk 2A, dan ben je alsnog in overtreding."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u",
+          "expressway": "110 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Boetes worden ter plaatse geind en zijn naar Nederlandse maatstaven hoog."
+      },
+      "quirks": [
+        "Dimlicht overdag is het hele jaar door verplicht.",
+        "Radarverklikkers zijn verboden.",
+        "Dashcams zijn toegestaan voor privégebruik.",
+        "Slovenië is klein, maar de doorgaande route naar Kroatië loopt volledig over vignetplichtige snelwegen, ook als je er maar twintig minuten bent."
+      ],
+      "winterEquipment": {
+        "required": "seizoensgebonden",
+        "periodStart": "11-15",
+        "periodEnd": "03-15",
+        "period": "15 november tot en met 15 maart, en daarbuiten zodra er winterse omstandigheden zijn",
+        "note": "Verplicht in die periode ongeacht het weer: winterbanden op alle vier de wielen met minimaal 3 mm profiel, of zomerbanden met minimaal 3 mm plus sneeuwkettingen aan boord."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "CZ",
+      "name": "Tsjechië",
+      "flagStyle": "stripes-h",
+      "flagColors": [
+        "#FFFFFF",
+        "#D7141A"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://edalnice.cz/en/",
+      "sources": [
+        {
+          "label": "eDálnice - officieel Tsjechisch e-vignet",
+          "url": "https://edalnice.cz/en/"
+        },
+        {
+          "label": "ANWB - winterbanden in het buitenland",
+          "url": "https://www.anwb.nl/auto/banden/winterbanden/winterbanden-in-het-buitenland"
+        }
+      ],
+      "environmentalZone": {
+        "required": false,
+        "note": "Praag heeft een lage-emissiezone die vooral vrachtverkeer treft; voor personenauto's speelt dit in de praktijk nauwelijks.",
+        "needsVerification": true,
+        "verificationNote": "Praag werkt al jaren aan een bredere milieuzone voor personenauto's. Controleer de actuele status bij de gemeente Praag."
+      },
+      "tollVignette": {
+        "required": true,
+        "name": "Elektronische dálniční známka, het digitale vignet",
+        "howToGet": "Koop online via edalnice.cz of bij tankstations en postkantoren. Volledig digitaal en gekoppeld aan je kenteken; er is geen sticker meer.",
+        "note": "Verplicht op alle snelwegen. Indicatieve tarieven: 1 dag circa 200 CZK, 10 dagen circa 270 CZK, 30 dagen circa 430 CZK en een jaar circa 2440 CZK. Elektrische auto's zijn vrijgesteld, maar moeten zich wel registreren.",
+        "appliesToForeign": true,
+        "fineIndication": "tot 20.000 CZK",
+        "needsVerification": true,
+        "verificationNote": "Tarieven worden jaarlijks geïndexeerd. Controleer het actuele bedrag bij eDálnice."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": ""
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "required",
+          "enforceable": true,
+          "note": "In het interieur bewaren; verplicht te dragen bij het uitstappen buiten de bebouwde kom."
+        },
+        {
+          "item": "Verbanddoos",
+          "status": "required",
+          "enforceable": true,
+          "note": "Tsjechië handhaaft dit ook bij buitenlandse kentekens."
+        },
+        {
+          "item": "Reservelampenset",
+          "status": "required",
+          "enforceable": true,
+          "note": "Niet vereist bij volledig geïntegreerde ledverlichting."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u; op enkele aangewezen trajecten 150 km/u",
+          "expressway": "110 km/u",
+          "rural": "90 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "De trajecten waar 150 km/u geldt zijn expliciet bebord; overal elders blijft 130 de limiet."
+      },
+      "quirks": [
+        "Tsjechië hanteert een absolute nultolerantie voor alcohol: 0,0 promille voor iedereen.",
+        "Dimlicht overdag is het hele jaar door verplicht.",
+        "Radarverklikkers zijn verboden; flitsapps zijn toegestaan.",
+        "Dashcams zijn toegestaan."
+      ],
+      "winterEquipment": {
+        "required": "seizoensgebonden",
+        "periodStart": "11-01",
+        "periodEnd": "03-31",
+        "period": "1 november tot en met 31 maart, bij winterse omstandigheden of waar het winterbord staat",
+        "note": "Binnen die periode zijn winterbanden verplicht zodra er sneeuw, ijs of sneeuwmodder ligt, of zodra het blauwe winterbord staat. Minimaal 4 mm profiel."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "DK",
+      "name": "Denemarken",
+      "flagStyle": "cross",
+      "flagColors": [
+        "#C8102E",
+        "#FFFFFF"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://miljoezoner.dk/",
+      "sources": [
+        {
+          "label": "Miljoezoner.dk - officiële Deense milieuzones",
+          "url": "https://miljoezoner.dk/"
+        },
+        {
+          "label": "ANWB - Denemarken reisvoorbereiding",
+          "url": "https://www.anwb.nl/vakantie/denemarken/reisvoorbereiding"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "geen",
+        "appliesToCars": false,
+        "required": true,
+        "name": "Miljøzone in Kopenhagen, Aarhus, Odense, Aalborg en Frederiksberg",
+        "howToGet": "Geen sticker: handhaving gebeurt via kentekencamera's op basis van de euronorm in de registratiegegevens.",
+        "note": "Belangrijke nuance: de Deense milieuzones richten zich op dieselbestelwagens, -bussen en -vrachtwagens. Gewone personenauto's, ook diesels, vallen er in beginsel buiten. Rijd je een gewone personenauto, dan hoef je hier meestal niets voor te doen.",
+        "appliesToForeign": true,
+        "needsVerification": true,
+        "verificationNote": "Denemarken heeft de zones stapsgewijs uitgebreid. Controleer op miljoezoner.dk of personenauto's inmiddels wel onder de regeling vallen."
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet en geen snelwegtol, maar de twee grote brugverbindingen zijn duur — zie de tolpunten hieronder."
+      },
+      "tollPoints": [
+        {
+          "name": "Storebæltsbroen",
+          "lat": 55.34,
+          "lon": 10.98,
+          "radiusKm": 12,
+          "price": "205 kroon enkele reis, ongeveer 27,50 euro",
+          "priceEur": 27.5,
+          "note": "De brug tussen Funen en Seeland, onvermijdelijk op de route naar Kopenhagen. Betalen bij het tolstation of vooraf online; met BroBizz of kentekenbetaling is het tarief lager dan met pas of contant (235 kroon).",
+          "sourceUrl": "https://storebaelt.dk/",
+          "needsVerification": false
+        },
+        {
+          "name": "Øresundsbron",
+          "lat": 55.57,
+          "lon": 12.83,
+          "radiusKm": 12,
+          "price": "470 kroon enkele reis, ongeveer 63 euro",
+          "priceEur": 63,
+          "note": "De brug naar Malmö in Zweden, en het duurste losse tolpunt van Europa. Per 1 januari 2026 verlaagd van 510 naar 470 kroon. Online vooraf kopen kost 420 kroon; met een ØresundGO-abonnement zakt het naar 182 kroon — bij een retour verdient dat zich meteen terug.",
+          "sourceUrl": "https://www.oresundsbron.com/",
+          "needsVerification": false
+        }
+      ],
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": ""
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet wettelijk verplicht in Denemarken, wel sterk aanbevolen, en verplicht in de landen waar je doorheen rijdt om er te komen."
+        }
+      ],
+      "vehicleNotes": [
+        {
+          "applies": [
+            "aanhanger",
+            "camper"
+          ],
+          "text": "Met aanhanger of caravan geldt 80 km/u op de snelweg en 70 km/u daarbuiten."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "130 km/u waar aangegeven, elders 110 km/u",
+          "expressway": "80 km/u",
+          "rural": "80 km/u",
+          "builtUp": "50 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Met een aanhanger of caravan gelden veel lagere limieten: meestal 80 km/u op de snelweg en 70 km/u daarbuiten."
+      },
+      "quirks": [
+        "Dimlicht overdag is het hele jaar door verplicht.",
+        "Denemarken kent een streng puntensysteem en hoge boetes; ernstige overtredingen kunnen leiden tot inbeslagname van het voertuig.",
+        "Dashcams en flitsapps zijn toegestaan.",
+        "Let bij het afslaan goed op fietsers; in Kopenhagen kruisen fietspaden vrijwel elke zijstraat."
+      ],
+      "winterEquipment": {
+        "required": "nee",
+        "period": "",
+        "note": "Geen winterbandenplicht, maar in de wintermaanden zijn winterbanden praktisch onmisbaar. Spijkerbanden zijn toegestaan van 1 november tot en met 15 april, mits op alle vier de wielen."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "SE",
+      "name": "Zweden",
+      "flagStyle": "cross",
+      "flagColors": [
+        "#006AA7",
+        "#FECC02"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://www.transportstyrelsen.se/en/road/",
+      "sources": [
+        {
+          "label": "Transportstyrelsen - Zweedse verkeersautoriteit",
+          "url": "https://www.transportstyrelsen.se/en/road/"
+        },
+        {
+          "label": "Urban Access Regulations - Zweden",
+          "url": "https://urbanaccessregulations.eu/countries-mainmenu-147/sweden-mainmenu-248"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "geen",
+        "emissionThreshold": {
+          "diesel": 6,
+          "petrol": 5,
+          "scope": "miljözon klass 2, een beperkt aantal straten in Stockholm",
+          "note": "Klass 1 treft alleen zwaar verkeer. Voor personenauto's speelt dit dus maar op een handvol straten, met een boete van circa 1000 SEK."
+        },
+        "required": true,
+        "name": "Miljözon in Stockholm, Göteborg, Malmö en andere steden",
+        "howToGet": "Geen sticker; handhaving via kentekenherkenning op basis van de euronorm.",
+        "note": "Miljözon klass 1 treft vooral zwaar verkeer. In delen van Stockholm geldt miljozon klass 2, waarvoor personenauto's minimaal Euro 6 bij diesel of Euro 5 bij benzine moeten zijn. Enkele straten kennen inmiddels een klass 3-zone die alleen elektrisch verkeer toelaat.",
+        "appliesToForeign": true,
+        "needsVerification": true,
+        "verificationNote": "Zweden breidt de zones stapsgewijs uit. Controleer de actuele grenzen bij de gemeente Stockholm of Göteborg."
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet, maar Stockholm en Göteborg heffen een congestieheffing, de trängselskatt, via kentekencamera's. Buitenlandse kentekens zijn sinds 2015 niet meer vrijgesteld en krijgen de rekening achteraf thuis. Daarnaast is de Öresundsbron een tolbrug.",
+        "appliesToForeign": true
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "required",
+          "enforceable": true,
+          "note": ""
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet wettelijk verplicht in Zweden, wel sterk aanbevolen."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "110 km/u, op enkele trajecten 120 km/u",
+          "expressway": "90 tot 100 km/u",
+          "rural": "70 tot 90 km/u afhankelijk van de weg",
+          "builtUp": "50 km/u; in veel woonwijken 40 of 30 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Zweden gebruikt veel gedifferentieerde limieten in stappen van 10 km/u. De borden zijn leidend en de handhaving is consequent."
+      },
+      "quirks": [
+        "Dimlicht overdag is het hele jaar door verplicht.",
+        "De alcohollimiet is 0,2 promille, strenger dan vrijwel heel Europa.",
+        "Radarverklikkers zijn verboden; flitsapps zijn toegestaan.",
+        "Wildaanrijdingen met elanden en reën zijn een reëel risico in de schemering. Een aanrijding met wild moet je verplicht melden bij de politie, ook als het dier wegloopt."
+      ],
+      "winterEquipment": {
+        "required": "seizoensgebonden",
+        "periodStart": "12-01",
+        "periodEnd": "03-31",
+        "period": "1 december tot en met 31 maart, bij winterse wegomstandigheden",
+        "note": "In die periode zijn winterbanden verplicht zodra er winterse omstandigheden zijn, en dit geldt uitdrukkelijk ook voor buitenlandse voertuigen. Minimaal 3 mm profiel. Spijkerbanden zijn toegestaan van 1 oktober tot en met 15 april, en daarbuiten alleen bij winters weer."
+      },
+      "needsVerification": false
+    },
+    {
+      "code": "GB",
+      "name": "Verenigd Koninkrijk",
+      "flagStyle": "union",
+      "flagColors": [
+        "#012169",
+        "#FFFFFF",
+        "#C8102E"
+      ],
+      "lastVerified": "2026-08-19",
+      "sourceUrl": "https://tfl.gov.uk/modes/driving/ultra-low-emission-zone",
+      "sources": [
+        {
+          "label": "Transport for London - ULEZ en Congestion Charge",
+          "url": "https://tfl.gov.uk/modes/driving/ultra-low-emission-zone"
+        },
+        {
+          "label": "GOV.UK - Clean Air Zones",
+          "url": "https://www.gov.uk/guidance/driving-in-a-clean-air-zone"
+        },
+        {
+          "label": "RAC - driving in Europe checklist",
+          "url": "https://www.rac.co.uk/drive/travel/advice/checklist/"
+        }
+      ],
+      "environmentalZone": {
+        "actionRequired": "betaling",
+        "emissionThreshold": {
+          "diesel": 6,
+          "petrol": 4,
+          "scope": "ULEZ, heel Groot-Londen",
+          "note": "Voldoe je niet, dan mag je er wel in maar betaal je 12,50 pond per dag. Clean Air Zones buiten Londen hanteren dezelfde normen."
+        },
+        "required": true,
+        "name": "ULEZ Londen en Clean Air Zones in onder meer Birmingham, Bristol, Sheffield en Bath",
+        "howToGet": "Geen sticker: je betaalt per dag online. Registreer je buitenlandse kenteken vooraf bij Transport for London voor de ULEZ, 12,50 pond per dag, en voor de Congestion Charge, 15 pond per dag binnen de zone op werkdagen. Voor Clean Air Zones elders betaal je via gov.uk.",
+        "note": "De ULEZ dekt sinds 2023 heel Groot-Londen, dus ook de buitenwijken en de route vanaf de haven. Buitenlandse kentekens zijn niet vrijgesteld: TfL vordert de bedragen internationaal in via incassobureaus. Betalen kan tot en met de derde dag na de rit.",
+        "appliesToForeign": true,
+        "fineIndication": "penalty charge notice van 180 pond, gehalveerd bij snelle betaling"
+      },
+      "tollVignette": {
+        "required": false,
+        "note": "Geen vignet. Wel losse tolpunten: de Dartford Crossing met de Dart Charge die je achteraf online betaalt, de M6 Toll en diverse bruggen en tunnels."
+      },
+      "mandatoryEquipment": [
+        {
+          "item": "Gevarendriehoek",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet wettelijk verplicht in het VK, en op de motorway wordt plaatsen zelfs uitdrukkelijk afgeraden. Toch meenemen, want in de rest van Europa heb je hem wel nodig."
+        },
+        {
+          "item": "Reflecterend veiligheidsvest",
+          "status": "recommended",
+          "enforceable": false,
+          "note": "Niet verplicht, wel sterk aanbevolen, zeker op de hard shoulder."
+        },
+        {
+          "item": "UK-sticker of kentekenplaat met UK-identificatie",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Dit geldt de andere kant op: rijd je met een Brits kenteken het vasteland op, dan is een UK-identificatie verplicht. Met een Nederlands of Belgisch kenteken speelt dit niet."
+        },
+        {
+          "item": "Koplampomzetters",
+          "status": "registration-country",
+          "enforceable": false,
+          "note": "Ook dit werkt andersom: Britse auto's hebben ze nodig op het vasteland. Rijd je vanaf het vasteland naar het VK, dan zijn omzetters strikt genomen niet vereist, maar ze voorkomen wel dat je tegemoetkomend verkeer verblindt in het linksrijdende verkeer."
+        }
+      ],
+      "speedLimits": {
+        "normal": {
+          "motorway": "70 mph, circa 112 km/u",
+          "expressway": "70 mph op dual carriageway, circa 112 km/u",
+          "rural": "60 mph op single carriageway, circa 96 km/u",
+          "builtUp": "30 mph, circa 48 km/u, in Engeland en Schotland; in Wales geldt sinds september 2023 standaard 20 mph, circa 32 km/u"
+        },
+        "wet": {
+          "note": "Geen aparte natweerlimieten."
+        },
+        "notes": "Alle borden staan in mijlen per uur, dus reken niet op je kilometerteller. De Welshe standaard van 20 mph in de bebouwde kom is een veelgemaakte fout bij bezoekers."
+      },
+      "quirks": [
+        "Links rijden. De eerste rotonde en de eerste afslag naar rechts zijn het gevaarlijkst, dus plan je eerste uur bewust rustig.",
+        "Dashcams en flitsapps zijn toegestaan.",
+        "Sinds de Brexit heb je een geldig paspoort nodig en gelden er douaneregels. Een groene kaart is voor de meeste EU-verzekeringen niet meer nodig, maar controleer je polis.",
+        "De alcohollimiet is 0,8 promille in Engeland en Wales, maar 0,5 promille in Schotland."
+      ],
+      "winterEquipment": {
+        "required": "nee",
+        "period": "",
+        "note": "Geen winterbandenplicht. In Schotland kunnen bergpassen bij sneeuw worden afgesloten."
+      },
+      "needsVerification": false,
+      "tollPoints": [
+        {
+          "name": "Dartford Crossing",
+          "lat": 51.465,
+          "lon": 0.26,
+          "radiusKm": 10,
+          "price": "3,50 pond enkele reis, ongeveer 4 euro",
+          "priceEur": 4,
+          "note": "De M25 onder en over de Theems ten oosten van Londen. Er staat geen tolpoort: je moet zelf online betalen, uiterlijk de dag ná de doorgang. Vergeet je dat, dan volgt een boete van 70 pond.",
+          "sourceUrl": "https://www.gov.uk/pay-dartford-crossing-charge",
+          "needsVerification": true
+        },
+        {
+          "name": "M6 Toll",
+          "lat": 52.6,
+          "lon": -1.8,
+          "radiusKm": 25,
+          "price": "7,40 pond enkele reis, ongeveer 8,50 euro",
+          "priceEur": 8.5,
+          "note": "De betaalde omleiding om Birmingham heen. De gratis M6 er dwars doorheen staat in de spits vast.",
+          "sourceUrl": "https://www.m6toll.co.uk/",
+          "needsVerification": true
+        }
+      ]
+    }
+  ]
+}

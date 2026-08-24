@@ -1,0 +1,5 @@
+﻿# Brondata voor tools/build-geodata.ps1 (ruim 30 MB, wordt automatisch opgehaald)
+tools/_cache/
+
+# Werkbestanden van de editor
+.claude/
