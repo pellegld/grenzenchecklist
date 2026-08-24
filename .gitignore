@@ -3,3 +3,9 @@ tools/_cache/
 
 # Werkbestanden van de editor
 .claude/
+
+# Sleutels. Deze horen bij je host in de omgeving te staan, niet in de repo.
+# .dev.vars is het lokale-ontwikkelbestand van wrangler.
+.dev.vars
+.env
+.env.*

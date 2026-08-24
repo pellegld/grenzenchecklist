@@ -568,6 +568,112 @@ in plaats van een adres, en de spam die dat oplevert filtert de dienst zelf.
 
 ---
 
+## Router en geocoder verwisselen
+
+### Waarom er geen sleutelveld in de client zit
+
+Alles wat de browser meekrijgt is publiek. Een sleutel in `index.html`, in een los
+`config.js`, of achter een build-stap gestopt: het staat allemaal in de bundle die
+iedereen kan lezen. Er is in een statische site geen plek waar een sleutel geheim blijft.
+
+Daarom staat er in `DIENSTEN` **geen veld voor een sleutel**. Niet vergeten, maar bewust:
+er is dan ook niets om per ongeluk in te vullen en mee te committen. Wie een dienst met
+sleutel wil gebruiken, zet die achter een proxy op het eigen domein.
+
+### De drie standen
+
+```js
+var DIENSTEN = {
+  mode: "auto",        // "auto" | "proxy" | "open"
+  proxyBase: "./api",
+  osrm: "https://router.project-osrm.org/route/v1/driving/",
+  nominatim: "https://nominatim.openstreetmap.org/search"
+};
+```
+
+| stand | gedrag |
+|---|---|
+| `auto` | klopt eenmalig aan bij `./api/route?ping=1`; is er een proxy, dan die, anders de sleutelloze diensten |
+| `proxy` | alleen de eigen proxy; is die stuk, dan faalt de planner zichtbaar |
+| `open` | alleen OSRM-demo en Nominatim, geen proxyaanroep |
+
+`auto` is handig omdat de app dan ook werkt op `file://` en op een host zonder functions.
+Het risico is stil terugvallen op de demoserver, en daarom noemt de statusregel onder de
+planner altijd welke dienst het uiteindelijk werd — inclusief *"die is niet voor productie
+bedoeld"* bij de demoserver. Voor een echte productiesite is `proxy` de juiste stand: dan
+merk je het als de proxy eruit ligt.
+
+### Het contract
+
+De proxy moet twee routes aanbieden. De client kent de provider niet en normaliseert niets:
+dat gebeurt aan de serverkant, zodat je van provider kunt wisselen zonder de app aan te raken.
+
+```
+GET  {proxyBase}/route?from=<lon>,<lat>&to=<lon>,<lat>
+200  { "coordinates": [[lon,lat], ...], "meters": 734000, "provider": "openrouteservice" }
+
+GET  {proxyBase}/geocode?q=<tekst>
+200  { "results": [{ "naam", "omschrijving", "land", "lat", "lon" }], "provider": "..." }
+
+     Beide accepteren ?ping=1 en antwoorden dan 200 zonder de provider aan te roepen.
+     Fouten komen terug als { "error": "<uitleg>" } met een 4xx- of 5xx-status.
+```
+
+### De meegeleverde proxy
+
+`functions/api/route.js` en `functions/api/geocode.js` zijn Cloudflare Pages Functions.
+Zet ze naast de statische bestanden, koppel de repo aan Cloudflare Pages en ze draaien;
+Netlify werkt hetzelfde met de map `netlify/functions` en een kleine wijziging in de
+handtekening van de handler.
+
+Ondersteund: OpenRouteService en Graphhopper (beide met sleutel) voor routes,
+OpenRouteService voor geocoderen, en OSRM/Nominatim zonder sleutel. Instellen gebeurt met
+omgevingsvariabelen, nooit met bestanden in de repo:
+
+| variabele | waarde |
+|---|---|
+| `ROUTE_PROVIDER` | `ors` \| `graphhopper` \| `osrm` |
+| `ROUTE_KEY` | de sleutel, als **Secret** — niet als plain text |
+| `ROUTE_OSRM_URL` | eigen OSRM-instantie; zonder deze pakt hij de demoserver |
+| `GEO_PROVIDER` | `ors` \| `nominatim` |
+| `GEO_KEY` | de sleutel, als Secret |
+| `GEO_UA` | contactadres voor de User-Agent die Nominatim eist |
+| `TOEGESTANE_HERKOMST` | je eigen domein; leeg laten zet de proxy open |
+
+Die laatste is het verschil tussen jouw quotum en dat van iedereen die je endpoint vindt.
+Zonder `TOEGESTANE_HERKOMST` kan een vreemde site jouw proxy als gratis routeserver
+gebruiken en jouw sleutel opmaken.
+
+Twee dingen die de proxy nog doet, en die je zelf moet blijven doen als je hem vervangt:
+coördinaten worden op vorm en bereik gecontroleerd voordat ze doorgaan, en foutmeldingen
+van de provider worden **niet** teruggegeven aan de client — die kunnen de sleutel bevatten.
+De echte fout gaat naar je hostlogs.
+
+### Sleutels buiten de repo houden
+
+Drie lagen, en je hebt ze alle drie nodig:
+
+1. `.gitignore` blokkeert `.dev.vars`, `.env` en `.env.*`.
+2. `.dev.vars.example` staat er wel in, met alleen namen en lege waarden. Kopieer hem
+   naar `.dev.vars` voor `npx wrangler pages dev .`
+3. `tools/check-geheimen.ps1` doorzoekt alles wat onder versiebeheer staat op
+   sleutelpatronen (ORS, Google, Mapbox, AWS, private keys) en op e-mailadressen:
+
+```powershell
+powershell -File tools\check-geheimen.ps1
+```
+
+Exitcode 1 als er iets gevonden wordt, dus je kunt hem als pre-commit hook hangen.
+
+### Caching
+
+De service worker laat `/api/` met rust. Een route is geen bestand — hij hangt af van de
+vraag — en de proxy zegt met zijn eigen `cache-control` hoe lang zijn antwoord houdbaar is:
+een uur voor routes, een dag voor plaatsnamen. Dat scheelt aanroepen op je quotum zonder dat
+de app daar iets van hoeft te weten.
+
+---
+
 ## Geodata opnieuw genereren
 
 `cities.json` en `borders.json` komen uit Natural Earth en zijn reproduceerbaar:

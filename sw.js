@@ -9,7 +9,7 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v9";
+var CACHE = "grenschecklist-v10";
 var ASSETS = [
   "./", "./index.html", "./fonts.css",
   "./countries.json", "./cities.json", "./borders.json", "./zones.json", "./drukte.json",
@@ -44,7 +44,13 @@ self.addEventListener("fetch", function(e){
 
   // Alleen eigen GET-verkeer cachen; bronlinks naar ANWB en co. laten we met rust.
   if(req.method !== "GET") return;
-  if(new URL(req.url).origin !== self.location.origin) return;
+  var u = new URL(req.url);
+  if(u.origin !== self.location.origin) return;
+
+  // De proxy onder /api/ blijft er buiten. Een route is geen bestand: hij hangt
+  // af van de vraag, en de proxy zegt zelf al met cache-control hoe lang zijn
+  // antwoord houdbaar is. Die afweging hier overrulen levert alleen verwarring op.
+  if(u.pathname.indexOf("/api/") !== -1) return;
 
   e.respondWith(
     caches.open(CACHE).then(function(cache){

@@ -1,0 +1,18 @@
+# Kopieer dit naar .dev.vars voor lokaal testen met `npx wrangler pages dev .`
+# .dev.vars staat in .gitignore en hoort daar te blijven.
+#
+# Bij je host (Cloudflare Pages: Settings > Variables and Secrets) zet je
+# dezelfde namen, en dan als Secret, niet als plain text.
+
+# ors | graphhopper | osrm
+ROUTE_PROVIDER=osrm
+# ROUTE_KEY=zet-hier-je-sleutel
+# ROUTE_OSRM_URL=https://osrm.jouwdomein.nl/route/v1/driving/
+
+# ors | nominatim
+GEO_PROVIDER=nominatim
+# GEO_KEY=zet-hier-je-sleutel
+GEO_UA=Grenschecklist (jouw@contactadres.nl)
+
+# Laat leeg om de proxy open te zetten; vul je domein in om je quotum te beschermen.
+# TOEGESTANE_HERKOMST=https://jouwdomein.nl

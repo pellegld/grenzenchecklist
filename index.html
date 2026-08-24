@@ -647,8 +647,49 @@ var FROM_CACHE = false;
 var CITIES = null, BORDERS = null;
 var ZONES = null, ROUTE_ZONES = [], ROUTE_RES = null, ROUTE_TOLLS = [];
 var FROM_CITY = null, TO_CITY = null, ROUTING = false;
-var OSRM = "https://router.project-osrm.org/route/v1/driving/";
-var NOMINATIM = "https://nominatim.openstreetmap.org/search";
+/* ================= externe diensten =================
+   Let op: hier staat met opzet GEEN sleutelveld. Alles wat de browser meekrijgt
+   is publiek, ook een sleutel die je "alleen in de JS" zet. Wil je een dienst
+   met een sleutel gebruiken, zet die dan achter een proxy op je eigen domein en
+   laat de sleutel daar in een omgevingsvariabele staan. De client kent dan
+   alleen het pad, en er valt niets te lekken.
+
+   mode:
+     "auto"  probeert eerst de proxy en valt terug op de sleutelloze dienst
+     "proxy" alleen je eigen proxy; faalt hij, dan faalt de planner
+     "open"  alleen de sleutelloze publieke diensten (OSRM-demo, Nominatim)
+
+   De proxy moet twee routes aanbieden. Zie functions/api/ voor een werkende
+   implementatie en README voor het contract. */
+var DIENSTEN = {
+  mode: "auto",
+  proxyBase: "./api",
+  osrm: "https://router.project-osrm.org/route/v1/driving/",
+  nominatim: "https://nominatim.openstreetmap.org/search"
+};
+
+/* Welke kant het uiteindelijk op ging. Blijft null tot de eerste aanroep, en
+   wordt in de planner zichtbaar gemaakt: stil terugvallen op een demoserver is
+   precies wat je in productie niet wil. */
+var DIENST_IN_GEBRUIK = null;
+
+/* Eenmalig vaststellen of er een proxy draait. Het antwoord wordt onthouden,
+   zodat we niet bij elke route opnieuw kloppen. */
+var PROXY_CHECK = null;
+function proxyBeschikbaar(){
+  if(DIENSTEN.mode === "open")  return Promise.resolve(false);
+  if(DIENSTEN.mode === "proxy") return Promise.resolve(true);
+  if(PROXY_CHECK) return PROXY_CHECK;
+  PROXY_CHECK = fetch(DIENSTEN.proxyBase + "/route?ping=1")
+    .then(function(r){ return r.ok || r.status === 400; })
+    .catch(function(){ return false; });
+  return PROXY_CHECK;
+}
+
+function dienstFout(r){
+  if(r.status === 429) throw new Error("te veel aanvragen \u2014 probeer het zo nog eens");
+  throw new Error("HTTP " + r.status);
+}
 var SAMPLE_KM = 2;      // om de hoeveel km we de route bemonsteren
 var SHORT_KM = 15;      // daaronder melden we "even aangeraakt, controleer dit"
 
@@ -846,11 +887,35 @@ function searchCities(q){
 /* Terugval voor alles wat niet in de 689 meegeleverde plaatsen zit. Bewust pas
    op een expliciete klik: het beleid van Nominatim staat geen zoeken-tijdens-typen toe. */
 function searchOnline(q){
-  var url = NOMINATIM + "?format=jsonv2&limit=5&addressdetails=1&accept-language=nl&q=" + encodeURIComponent(q);
+  return proxyBeschikbaar().then(function(viaProxy){
+    return viaProxy ? geocodeViaProxy(q) : geocodeViaNominatim(q);
+  });
+}
+
+/* Het proxycontract levert al genormaliseerde treffers, zodat het niet uitmaakt
+   welke dienst erachter zit. */
+function geocodeViaProxy(q){
+  var url = DIENSTEN.proxyBase + "/geocode?q=" + encodeURIComponent(q);
   return fetch(url).then(function(r){
-    if(!r.ok) throw new Error("HTTP " + r.status);
+    if(!r.ok) dienstFout(r);
+    return r.json();
+  }).then(function(j){
+    DIENST_IN_GEBRUIK = j.provider || "proxy";
+    return (j.results || []).map(function(h){
+      return [h.naam, h.omschrijving || h.naam, (h.land || "").toUpperCase(),
+              Number(h.lat), Number(h.lon)];
+    });
+  });
+}
+
+function geocodeViaNominatim(q){
+  var url = DIENSTEN.nominatim +
+    "?format=jsonv2&limit=5&addressdetails=1&accept-language=nl&q=" + encodeURIComponent(q);
+  return fetch(url).then(function(r){
+    if(!r.ok) dienstFout(r);
     return r.json();
   }).then(function(list){
+    DIENST_IN_GEBRUIK = "nominatim";
     return list.map(function(h){
       var cc = (h.address && h.address.country_code || "").toUpperCase();
       var naam = h.display_name.split(",")[0];
@@ -859,16 +924,39 @@ function searchOnline(q){
   });
 }
 
+/* Levert altijd dezelfde vorm op: { geometry:{ coordinates:[[lon,lat],...] } }.
+   De rest van de app kent de provider niet, en dat is precies de bedoeling \u2014
+   de landanalyse draait op die co\u00f6rdinaten en verder op niets. */
 function fetchRoute(a, b){
-  var url = OSRM + a[4] + "," + a[3] + ";" + b[4] + "," + b[3] +
+  return proxyBeschikbaar().then(function(viaProxy){
+    return viaProxy ? routeViaProxy(a, b) : routeViaOsrm(a, b);
+  });
+}
+
+function routeViaProxy(a, b){
+  var url = DIENSTEN.proxyBase + "/route" +
+    "?from=" + a[4] + "," + a[3] + "&to=" + b[4] + "," + b[3];
+  return fetch(url).then(function(r){
+    if(!r.ok) dienstFout(r);
+    return r.json();
+  }).then(function(j){
+    if(!j.coordinates || !j.coordinates.length) throw new Error(j.error || "geen route gevonden");
+    DIENST_IN_GEBRUIK = j.provider || "proxy";
+    return { geometry:{ coordinates:j.coordinates }, distance:j.meters || 0 };
+  });
+}
+
+function routeViaOsrm(a, b){
+  var url = DIENSTEN.osrm + a[4] + "," + a[3] + ";" + b[4] + "," + b[3] +
             "?overview=full&geometries=geojson&alternatives=false&steps=false";
   return fetch(url).then(function(r){
-    if(!r.ok) throw new Error("HTTP " + r.status);
+    if(!r.ok) dienstFout(r);
     return r.json();
   }).then(function(j){
     if(j.code !== "Ok" || !j.routes || !j.routes.length){
       throw new Error(j.message || "geen route gevonden");
     }
+    DIENST_IN_GEBRUIK = "osrm-demo";
     return j.routes[0];
   });
 }
@@ -1990,6 +2078,21 @@ function plannerStatus(msg, isErr){
   el.className = "rstat" + (isErr ? " err" : "");
 }
 
+/* Welke dienst de route berekende, in gewone taal. Stil terugvallen op een
+   demoserver is precies wat je in productie niet pas wil merken als het te laat
+   is, dus staat het er gewoon bij. */
+var DIENST_NAAM = {
+  "osrm-demo":        "Berekend via de OSRM-demoserver — die is niet voor productie bedoeld.",
+  "osrm-eigen":       "Berekend via je eigen OSRM-instantie.",
+  "openrouteservice": "Berekend via OpenRouteService.",
+  "graphhopper":      "Berekend via Graphhopper.",
+  "proxy":            "Berekend via je eigen proxy."
+};
+function dienstNotitie(){
+  if(!DIENST_IN_GEBRUIK) return "";
+  return " " + (DIENST_NAAM[DIENST_IN_GEBRUIK] || "Berekend via " + DIENST_IN_GEBRUIK + ".");
+}
+
 function cityRowHTML(c, idx){
   var geo = BORDERS && BORDERS[c[2]];
   var landNaam = (BY_CODE[c[2]] && BY_CODE[c[2]].name) || (geo && geo.n) || c[2];
@@ -2141,7 +2244,8 @@ function doRoute(){
     saveRoute();
     render();
     renderRouteResult(res, route);
-    plannerStatus("Klaar — de landen hieronder zijn ingevuld. Je kunt ze nog aanpassen.");
+    plannerStatus("Klaar — de landen hieronder zijn ingevuld. Je kunt ze nog aanpassen." +
+      dienstNotitie());
   }).catch(function(err){
     var m = String(err && err.message || err);
     plannerStatus("Route bepalen lukte niet (" + m + "). Voeg de landen hieronder handmatig toe.", true);
