@@ -369,6 +369,9 @@ details.disclaimer summary b{color:var(--on-surface)}
 .chktext .ttl{font:500 .92rem/1.3 var(--f-body);color:var(--on-surface)}
 .chkrow.done .ttl{text-decoration:line-through;opacity:.6}
 .chktext .sub{font:400 .74rem/1.3 var(--f-body);color:var(--on-surface-var)}
+.vlaggen{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.vlaggen .flag{width:20px;height:14px;border-radius:2px;display:block}
+.vlaggen .dim{opacity:.35}
 .pill{font:700 .62rem/1 var(--f-display);letter-spacing:.02em;color:var(--amber);
   background:var(--amber-container);border:1px solid var(--amber-line);padding:2px 7px;border-radius:var(--r-md);
   margin-left:6px;white-space:nowrap;vertical-align:middle}
@@ -383,22 +386,55 @@ details.disclaimer summary b{color:var(--on-surface)}
 .blockerbar p:last-child{margin-bottom:0}
 
 /* ================= Landeninformatie-pagina ================= */
-.landchips{display:flex;gap:8px;overflow-x:auto;padding-bottom:var(--sp-sm);margin-bottom:var(--sp-md)}
-.landchip{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r-full);
-  border:1px solid var(--outline-var);background:var(--surface-lowest);font:600 .8rem/1 var(--f-display);
-  color:var(--on-surface-var);white-space:nowrap;cursor:pointer;flex:0 0 auto}
-.landchip:hover{border-color:var(--secondary)}
-.landchip.active{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
-
-.landhero{position:relative;border-radius:var(--r-xl);overflow:hidden;padding:var(--sp-lg) var(--sp-md) var(--sp-md);
+/* Hero breekt uit de padding van .view-page en loopt tot de rand van het
+   scherm, zoals in het voorbeeld — vandaar de negatieve marge i.p.v. gewoon
+   margin-bottom, en geen afgeronde hoeken meer (die horen bij een los kaartje,
+   niet bij iets dat tot de rand loopt). */
+.landherowrap{position:relative;margin:calc(-1 * var(--sp-margin-mobile)) calc(-1 * var(--sp-margin-mobile)) var(--sp-md)}
+@media (min-width:1024px){
+  .landherowrap{margin:calc(-1 * var(--sp-margin-desktop)) calc(-1 * var(--sp-margin-desktop)) var(--sp-md)}
+}
+.landhero{position:relative;overflow:hidden;height:256px;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 var(--sp-lg) var(--sp-lg);
   background-image:linear-gradient(to top,var(--navy) 0%,rgba(var(--navy-rgb),.75) 55%,rgba(var(--navy-rgb),.15) 100%),
     radial-gradient(var(--outline-var) 1px,transparent 1px);
-  background-size:auto,24px 24px;background-color:var(--surface-highest);color:#fff;margin-bottom:var(--sp-md)}
+  background-size:auto,24px 24px;background-color:var(--surface-highest);color:#fff}
+@media (min-width:1024px){ .landhero{height:320px} }
 .landhero .regio{display:flex;align-items:center;gap:var(--sp-sm);opacity:.85;font:600 .72rem/1 var(--f-display);
-  letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
 .landhero .regio .flag{width:34px;height:24px}
-.landhero h2{font:700 2rem/1.1 var(--f-display);color:#fff;margin:0 0 8px}
-.landhero p{font-size:.92rem;opacity:.9;max-width:60ch;margin:0}
+.landhero h2{font:700 2.75rem/1.1 var(--f-display);color:#fff;margin:0 0 10px}
+.landhero p{font-size:.95rem;opacity:.9;max-width:60ch;margin:0}
+
+/* Landkiezer: pillknop rechtsboven in de hero, dropdownpaneel eronder. Als
+   sibling van .landhero (niet erin) zodat het paneel niet wordt afgesneden
+   door de overflow:hidden van de hero. */
+.landswitch{position:absolute;top:var(--sp-lg);right:var(--sp-lg);z-index:2}
+.landswitch-toggle{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r-full);
+  border:1px solid rgba(255,255,255,.25);background:rgba(9,20,38,.45);backdrop-filter:blur(6px);
+  color:#fff;font:600 .82rem/1 var(--f-display);cursor:pointer}
+.landswitch-toggle:hover{background:rgba(9,20,38,.65)}
+.landswitch-toggle .flag{width:20px;height:14px;border-radius:2px}
+.landswitch-toggle .icon{width:14px;height:14px;transform:rotate(90deg);opacity:.8}
+.landswitch-panel{position:absolute;top:calc(100% + 8px);right:0;width:290px;max-height:380px;
+  display:flex;flex-direction:column;background:var(--surface-lowest);color:var(--on-surface);
+  border:1px solid var(--outline-var);border-radius:var(--r-lg);box-shadow:var(--shadow-2);overflow:hidden}
+.landswitch-panel[hidden]{display:none}
+.landswitch-search{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--outline-var);
+  color:var(--on-surface-var);flex:0 0 auto}
+.landswitch-search .icon{width:16px;height:16px;flex:0 0 auto}
+.landswitch-search input{border:0;background:none;outline:0;font:500 .88rem/1.2 var(--f-body);
+  color:var(--on-surface);width:100%}
+.landswitch-list{overflow-y:auto;padding:6px}
+.landswitch-label{padding:8px 10px 4px;font:600 .68rem/1 var(--f-display);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--on-surface-var)}
+.landswitch-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border-radius:var(--r-md);
+  border:0;background:none;font:500 .88rem/1.2 var(--f-body);color:var(--on-surface);cursor:pointer;text-align:left}
+.landswitch-row:hover{background:var(--surface-high)}
+.landswitch-row.active{background:var(--secondary-container);color:var(--on-secondary-container);font-weight:700}
+.landswitch-row .flag{width:24px;height:17px;flex:0 0 auto}
+.landswitch-row span{flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.landswitch-row .icon{width:16px;height:16px;flex:0 0 auto;color:var(--secondary)}
 
 .landgrid{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter)}
 @media (min-width:1000px){ .landgrid{grid-template-columns:2fr 1fr} }
@@ -661,6 +697,7 @@ details.disclaimer summary b{color:var(--on-surface)}
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><polyline points="4 12 9 17 20 6"/></symbol>
   <symbol id="i-journey" viewBox="0 0 24 24"><path d="M4 4v16"/><path d="M4 4h11l-2 3 2 3H4"/><circle cx="18" cy="18" r="3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
 </svg>
 
 <div id="loaderr" class="loaderr" hidden></div>
@@ -832,7 +869,6 @@ details.disclaimer summary b{color:var(--on-surface)}
 </section>
 
 <section class="view view-page" id="view-landen" hidden>
-  <div class="landchips" id="land-chips"></div>
   <div id="land-detail"></div>
 </section>
 
@@ -2349,13 +2385,13 @@ function renderMilieuzones(){
 /* ================= Checklist-pagina =================
    Hergebruikt buildGroups()/buildTasks()/checklistTelling() ongewijzigd —
    alleen de render-laag is nieuw (bento-kaarten i.p.v. de oude 6-koloms grid). */
-function bentoRow(key, titel, sub, badge, extraClass){
+function bentoRow(key, titel, sub, badge, extraClass, vlaggenHTML){
   var done = !!TICKED[key];
   return '<div class="chkrow' + (done ? " done" : "") + (extraClass ? " " + extraClass : "") + '">' +
     '<label class="chklabel">' +
       '<input type="checkbox" data-tick="' + esc(key) + '"' + (done ? " checked" : "") + '>' +
       '<span class="chktext"><span class="ttl">' + esc(titel) + (badge || "") + '</span>' +
-        (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + '</span>' +
+        (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + (vlaggenHTML || "") + '</span>' +
     '</label>' +
     (sub ? '<button type="button" class="infobtn" title="' + esc(sub) + '">' + iconUse("info") + '</button>' : "") +
   '</div>';
@@ -2370,14 +2406,17 @@ function renderChecklistPagina(){
   var docRows = DOC_ITEMS.map(function(d){ return bentoRow("doc:" + d.key, d.naam, d.info); }).join("");
 
   var autoRows = G.must.map(function(row){
-    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "", '<span class="pill">Verplicht</span>');
+    var vl = vlaggenRij(row.main.map(function(e){ return e.country; }), row.other.map(function(e){ return e.country; }));
+    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "", '<span class="pill">Verplicht</span>', "", vl);
   }).concat(G.advice.map(function(row){
-    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "");
+    var vl = vlaggenRij(row.main.map(function(e){ return e.country; }), row.other.map(function(e){ return e.country; }));
+    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "", "", "", vl);
   })).join("");
 
   var landRows = T.todo.map(function(t){
     var isZone = /^zone:/.test(t.key);
-    return bentoRow("task:" + t.key, t.what, t.meta || "", isZone ? '<span class="pill">Verplicht</span>' : "", isZone ? "zone" : "");
+    var vl = vlaggenRij(t.cs || (t.c ? [t.c] : []), []);
+    return bentoRow("task:" + t.key, t.what, t.meta || "", isZone ? '<span class="pill">Verplicht</span>' : "", isZone ? "zone" : "", vl);
   }).join("");
 
   var blokHtml = T.blockers.length
@@ -2413,19 +2452,53 @@ function renderChecklistPagina(){
    op het navy verloop van hiervoor. */
 var LAND_PHOTOS = {
   NL: "images/Landbanner/Nederland.png",
-  FR: "images/Landbanner/Frankrijk.png"
+  FR: "images/Landbanner/Frankrijk.png",
+  GB: "images/Landbanner/UK.png"
 };
-function landChipsHTML(){
+
+/* Subregio voor de "EUROPA · WEST"-regel in de hero. Niet in countries.json
+   (dat gaat over regelgeving, niet geografie), dus een kleine vaste indeling
+   voor de 16 landen die de app kent. */
+var LAND_REGIO = {
+  NL: "West", BE: "West", LU: "West", FR: "West", GB: "West",
+  DE: "Centraal", AT: "Centraal", CH: "Centraal", CZ: "Centraal", SI: "Centraal",
+  IT: "Zuid", ES: "Zuid", PT: "Zuid", HR: "Zuid",
+  DK: "Noord", SE: "Noord"
+};
+
+/* Landkiezer als doorzoekbaar dropdownpaneel i.p.v. een rij vlagchips: schaalt
+   beter dan 16 losse chips en houdt de hero net zo rustig als het voorbeeld. */
+function landSwitcherHTML(){
   var route = ROUTE.slice();
   var overig = DATA.countries.map(function(c){ return c.code; })
-    .filter(function(c){ return route.indexOf(c) === -1; })
+    .filter(function(code){ return route.indexOf(code) === -1; })
     .sort(function(a, b){ return BY_CODE[a].name.localeCompare(BY_CODE[b].name); });
-  return route.concat(overig).map(function(code){
+
+  function rij(code){
     var c = BY_CODE[code];
     if(!c) return "";
-    return '<button type="button" class="landchip' + (code === LANDEN_ACTIEF ? " active" : "") + '" data-land="' + esc(code) + '">' +
-      flagHTML(c) + esc(c.name) + "</button>";
-  }).join("");
+    return '<button type="button" class="landswitch-row' + (code === LANDEN_ACTIEF ? " active" : "") + '" data-land="' + esc(code) + '" data-naam="' + esc(c.name.toLowerCase()) + '">' +
+      flagHTML(c) + "<span>" + esc(c.name) + "</span>" +
+      (code === LANDEN_ACTIEF ? iconUse("check") : "") + "</button>";
+  }
+  var routeGroep = route.length
+    ? '<div class="landswitch-label">Op je route</div>' + route.map(rij).join("") : "";
+  var overigGroep = '<div class="landswitch-label">Alle landen</div>' + overig.map(rij).join("");
+
+  var actief = BY_CODE[LANDEN_ACTIEF];
+  return (
+    '<div class="landswitch">' +
+      '<button type="button" class="landswitch-toggle" id="land-switch-toggle" aria-expanded="false">' +
+        (actief ? flagHTML(actief) : "") + "<span>Wissel van land</span>" + iconUse("chevron-right") +
+      "</button>" +
+      '<div class="landswitch-panel" id="land-switch-panel" hidden>' +
+        '<div class="landswitch-search">' + iconUse("search") +
+          '<input type="search" id="land-switch-search" placeholder="Zoek een land..." autocomplete="off">' +
+        "</div>" +
+        '<div class="landswitch-list" id="land-switch-list">' + routeGroep + overigGroep + "</div>" +
+      "</div>" +
+    "</div>"
+  );
 }
 
 function landDetailHTML(c){
@@ -2469,10 +2542,14 @@ function landDetailHTML(c){
 
   var foto = LAND_PHOTOS[c.code];
   var heroStyle = foto ? ' style="background-image:linear-gradient(to top,var(--navy) 0%,rgba(var(--navy-rgb),.75) 55%,rgba(var(--navy-rgb),.15) 100%),url(' + foto + ');background-size:auto,cover;background-position:center,center 35%"' : '';
+  var regio = LAND_REGIO[c.code];
 
   return (
-    '<div class="landhero"' + heroStyle + '><div class="regio">' + flagHTML(c) + "<span>Europa</span></div>" +
-      "<h2>" + esc(c.name) + "</h2><p>Reisregels, verplichtingen en belangrijke informatie voor deze doorreis.</p></div>" +
+    '<div class="landherowrap">' +
+      '<div class="landhero"' + heroStyle + '><div class="regio">' + flagHTML(c) + "<span>Europa" + (regio ? " · " + esc(regio) : "") + "</span></div>" +
+        "<h2>" + esc(c.name) + "</h2><p>Reisregels, verplichtingen en belangrijke informatie voor een veilige en vlotte doorreis.</p></div>" +
+      landSwitcherHTML() +
+    "</div>" +
     '<div class="landgrid"><div class="landmain">' +
       '<div class="landcard"><div class="landcardhead">' + iconUse("warning") + "<h3>Verplicht in de auto</h3></div>" +
       '<div class="eqgrid">' + eqCards + "</div></div>" +
@@ -2492,14 +2569,28 @@ function landDetailHTML(c){
   );
 }
 
+function filterLandSwitch(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll("#land-switch-list .landswitch-row").forEach(function(row){
+    var naam = row.getAttribute("data-naam") || "";
+    row.style.display = (!q || naam.indexOf(q) !== -1) ? "" : "none";
+  });
+  document.querySelectorAll("#land-switch-list .landswitch-label").forEach(function(label){
+    var next = label.nextElementSibling, zichtbaar = false;
+    while(next && !next.classList.contains("landswitch-label")){
+      if(next.style.display !== "none") zichtbaar = true;
+      next = next.nextElementSibling;
+    }
+    label.style.display = zichtbaar ? "" : "none";
+  });
+}
+
 function renderLandenInfo(){
-  var chips = document.getElementById("land-chips");
   var detail = document.getElementById("land-detail");
-  if(!chips || !detail) return;
+  if(!detail) return;
   if(!LANDEN_ACTIEF || !BY_CODE[LANDEN_ACTIEF]){
     LANDEN_ACTIEF = ROUTE.length ? ROUTE[0] : (DATA.countries[0] && DATA.countries[0].code);
   }
-  chips.innerHTML = landChipsHTML();
   var c = BY_CODE[LANDEN_ACTIEF];
   detail.innerHTML = c ? landDetailHTML(c) : '<p class="hint">Geen landen beschikbaar.</p>';
 }
@@ -2834,11 +2925,42 @@ function wire(){
     if(bar) bar.style.width = pct + "%";
   });
 
-  document.getElementById("land-chips").addEventListener("click", function(e){
-    var b = e.target.closest(".landchip");
-    if(!b) return;
-    LANDEN_ACTIEF = b.getAttribute("data-land");
-    renderLandenInfo();
+  document.getElementById("view-landen").addEventListener("click", function(e){
+    var toggle = e.target.closest(".landswitch-toggle");
+    if(toggle){
+      var panel = document.getElementById("land-switch-panel");
+      var openen = panel.hidden;
+      panel.hidden = !openen;
+      toggle.setAttribute("aria-expanded", openen ? "true" : "false");
+      if(openen){
+        var zoek = document.getElementById("land-switch-search");
+        if(zoek){ zoek.value = ""; filterLandSwitch(""); zoek.focus(); }
+      }
+      return;
+    }
+    var rij = e.target.closest(".landswitch-row");
+    if(rij){
+      LANDEN_ACTIEF = rij.getAttribute("data-land");
+      renderLandenInfo();
+    }
+  });
+  document.getElementById("view-landen").addEventListener("input", function(e){
+    if(e.target.id === "land-switch-search") filterLandSwitch(e.target.value);
+  });
+  document.addEventListener("click", function(e){
+    var panel = document.getElementById("land-switch-panel");
+    if(!panel || panel.hidden || e.target.closest(".landswitch")) return;
+    panel.hidden = true;
+    var toggle = document.getElementById("land-switch-toggle");
+    if(toggle) toggle.setAttribute("aria-expanded", "false");
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "Escape") return;
+    var panel = document.getElementById("land-switch-panel");
+    if(!panel || panel.hidden) return;
+    panel.hidden = true;
+    var toggle = document.getElementById("land-switch-toggle");
+    if(toggle){ toggle.setAttribute("aria-expanded", "false"); toggle.focus(); }
   });
   document.getElementById("landenlijst").addEventListener("click", function(e){
     var row = e.target.closest(".landrow");
