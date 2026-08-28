@@ -1,0 +1,17 @@
+# Statische site, geen build step. Netlify serveert de repo-root direct.
+#
+# functions/api/route.js en geocode.js zijn geschreven voor Cloudflare Pages
+# (onRequestGet-signatuur) en draaien hier niet. Dat is geen probleem: de app
+# controleert bij het opstarten of er een proxy op ./api draait (zie DIENSTEN
+# in index.html) en valt zonder proxy vanzelf terug op de publieke OSRM-demo-
+# server en Nominatim, zonder eigen sleutel. Wil je later toch een proxy met
+# eigen routeringssleutel op Netlify, dan moeten die twee bestanden naar het
+# Netlify Functions-formaat (netlify/functions/*.js) omgezet worden.
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

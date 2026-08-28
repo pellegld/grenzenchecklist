@@ -4,627 +4,850 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
+<script>try{
+  var t = localStorage.getItem("grenschecklist.theme.v1");
+  if(t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+}catch(e){}</script>
 <link rel="stylesheet" href="fonts.css">
-<title>Grenschecklist</title>
+<title>Grenschecklist — Routeplanner</title>
 <style>
-/* Roadbook v2: donkerblauwe achtergrond, afgeronde panelen, Manrope voor alles
-   en JetBrains Mono voor cijfers en labels. Teal is de accentkleur voor bedragen,
-   amber voor "let op", rood voor blokkades. Bewust alleen donker; de printregels
-   onderaan zetten alles terug naar zwart op wit. */
+/* Kinetic Route: licht dashboard met vaste zijbalk, Geist voor koppen/labels/
+   cijfers, Inter voor lopende tekst — dezelfde twee lettertypes als de Stitch-
+   mockups zelf. Self-hosted, geen CDN's —
+   zie fonts.css. Dit vervangt het donkere "roadbook"-thema van v1; zie
+   backup-20260828-huidige-site/ en de git-branch backup-voor-kinetic-route
+   voor de vorige versie. */
 :root{
-  --bg:#0a0f18;
-  --panel:#121a26;
-  --panel-2:rgba(238,242,248,.05);
-  --ink-bright:#f6f9fd;
-  --ink:#eef2f8;
-  --ink-2:#dfe5ef;
-  --muted:#8996ab;
-  --faint:#7b8598;
-  --line:rgba(238,242,248,.07);
-  --line-2:rgba(238,242,248,.12);
-  --accent:#35d6c0;
-  --amber:#e0b341;
-  --rood:#e07a49;
-  --groen:#3fa877;
+  --surface:#f7f9fb; --surface-dim:#d8dadc; --surface-bright:#f7f9fb;
+  --surface-lowest:#ffffff; --surface-low:#f2f4f6; --surface-c:#eceef0;
+  --surface-high:#e6e8ea; --surface-highest:#e0e3e5;
+  --on-surface:#191c1e; --on-surface-var:#45474c;
+  --outline:#75777d; --outline-var:#c5c6cd;
+  --primary:#091426; --on-primary:#ffffff; --primary-container:#1e293b; --on-primary-container:#8590a6;
+  --secondary:#0058be; --on-secondary:#ffffff; --secondary-container:#2170e4; --on-secondary-container:#fefcff;
+  --error:#ba1a1a; --error-container:#ffdad6; --on-error-container:#93000a;
+  --amber:#f59e0b; --amber-container:rgba(245,158,11,.10); --amber-line:rgba(245,158,11,.32);
+  --amber-ink:#7a5205;
+  --eco:#6b8e23;
+  --background:#f7f9fb;
+  --topbar-bg:rgba(247,249,251,.9);
+  --map-alt:#dfe6ea;
 
-  --must:#e07a49; --must-bg:rgba(224,122,73,.12); --must-line:rgba(224,122,73,.32);
-  --ok:#3fa877;   --ok-bg:rgba(63,168,119,.12);   --ok-line:rgba(63,168,119,.30);
-  --warn:#e0b341; --warn-bg:rgba(224,179,65,.12); --warn-line:rgba(224,179,65,.30);
-  --advice:#8996ab; --advice-bg:rgba(238,242,248,.05); --advice-line:var(--line-2);
-  --na:#7b8598;   --na-bg:rgba(238,242,248,.04);  --na-line:var(--line);
+  /* Vaste merkkleur voor decoratieve donkere panelen (Milieuzones&Tol, landenhero,
+     tripbanner) — die blijven bewust altijd donkernavy, in beide thema's, dus
+     géén var(--primary): die wordt hieronder juist licht in dark mode. */
+  --navy:#091426; --navy-rgb:9,20,38;
+  /* Ook vast, zelfde reden: het wegdek van de reiservaring blijft altijd
+     donker asfalt met een halfdoorzichtige rand, in beide thema's. */
+  --asphalt:#2d3133; --asphalt-border:rgba(117,119,125,.35);
 
-  --sans:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --radius:18px;
-  --radius-s:10px;
-  --gutter:20px;
-  --maxw:1080px;
-  --leesbreedte:66ch;
+  --f-display:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-body:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-mono:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+
+  --r-2xs:.125rem; --r-sm:.25rem; --r-md:.375rem; --r-lg:.5rem; --r-xl:.75rem; --r-full:9999px;
+  --sp-base:8px; --sp-xs:4px; --sp-sm:12px; --sp-md:24px; --sp-lg:40px; --sp-xl:64px; --sp-gutter:20px;
+
+  --shadow-1:0 4px 12px rgba(30,41,59,.05);
+  --shadow-2:0 8px 24px rgba(30,41,59,.12);
+
+  --sidebar-w:256px;
+  --route-panel-w:400px;
+  --topbar-h:56px;
+  --sp-margin-mobile:16px;
+  --sp-margin-desktop:32px;
 }
-@media (min-width:760px){ :root{ --gutter:28px } }
+
+/* Donker thema: volgt het systeem tenzij de gebruiker het handmatig instelt
+   (dan staat er data-theme="dark"/"light" op <html>, gezet door het
+   flits-vrije script bovenin <head> en door de toggle onder Instellingen).
+   --navy/--navy-rgb blijven bewust ongewijzigd: die zijn geen "thema", maar
+   een vaste merkkleur voor de donkere accentpanelen in beide standen. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --surface:#0f1420; --surface-dim:#0a0e17; --surface-bright:#262f40;
+    --surface-lowest:#0a0e17; --surface-low:#161d2b; --surface-c:#1c2434;
+    --surface-high:#232c3f; --surface-highest:#2b3548;
+    --on-surface:#e5e8ee; --on-surface-var:#a7adbb;
+    --outline:#6b7383; --outline-var:#333d52;
+    --primary:#c3cef0; --on-primary:#16233d; --primary-container:#2a3650; --on-primary-container:#b7c2e6;
+    --secondary:#8ec2ff; --on-secondary:#003259; --secondary-container:#2f5f96; --on-secondary-container:#ffffff;
+    --error:#ffb4a9; --error-container:#7a0a0a; --on-error-container:#ffdad4;
+    --amber:#ffc267; --amber-container:rgba(255,194,103,.14); --amber-line:rgba(255,194,103,.4);
+    --amber-ink:#ffdca3;
+    --eco:#a0cf62;
+    --background:#0f1420;
+    --topbar-bg:rgba(15,20,32,.85);
+    --map-alt:#1a2233;
+  }
+}
+:root[data-theme="dark"]{
+  --surface:#0f1420; --surface-dim:#0a0e17; --surface-bright:#262f40;
+  --surface-lowest:#0a0e17; --surface-low:#161d2b; --surface-c:#1c2434;
+  --surface-high:#232c3f; --surface-highest:#2b3548;
+  --on-surface:#e5e8ee; --on-surface-var:#a7adbb;
+  --outline:#6b7383; --outline-var:#333d52;
+  --primary:#c3cef0; --on-primary:#16233d; --primary-container:#2a3650; --on-primary-container:#b7c2e6;
+  --secondary:#8ec2ff; --on-secondary:#003259; --secondary-container:#2f5f96; --on-secondary-container:#ffffff;
+  --error:#ffb4a9; --error-container:#7a0a0a; --on-error-container:#ffdad4;
+  --amber:#ffc267; --amber-container:rgba(255,194,103,.14); --amber-line:rgba(255,194,103,.4);
+  --amber-ink:#ffdca3;
+  --eco:#a0cf62;
+  --background:#0f1420;
+  --topbar-bg:rgba(15,20,32,.85);
+  --map-alt:#1a2233;
+}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font:400 15.5px/1.6 var(--sans);
+body{background:var(--background);color:var(--on-surface);font:400 15px/1.55 var(--f-body);
   -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter) 72px}
+h1,h2,h3{font-family:var(--f-display);color:var(--primary);margin:0}
+h1{font:700 1.5rem/1.25 var(--f-display);letter-spacing:-.01em;margin:0 0 var(--sp-md)}
+h3{font:700 .8rem/1.3 var(--f-display);letter-spacing:.03em;text-transform:uppercase;
+  color:var(--on-surface-var);margin:0 0 var(--sp-sm)}
+p{margin:0}
+a{color:var(--secondary);text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--outline-var);border-radius:99px}
 
-/* ---- typografie ---- */
-h1{font:800 clamp(2rem,7vw,3.25rem)/1.05 var(--sans);letter-spacing:-.035em;
-  margin:0 0 16px;color:var(--ink-bright)}
-h1 em{font-style:normal;color:var(--accent)}
-h2{font:800 clamp(1.35rem,4vw,1.63rem)/1.15 var(--sans);letter-spacing:-.02em;margin:0 0 18px;
-  color:var(--ink-bright);display:flex;align-items:baseline;justify-content:space-between;gap:16px}
-h2::after{content:attr(data-label);font:700 .66rem/1 var(--mono);letter-spacing:.1em;
-  color:var(--faint);text-transform:uppercase;white-space:nowrap;flex:0 0 auto}
-h2[data-label=""]::after,h2:not([data-label])::after{content:none}
-h3{font:600 .74rem/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);margin:24px 0 12px}
-h4{font:600 .68rem/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);margin:0 0 7px}
-p{margin:0 0 11px}
-a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(53,214,192,.3)}
-a:hover{border-bottom-color:var(--accent)}
-strong,b{font-weight:700;color:var(--ink-bright)}
-.sub{color:var(--muted);font-size:.98rem;margin:0 0 26px;max-width:46ch}
-.hint{font-size:.85rem;color:var(--faint);margin-top:8px;line-height:1.6;max-width:var(--leesbreedte)}
-.fine{color:var(--faint);font-size:.84rem}
+.icon{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.icon.sm{width:16px;height:16px}
+.icon.lg{width:32px;height:32px}
 
-/* Secties zijn blokken met ruimte, geen dozen; de kaarten erbinnen dragen de vorm. */
-.card{background:none;border:0;border-radius:0;padding:30px 0 4px;margin:0}
-.card>h2:first-child{margin-top:0}
+/* ---------------- topbar (mobiel) ---------------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  height:var(--topbar-h);padding:0 var(--sp-md);
+  background:var(--topbar-bg);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--surface-highest);position:sticky;top:0;z-index:30}
+.topbar .brand{font:700 1.05rem/1 var(--f-display);color:var(--primary);letter-spacing:-.01em}
+.topbar .icon{color:var(--on-surface-var)}
+@media (min-width:1024px){ .topbar{display:none} }
 
-/* ---- kop ---- */
-.masthead{display:flex;justify-content:space-between;align-items:center;gap:14px;
-  padding:18px 0 30px}
-.masthead .merk{display:flex;align-items:center;gap:9px;font:800 1rem/1 var(--sans);
-  letter-spacing:-.01em;color:var(--ink)}
-.masthead .merk::before{content:"";width:19px;height:19px;border-radius:6px;
-  background:var(--accent);flex:0 0 auto}
-.masthead .route-line{font:700 .66rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);text-align:right}
+/* ---------------- onderbalk (mobiel) ---------------- */
+.bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface-lowest);
+  border-top:1px solid var(--surface-highest);box-shadow:0 -4px 12px rgba(30,41,59,.05)}
+@media (min-width:1024px){ .bottomnav{display:none} }
+.bnitem{appearance:none;flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 4px 10px;border:0;background:none;color:var(--on-surface-var);
+  font:600 .62rem/1 var(--f-display);cursor:pointer}
+.bnitem.active{color:var(--secondary)}
+@media (max-width:1023px){ .panel-route,.view-page{padding-bottom:76px} }
 
-/* ---- hero met drie kaarten ---- */
-.hero{padding:6px 0 44px}
-.hero-text{min-width:0}
-.stats{display:grid;grid-template-columns:1fr;gap:14px;margin-top:30px}
-@media (min-width:680px){ .stats{grid-template-columns:repeat(3,minmax(0,1fr))} }
-.stat{background:var(--panel);border:.8px solid var(--line);border-radius:var(--radius);
-  padding:20px 22px}
-.stat .lbl{font:600 .75rem/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);display:block;margin-bottom:13px}
-.stat .val{font:700 1.85rem/1.15 var(--mono);letter-spacing:-.02em;color:var(--ink-bright);display:block}
-.stat.money .val{color:var(--accent)}
-.stat .val i{font-style:normal;color:var(--faint)}
-.stat .val small{font:600 .5em/1 var(--sans);color:var(--faint);letter-spacing:.02em}
-
-/* ---- sticky navigatie ---- */
-.nav{position:sticky;top:0;z-index:20;display:flex;gap:0;
-  margin:0 calc(var(--gutter) * -1) 0;padding:11px var(--gutter);
-  background:rgba(10,15,24,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-bottom:.8px solid var(--line);overflow-x:auto;scrollbar-width:none;
-  -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent);
-  mask-image:linear-gradient(to right,#000 calc(100% - 24px),transparent)}
-.nav::-webkit-scrollbar{display:none}
-.nav a{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;
-  padding:6px 12px;margin-right:6px;border-radius:999px;
-  font:600 .78rem/1 var(--sans);letter-spacing:.01em;
-  color:var(--muted);text-decoration:none;border-bottom:0;white-space:nowrap}
-.nav a.on{background:var(--panel-2);color:var(--accent)}
-.nav a .n{font:700 .68rem/1 var(--mono);color:var(--must)}
-.nav a.on .n{color:var(--accent)}
-section[id],#builder{scroll-margin-top:62px}
-
-/* ---- waarschuwing bovenaan ---- */
-.card.disclaimer{border:.8px solid var(--line);background:var(--panel);border-radius:var(--radius-s);
-  padding:14px 18px;margin:0 0 6px}
-.disclaimer summary{cursor:pointer;list-style:none;font-size:.9rem;color:var(--muted);
-  display:flex;align-items:center;justify-content:space-between;gap:16px}
-.disclaimer summary::-webkit-details-marker{display:none}
-.disclaimer summary b{color:var(--ink-bright);font-weight:700}
-.disclaimer summary .tekst{min-width:0}
-.disclaimer summary::after{content:"uitleg";font:600 .72rem/1 var(--sans);letter-spacing:.04em;
-  text-transform:uppercase;color:var(--accent);white-space:nowrap;flex:0 0 auto}
-.disclaimer[open] summary::after{content:"sluit"}
-.disclaimer ul{margin:12px 0 0;padding-left:16px;font-size:.88rem;color:var(--muted)}
-.disclaimer ul li{margin-bottom:5px}
-.disclaimer .body{font-size:.9rem;color:var(--muted);margin:12px 0 0;max-width:var(--leesbreedte)}
-
-/* ---- checklist: kaarten in een raster ---- */
-/* stretch, niet start: de kaarten in een rij lopen tot dezelfde onderkant door. */
-.grid{display:grid;grid-template-columns:1fr;gap:14px;align-items:stretch}
-@media (min-width:660px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr))} }
-@media (min-width:980px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
-.grp{background:var(--panel);border:.8px solid var(--line);border-radius:var(--radius);
-  padding:18px 18px 12px;margin:0;min-width:0}
-.grp-head{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;justify-content:space-between;
-  font:700 .94rem/1.35 var(--sans);letter-spacing:-.01em;text-transform:none;color:var(--ink-bright);
-  margin:0 0 12px;padding:0;border:0}
-.grp-head .qual{font:600 .69rem/1 var(--sans);letter-spacing:.05em;text-transform:uppercase;
-  color:var(--muted);font-weight:600;flex:0 0 auto}
-.grp.key .grp-head .qual{color:var(--accent)}
-.blockers{margin:0 0 18px}
-
-/* ---- tol onderweg: bedragenkaart links, uitleg rechts ---- */
-.tolgrid{display:grid;grid-template-columns:1fr;gap:14px}
-@media (min-width:900px){ .tolgrid{grid-template-columns:1.15fr 1fr} }
-.tolkaart{background:var(--panel);border:.8px solid var(--line);border-radius:var(--radius);
-  padding:8px 22px 22px;min-width:0}
-.tolrij{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;
-  padding:16px 0;border-bottom:.8px solid var(--line)}
-.tolrij .code{width:34px;height:34px;border-radius:10px;background:rgba(53,214,192,.12);
-  color:var(--accent);font:700 .75rem/1 var(--mono);display:grid;place-items:center;letter-spacing:.02em}
-.tolrij .naam{font:700 .97rem/1.3 var(--sans);color:var(--ink-bright)}
-.tolrij .detail{font:400 .84rem/1.4 var(--sans);color:var(--muted);margin-top:2px}
-.tolrij .bedrag{font:700 1.19rem/1 var(--mono);color:var(--ink);white-space:nowrap;text-align:right}
-.tolrij .bedrag .cur{color:var(--muted);margin-right:5px}
-.tolrij .bedrag.zacht{font-size:.8rem;font-weight:600;color:var(--faint);
-  letter-spacing:.06em;text-transform:uppercase;font-family:var(--sans)}
-.toltotaal{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:20px}
-.toltotaal .lbl{font:700 .81rem/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-.toltotaal .val{font:700 1.88rem/1 var(--mono);letter-spacing:-.02em;color:var(--accent);white-space:nowrap}
-.toltotaal .val .cur{opacity:.75;margin-right:6px}
-.toltotaal .val small{font:600 .42em/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;
-  color:var(--muted);margin-left:6px}
-.tolzij{display:grid;gap:14px;align-content:start}
-.tolnote{background:var(--panel);border:.8px solid var(--line);border-radius:var(--radius);padding:20px 22px}
-.tolnote .k{font:700 .81rem/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;
-  color:var(--accent);margin-bottom:8px}
-.tolnote p{margin:0 0 8px;font-size:.91rem;line-height:1.6;color:var(--ink-2)}
-.tolnote p:last-child{margin-bottom:0}
-.tolnote p b{font-weight:700;color:var(--ink-bright)}
-.tolfijn{font-size:.79rem;line-height:1.5;color:var(--faint);padding:0 4px}
-
-/* ---- terugval voor de meldknop, als het klembord geblokkeerd is ---- */
-.melddialoog{position:fixed;inset:0;z-index:40;background:rgba(4,7,12,.72);
-  display:grid;place-items:center;padding:var(--gutter)}
-.melddialoog[hidden]{display:none}
-.melddoos{background:var(--panel);border:.8px solid var(--line-2);border-radius:var(--radius);
-  padding:22px;width:min(560px,100%);max-height:86vh;overflow:auto}
-.melddoos h3{margin:0 0 8px;font:700 .95rem/1.3 var(--sans);letter-spacing:-.01em;
-  text-transform:none;color:var(--ink-bright)}
-.melddoos textarea{width:100%;margin-top:12px;background:var(--bg);color:var(--ink-2);
-  border:.8px solid var(--line-2);border-radius:var(--radius-s);padding:12px;
-  font:400 .84rem/1.5 var(--mono);resize:vertical}
-.meldknoppen{display:flex;justify-content:flex-end;margin-top:12px}
-.meldknoppen button{appearance:none;background:var(--accent);color:#06231f;border:0;
-  border-radius:var(--radius-s);padding:9px 16px;font:700 .84rem/1 var(--sans);cursor:pointer}
-
-/* ---- wanneer rijden: maandraster links, legenda en waarschuwing rechts ---- */
-.kalgrid{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
-@media (min-width:900px){ .kalgrid{grid-template-columns:minmax(0,1fr) 300px} }
-.kalkaart{background:var(--panel);border:.8px solid var(--line);border-radius:var(--radius);padding:22px;min-width:0}
-.kalkop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
-.kalkop .maand{font:700 1.06rem/1 var(--sans);color:var(--ink-bright)}
-.kalkop .richting{font:600 .78rem/1 var(--sans);color:var(--muted)}
-.kalkop .bladeren{display:flex;gap:6px}
-.kalkop button{appearance:none;background:var(--panel-2);border:.8px solid var(--line-2);color:var(--ink-2);
-  width:28px;height:28px;border-radius:8px;cursor:pointer;font:700 .8rem/1 var(--mono);padding:0}
-.kalkop button:hover{border-color:var(--accent);color:var(--accent)}
-.kalraster{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
-.kalraster .wd{font:700 .69rem/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;
-  color:var(--faint);text-align:center;padding-bottom:4px}
-.dag{aspect-ratio:1;border-radius:12px;padding:8px;display:flex;flex-direction:column;
-  justify-content:space-between;min-width:0;overflow:hidden}
-.dag .nr{font:700 .81rem/1 var(--mono)}
-.dag .tag{font:700 .59rem/1.1 var(--sans);letter-spacing:.04em;text-transform:uppercase;
-  overflow:hidden;text-overflow:ellipsis}
-.dag.leeg{background:none}
-/* Op een telefoon is een dagvakje 36 px: daar past het label niet meer in en
-   wordt het afgekapt. Dan doen de kleur en de legenda het werk. */
-@media (max-width:639px){
-  .dag{padding:5px;align-items:center;justify-content:center}
-  .dag .tag{display:none}
+/* ---------------- zijbalk ---------------- */
+.sidebar{display:none}
+@media (min-width:1024px){
+  .sidebar{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;
+    width:var(--sidebar-w);padding:var(--sp-md);background:var(--surface-low);
+    border-right:1px solid var(--surface-highest);z-index:40;overflow-y:auto}
 }
-.dag.vertrek{outline:2px solid var(--accent);outline-offset:1px}
-.kalzij{display:grid;gap:14px;align-content:start}
-.kallegenda{background:var(--panel);border:.8px solid var(--line);border-radius:var(--radius);padding:20px 22px}
-.kallegenda .k{font:700 .81rem/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:14px}
-.kallegenda ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.kallegenda li{display:flex;align-items:center;gap:11px;font:500 .87rem/1.2 var(--sans);color:var(--ink-2)}
-.kallegenda i{width:22px;height:10px;border-radius:999px;flex:0 0 auto}
-.kalwaarschuwing{background:rgba(220,60,60,.1);border:.8px solid rgba(220,60,60,.28);
-  border-radius:var(--radius);padding:20px 22px}
-.kalwaarschuwing .k{font:700 .81rem/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;
-  color:#ef7d73;margin-bottom:8px}
-.kalwaarschuwing p{margin:0 0 8px;font-size:.91rem;line-height:1.6;color:#d9c5c3}
-.kalwaarschuwing p:last-child{margin-bottom:0}
-.cnt{font:700 .72rem/1 var(--mono);color:var(--faint);letter-spacing:.04em}
+.sidebar .brandblock{margin-bottom:var(--sp-lg)}
+.sidebar .brand{font:700 1.35rem/1.2 var(--f-display);color:var(--primary);letter-spacing:-.01em}
+.sidebar .tagline{font:500 .82rem/1 var(--f-body);color:var(--on-surface-var);margin-top:4px;opacity:.85}
+.newtrip{width:100%;margin-bottom:var(--sp-lg);display:flex;align-items:center;justify-content:center;gap:var(--sp-xs)}
+.sidenav{display:flex;flex-direction:column;gap:var(--sp-sm);flex:1 1 auto}
+.navitem{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm);border-radius:var(--r-lg);
+  font:600 .85rem/1 var(--f-display);text-decoration:none;color:var(--on-surface-var);cursor:pointer}
+button.navitem{appearance:none;background:none;border:0;width:100%;text-align:left}
+.navitem:hover{background:var(--surface-c)}
+.navitem.active{background:var(--secondary-container);color:var(--on-secondary-container)}
+.navitem.active:hover{background:var(--secondary-container)}
+.navitem.disabled{color:var(--outline);cursor:default}
+.navitem.disabled:hover{background:none}
+.navitem.disabled em{margin-left:auto;font:600 .58rem/1 var(--f-body);font-style:normal;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--outline);background:var(--surface-c);
+  padding:2px 6px;border-radius:var(--r-full)}
+.sidefoot{margin-top:var(--sp-md);padding-top:var(--sp-md);border-top:1px solid var(--surface-highest);
+  display:flex;flex-direction:column;gap:var(--sp-xs)}
+.sidefoot .hint{margin-top:var(--sp-sm)}
 
-/* ---- afvinkbare regels ---- */
-.chk{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:.8px solid var(--line)}
-.chk:last-child{border-bottom:0}
-.chk input[type=checkbox]{appearance:none;-webkit-appearance:none;width:17px;height:17px;
-  margin:2px 0 0;flex:0 0 auto;border:1.2px solid rgba(238,242,248,.22);border-radius:5px;
-  background:none;cursor:pointer;position:relative}
-.chk input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
-.chk input[type=checkbox]:checked::after{content:"";position:absolute;left:5px;top:1px;
-  width:4px;height:9px;border:solid #0a0f18;border-width:0 2px 2px 0;transform:rotate(42deg)}
-.chk .body{flex:1 1 auto;min-width:0}
-.chk .ttl{font:500 .92rem/1.45 var(--sans);color:var(--ink-2)}
-.chk.done .ttl{text-decoration:line-through;opacity:.4}
-.chk .where{font:600 .7rem/1.4 var(--sans);letter-spacing:.03em;color:var(--faint);margin-top:3px}
-/* Bij uitrusting vervangen vlaggen de landnamen; de namen blijven staan voor de printversie. */
-.chk .vlaggen{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.chk .printnamen{display:none}
-.chk .vlaggen>span{display:block;line-height:0;flex:0 0 auto}
-.chk .vlaggen .flag{width:17px;height:12px;border-radius:2px;vertical-align:0}
-.chk .vlaggen .flag.sq{width:12px}
-.chk .vlaggen .dim{opacity:.3;filter:grayscale(1)}
-.chk.done .vlaggen{opacity:.35}
-.legenda{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:-8px 0 20px;
-  font:600 .7rem/1 var(--sans);letter-spacing:.03em;color:var(--faint)}
-.legenda .vb{width:17px;height:12px;border-radius:2px;flex:0 0 auto;
-  border:.8px solid rgba(255,255,255,.16);background:linear-gradient(to right,var(--accent) 50%,var(--muted) 50%)}
-.legenda .vb.dim{opacity:.3;filter:grayscale(1);margin-left:9px}
-.legenda a{margin-left:auto;border-bottom:0;color:var(--accent)}
-.chk .why{font-size:.82rem;color:var(--muted);margin-top:5px;line-height:1.5;max-width:var(--leesbreedte)}
-.chk .why p{margin:0 0 4px}
-.chk .why p:last-child{margin-bottom:0}
-.chk.noti .mark{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;
-  font:700 .62rem/1 var(--mono);background:var(--na-bg);color:var(--na);
-  border:.8px solid var(--na-line);flex:0 0 auto;margin-top:2px}
-.chk.noti .ttl{color:var(--muted);font-weight:700}
+/* ---------------- instellingen: donkere-modus-schakelaar ---------------- */
+.switchrow{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-sm);
+  padding:var(--sp-sm);margin-left:8px;font:500 .82rem/1.3 var(--f-body);color:var(--on-surface-var)}
+.switch{position:relative;display:inline-block;width:38px;height:21px;flex:0 0 auto}
+.switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:1}
+.switch-track{position:absolute;inset:0;background:var(--outline-var);border-radius:99px;transition:background .18s}
+.switch-thumb{position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .18s}
+.switch input:checked ~ .switch-track{background:var(--secondary)}
+.switch input:checked ~ .switch-track .switch-thumb{transform:translateX(17px)}
+.icon-toggle{width:36px;height:36px;border:0;background:none;color:var(--on-surface-var);
+  border-radius:99px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-toggle:hover{background:var(--surface-c)}
 
-/* ---- takenlijst (blokkades) ---- */
-.tasks{list-style:none;margin:0;padding:0}
-.tasks li{display:flex;gap:11px;align-items:flex-start;padding:13px 16px;
-  background:var(--must-bg);border:.8px solid var(--must-line);border-radius:var(--radius-s);
-  margin-bottom:8px}
-.tasks li:last-child{margin-bottom:0}
-.tasks .body{flex:1 1 auto;min-width:0}
-.tasks .what{font-weight:700;line-height:1.45;color:var(--must)}
-.tasks .meta{display:block;font-size:.85rem;color:var(--muted);margin-top:3px}
-.tasks .mark{flex:0 0 auto;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
-  font:700 .64rem/1 var(--mono);margin-top:2px;background:rgba(224,122,73,.18);color:var(--must)}
-.allclear{display:flex;gap:10px;align-items:center;color:var(--ok);font-size:.94rem;margin:0}
-.allclear span{font-weight:700}
+/* ---------------- layout ----------------
+   .main is a neutral positioning shell; exactly one .view is visible at a time
+   (toggled via [hidden] by switchView()). The Routeplanner view keeps the
+   sidebar+map two-pane split (.view-route); the other views are simple
+   scrollable pages (.view-page), like their mockups. */
+#app{display:flex;flex-direction:column;min-height:100vh}
+.main{flex:1 1 auto;display:flex;flex-direction:column}
+@media (min-width:1024px){
+  #app{display:block}
+  .main{margin-left:var(--sidebar-w);min-height:100vh}
+}
+.view{flex:1 1 auto;display:flex;flex-direction:column;min-width:0}
+.view[hidden]{display:none}
+@media (min-width:1024px){
+  .view-route{flex-direction:row;height:100vh}
+}
+.view-page{padding:var(--sp-margin-mobile);max-width:1280px;margin:0 auto;width:100%}
+@media (min-width:1024px){
+  .view-page{padding:var(--sp-margin-desktop);overflow-y:auto;height:100vh}
+}
+/* Zelfde reden als .panel-route>*{flex:0 0 auto} hierboven: zonder dit krimpen
+   de directe kinderen van een scrollende flex-kolom in plaats van dat de kolom
+   zelf scrollt. Trof hier de landenchips-rij (die zelf ook overflow-x:auto
+   heeft, dus zonder flex-shrink:0 een automatisch minimum van 0px krijgt) en
+   de land-detailkaart (waaronder Maximumsnelheden), die daardoor afgesneden
+   raakten in plaats van gewoon hun eigen hoogte te pakken. */
+.view-page>*{flex:0 0 auto}
+.hint{font-size:.85rem;color:var(--on-surface-var)}
 
-/* ---- vlaggen ---- */
-.flag{display:inline-block;width:20px;height:14px;border-radius:3px;
-  border:.8px solid rgba(255,255,255,.16);flex:0 0 auto;overflow:hidden;
-  vertical-align:-2px;background:#333}
-.flag>span{display:block;width:100%;height:100%}
-.flag.sq{width:14px}
+/* ---------------- routepaneel ---------------- */
+.panel-route{width:100%;background:var(--surface);padding:var(--sp-md);
+  display:flex;flex-direction:column;gap:var(--sp-md)}
+@media (min-width:1024px){
+  .panel-route{width:var(--route-panel-w);flex:0 0 auto;height:100%;overflow-y:auto;
+    border-right:1px solid var(--surface-highest);box-shadow:var(--shadow-1)}
+}
 
-/* ---- routeplanner ---- */
-.planner{border:.8px solid var(--line);border-radius:var(--radius);padding:20px;
-  margin:0 0 20px;background:var(--panel)}
-.planner h3{margin:0 0 15px}
-.planner .results{position:absolute;left:0;right:0;top:100%;z-index:5;background:#18212f;
-  border:.8px solid var(--line-2);border-radius:var(--radius-s);
-  box-shadow:0 14px 40px rgba(0,0,0,.55);margin-top:6px;overflow:hidden}
-.planner .field{position:relative}
-.rstat{font:600 .82rem/1.5 var(--sans);color:var(--muted);margin:12px 0 0}
-.rstat.err{color:var(--must)}
-.rsum{margin:14px 0 0;padding:16px;border:.8px solid var(--line);border-radius:var(--radius-s);
-  font-size:.92rem;background:var(--panel-2)}
-.rsum b{font-weight:700;color:var(--ink-bright)}
-.rchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.rwarn{margin-top:12px;font-size:.86rem;color:var(--warn)}
-.rwarn ul{margin:5px 0 0;padding-left:16px}
-.onlinehit{color:var(--accent);font-weight:700}
+/* Kinderen van het routepaneel mogen nooit krimpen: zonder flex-shrink:0 probeert
+   de flex-kolom ze te persen zodra de inhoud niet past, in plaats van de kolom
+   zelf te laten scrollen (dat doet .panel-route al met overflow-y:auto).
+   Een kind met overflow:hidden — zoals .milieukaart — mag dan tot bijna 0px
+   krimpen, wat precies de afgesneden kaart veroorzaakte. */
+.panel-route>*{flex:0 0 auto}
 
-/* ---- oordeelsregel ---- */
-.verdict{display:flex;gap:9px;align-items:flex-start;padding:10px 13px;border-radius:var(--radius-s);
-  border:.8px solid;font-size:.89rem;margin:0 0 11px;line-height:1.5}
-.verdict .vi{font-weight:700;flex:0 0 auto;font-family:var(--mono);font-size:.78rem;line-height:1.5}
-.v-ok{color:var(--ok);background:var(--ok-bg);border-color:var(--ok-line)}
-.v-bad{color:var(--must);background:var(--must-bg);border-color:var(--must-line)}
-.v-todo{color:var(--warn);background:var(--warn-bg);border-color:var(--warn-line)}
-.v-unknown{color:var(--na);background:var(--na-bg);border-color:var(--na-line)}
-
-/* ---- landenlijst ---- */
-.route-item{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:8px;
-  background:var(--panel-2);border:.8px solid var(--line);border-radius:var(--radius-s)}
-.route-item.dragging{opacity:.35}
-.route-item .idx{font:700 .68rem/1 var(--mono);color:var(--faint);flex:0 0 auto;width:16px}
-.route-item .nm{flex:1 1 auto;min-width:0;font-weight:700;color:var(--ink-bright);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.iconbtn{border:.8px solid var(--line-2);background:none;color:var(--muted);border-radius:8px;
-  width:31px;height:31px;font-size:.8rem;line-height:1;cursor:pointer;flex:0 0 auto}
-.iconbtn:hover{color:var(--ink);border-color:rgba(238,242,248,.28)}
-.iconbtn:disabled{opacity:.25;cursor:default}
-.iconbtn.rm{color:var(--must)}
-.empty{color:var(--faint);font-size:.9rem;padding:12px 0;margin:0}
-
-/* ---- formulier ---- */
+.fields{position:relative;display:flex;flex-direction:column;gap:var(--sp-sm)}
+.field{position:relative}
+.field label{display:flex;align-items:center;gap:6px;font:600 .72rem/1 var(--f-display);
+  letter-spacing:.04em;text-transform:uppercase;color:var(--on-surface-var);margin-bottom:6px}
 input[type=search],input[type=text],input[type=date],select{
-  width:100%;padding:11px 13px;border:.8px solid var(--line-2);border-radius:var(--radius-s);
-  background:rgba(0,0,0,.22);color:var(--ink);font:500 16px/1.4 var(--sans)}
-input:focus,select:focus{outline:0;border-color:rgba(53,214,192,.5)}
-.picker{position:relative}
-.results{list-style:none;margin:8px 0 0;padding:0;max-height:260px;overflow:auto;
-  border:.8px solid var(--line-2);border-radius:var(--radius-s)}
+  width:100%;padding:11px var(--sp-sm);border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  background:var(--surface-low);color:var(--on-surface);font:500 15px/1.4 var(--f-body)}
+input:focus,select:focus{outline:0;border-color:var(--secondary);box-shadow:0 0 0 1px var(--secondary)}
+.results{list-style:none;margin:6px 0 0;padding:0;max-height:260px;overflow:auto;position:absolute;
+  left:0;right:0;top:100%;z-index:15;background:var(--surface-lowest);
+  border:1px solid var(--outline-var);border-radius:var(--r-lg);box-shadow:var(--shadow-2)}
 .results:empty{display:none}
-.results li{display:flex;align-items:center;gap:11px;padding:11px 13px;cursor:pointer;
-  border-bottom:.8px solid var(--line);font-size:.92rem}
+.results li{display:flex;align-items:center;gap:var(--sp-sm);padding:10px var(--sp-sm);cursor:pointer;
+  border-bottom:1px solid var(--surface-highest);font-size:.88rem}
 .results li:last-child{border-bottom:0}
-.results li:hover{background:var(--panel-2)}
-.row2{display:flex;gap:13px;flex-wrap:wrap;align-items:flex-end;margin-top:15px}
-.field{flex:1 1 180px;min-width:0}
-.field label{display:block;font:600 .7rem/1 var(--sans);letter-spacing:.06em;
-  text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.results li:hover{background:var(--surface-low)}
+.results .cnt{font:600 .72rem/1 var(--f-mono);color:var(--outline)}
+.results .onlinehit{color:var(--secondary);font-weight:700}
+.swapbtn{align-self:flex-end;width:32px;height:32px;margin:-4px 0;border-radius:var(--r-full);
+  border:1px solid var(--outline-var);background:var(--surface-highest);color:var(--on-surface);
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.swapbtn:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
 
-/* ---- badges en chips ---- */
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
-.chip{font:600 .72rem/1.4 var(--sans);padding:3px 9px;border-radius:999px;
-  background:var(--panel-2);color:var(--muted);display:inline-flex;align-items:center;gap:6px}
-.badge{font:600 .66rem/1.5 var(--sans);letter-spacing:.05em;text-transform:uppercase;
-  padding:2px 8px;border-radius:999px;border:.8px solid;white-space:nowrap}
-.b-must{color:var(--must);background:var(--must-bg);border-color:var(--must-line)}
-.b-advice{color:var(--muted);background:var(--panel-2);border-color:var(--line-2)}
-.b-na{color:var(--na);background:var(--na-bg);border-color:var(--na-line)}
-.b-warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn-line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;
+  border-radius:var(--r-lg);border:1px solid var(--outline-var);background:none;color:var(--on-surface);
+  font:600 .82rem/1 var(--f-display);cursor:pointer}
+.btn.primary{background:var(--secondary);color:var(--on-secondary);border-color:transparent}
+.btn.primary:hover{background:var(--secondary-container)}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.45;cursor:default}
 
-/* ---- landkaarten ---- */
-details.country{border:.8px solid var(--line);border-radius:var(--radius);
-  background:var(--panel);margin:0 0 10px;overflow:hidden}
-details.country>summary{display:flex;align-items:center;gap:11px;padding:15px 18px;cursor:pointer;
-  list-style:none;font-weight:700;color:var(--ink-bright)}
-details.country>summary::-webkit-details-marker{display:none}
-details.country>summary .caret{margin-left:auto;color:var(--faint);transition:transform .18s;
-  flex:0 0 auto;font-size:.66rem}
-details.country[open]>summary .caret{transform:rotate(90deg)}
-.cbody{padding:0 18px 18px;border-top:.8px solid var(--line)}
-.sec{margin-top:18px}
-.sec p{margin:0 0 7px;font-size:.9rem;max-width:var(--leesbreedte)}
-.kv{font-size:.9rem;margin:0 0 6px;max-width:var(--leesbreedte)}
-.kv b{font-weight:700;color:var(--ink-bright)}
-ul.plain{margin:0;padding-left:17px;font-size:.9rem;color:var(--ink-2);max-width:var(--leesbreedte)}
-ul.plain li{margin-bottom:6px}
-ul.eq{list-style:none;margin:0;padding:0}
-ul.eq li{padding:10px 0;border-bottom:.8px solid var(--line);font-size:.9rem;max-width:var(--leesbreedte)}
-ul.eq li:last-child{border-bottom:0}
-ul.eq .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.foot{margin-top:18px;padding-top:13px;border-top:.8px solid var(--line);
-  font:500 .78rem/1.7 var(--sans);color:var(--faint);
-  display:flex;flex-wrap:wrap;gap:13px;align-items:center}
-.foot a{border-bottom:0;color:var(--muted)}
-.foot a:hover{color:var(--accent)}
-.stale{color:var(--warn)}
-.price{font:700 1.05rem/1 var(--mono);letter-spacing:-.02em;color:var(--accent);white-space:nowrap}
+.rstat{font:600 .82rem/1.5 var(--f-body);color:var(--on-surface-var);margin:0}
+.rstat.err{color:var(--error)}
 
-/* ---- knoppen ---- */
-.btn{display:inline-block;padding:11px 17px;border-radius:var(--radius-s);
-  border:.8px solid var(--line-2);background:none;color:var(--ink);
-  font:700 .82rem/1 var(--sans);letter-spacing:.01em;cursor:pointer;text-decoration:none}
-.btn:hover{border-color:rgba(238,242,248,.3)}
-.btn.primary{background:var(--accent);color:#08121a;border-color:var(--accent)}
-.btn.primary:hover{background:#4ee3cf}
-.btn:disabled{opacity:.4;cursor:default}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px;align-items:center}
+/* ---------------- statkaarten ---------------- */
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-sm)}
+.statcard{background:var(--surface-low);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-sm);display:flex;flex-direction:column;justify-content:center;gap:6px}
+.statcard.wide{grid-column:1 / -1}
+.statcard .slbl{display:flex;align-items:center;gap:6px;font:600 .72rem/1 var(--f-display);
+  letter-spacing:.03em;text-transform:uppercase;color:var(--on-surface-var)}
+.statcard .slbl .icon{color:var(--on-surface-var)}
+.statcard .sval{font:600 1.3rem/1 var(--f-mono);letter-spacing:-.01em;color:var(--primary)}
+.statcard .sval small{font:600 .55em/1 var(--f-display);color:var(--on-surface-var)}
 
-/* ---- ingeklapt autoprofiel ---- */
-details.profile{border:.8px solid var(--line);border-radius:var(--radius-s);
-  background:var(--panel-2);margin:16px 0 0;overflow:hidden}
-details.profile>summary{cursor:pointer;list-style:none;padding:12px 15px;font-size:.9rem;
-  display:flex;gap:10px;align-items:center}
-details.profile>summary::-webkit-details-marker{display:none}
-details.profile>summary .lbl{font:600 .68rem/1 var(--sans);letter-spacing:.06em;
-  text-transform:uppercase;color:var(--faint);flex:0 0 auto}
-details.profile>summary .val{font-weight:700;min-width:0;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap;color:var(--ink-bright)}
-details.profile>summary::after{content:"wijzig";margin-left:auto;font:600 .68rem/1 var(--sans);
-  letter-spacing:.05em;text-transform:uppercase;color:var(--accent);flex:0 0 auto}
-details.profile[open]>summary::after{content:"klaar"}
-details.profile .pbody{padding:0 15px 15px;border-top:.8px solid var(--line)}
+/* ---------------- landen op de route ---------------- */
+.landrow{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm);border-radius:var(--r-lg);
+  border:1px solid transparent;cursor:pointer}
+.landrow:hover{background:var(--surface-low);border-color:var(--outline-var)}
+.landrow .landnaam{flex:1 1 auto;font:500 .92rem/1.3 var(--f-body);color:var(--on-surface)}
+.landrow .icon{color:var(--on-surface-var)}
+.flag{display:inline-block;width:26px;height:19px;border-radius:var(--r-2xs);
+  border:1px solid rgba(0,0,0,.12);flex:0 0 auto;overflow:hidden;background:#999}
+.flag>span{display:block;width:100%;height:100%}
+.flag.sq{width:19px}
 
-.loaderr{border:.8px solid var(--warn-line);background:var(--warn-bg);color:var(--warn);
-  padding:16px;border-radius:var(--radius-s)}
-.loaderr code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:5px;font-family:var(--mono);font-size:.85em}
-.printonly{display:none}
+/* ---------------- milieuzonekaart ---------------- */
+.milieukaart{background:var(--amber-container);border:1px solid var(--amber-line);border-radius:var(--r-xl);
+  padding:var(--sp-sm);position:relative;overflow:hidden}
+.milieukaart::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber)}
+.milieuhead{display:flex;gap:var(--sp-sm);align-items:flex-start}
+.milieuhead .icon{color:var(--amber);margin-top:2px}
+.milieuhead h3{margin:0 0 4px;text-transform:none;letter-spacing:0;font:700 .88rem/1.3 var(--f-display);color:var(--on-surface)}
+.milieuhead p{font-size:.82rem;color:var(--on-surface-var);line-height:1.5}
+.milieuchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--sp-sm)}
+.mchip{font:600 .72rem/1 var(--f-mono);padding:5px 9px;border-radius:var(--r-md);
+  background:var(--surface-lowest);border:1px solid var(--outline-var);color:var(--on-surface)}
 
-@media (min-width:1000px){
-  .hero{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
-  .card{padding:44px 0 6px}
+/* ---------------- voertuigprofiel / disclaimer ---------------- */
+details.profile,details.disclaimer{border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  background:var(--surface-low);overflow:hidden}
+details.profile>summary,details.disclaimer>summary{cursor:pointer;list-style:none;padding:var(--sp-sm);
+  font-size:.85rem;display:flex;gap:var(--sp-sm);align-items:center}
+details.profile>summary::-webkit-details-marker,details.disclaimer>summary::-webkit-details-marker{display:none}
+details.profile>summary .lbl{font:600 .68rem/1 var(--f-display);letter-spacing:.04em;
+  text-transform:uppercase;color:var(--on-surface-var);flex:0 0 auto}
+details.profile>summary .val{font-weight:600;min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;color:var(--on-surface)}
+details.profile>summary::after,details.disclaimer>summary::after{content:"wijzig";margin-left:auto;
+  font:600 .68rem/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;color:var(--secondary);flex:0 0 auto}
+details.profile[open]>summary::after,details.disclaimer[open]>summary::after{content:"sluit"}
+details.profile .pbody,details.disclaimer .body,details.disclaimer ul{padding:0 var(--sp-sm) var(--sp-sm)}
+details.disclaimer .body{margin:0;font-size:.8rem;color:var(--on-surface-var);line-height:1.6}
+details.disclaimer ul{margin:0;font-size:.78rem;color:var(--on-surface-var);list-style:none}
+details.disclaimer ul li{margin-bottom:4px}
+details.disclaimer .colofon{padding:0 var(--sp-sm) var(--sp-sm);margin:0;font-size:.72rem;
+  line-height:1.6;color:var(--outline)}
+details.disclaimer summary .tekst{font-size:.85rem;color:var(--on-surface-var)}
+details.disclaimer summary b{color:var(--on-surface)}
+.row2{display:flex;gap:var(--sp-sm);flex-wrap:wrap;margin-top:var(--sp-sm)}
+.row2 .field{flex:1 1 140px;min-width:0}
+
+/* ---------------- kaartpaneel ---------------- */
+.panel-map{position:relative;flex:1 1 auto;min-height:320px;background:var(--surface-highest);
+  background-image:radial-gradient(var(--outline-var) 1px,transparent 1px);
+  background-size:28px 28px}
+.panel-map.alt{background-color:var(--map-alt)}
+@media (min-width:1024px){ .panel-map{min-height:0} }
+.mapwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.mapwrap svg{width:100%;height:100%;transition:transform .18s ease}
+.mapempty{display:flex;flex-direction:column;align-items:center;gap:var(--sp-sm);
+  color:var(--outline);text-align:center;padding:var(--sp-md)}
+.mapempty p{font-size:.85rem;max-width:26ch}
+.routeline-glow{fill:none;stroke:var(--secondary);stroke-width:9;stroke-linecap:round;
+  stroke-linejoin:round;opacity:.18}
+.routeline{fill:none;stroke:var(--secondary);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.pt-start{fill:#ffffff;stroke:var(--primary);stroke-width:3}
+.pt-end{fill:var(--error);stroke:#ffffff;stroke-width:3}
+.mapctrl{position:absolute;display:flex;flex-direction:column;gap:6px;z-index:10}
+.mapctrl.top{top:var(--sp-md);right:var(--sp-md)}
+.mapctrl.bottom{bottom:var(--sp-md);right:var(--sp-md);background:var(--surface-lowest);
+  border:1px solid var(--outline-var);border-radius:var(--r-lg);box-shadow:var(--shadow-2);overflow:hidden;gap:0}
+.mapctrl button{width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-2);color:var(--on-surface);cursor:pointer}
+.mapctrl.bottom button{border-radius:0;border:0;border-bottom:1px solid var(--outline-var);box-shadow:none}
+.mapctrl.bottom button:last-child{border-bottom:0}
+.mapctrl button:hover{color:var(--secondary)}
+
+/* ================= Checklist-pagina ================= */
+.progresscard{background:var(--surface-c);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  padding:var(--sp-md);margin-bottom:var(--sp-md)}
+.progresscard .prow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progresscard .plbl{font:600 .78rem/1 var(--f-display);color:var(--on-surface-var)}
+.progresscard .pval{font:700 .95rem/1 var(--f-mono);color:var(--secondary)}
+.progressbar{width:100%;height:10px;border-radius:99px;background:var(--surface-highest);overflow:hidden}
+.progressbar>i{display:block;height:100%;background:var(--secondary);border-radius:99px;transition:width .4s}
+
+.bento{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter)}
+@media (min-width:760px){ .bento{grid-template-columns:1fr 1fr} }
+.bentocard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-md);display:flex;flex-direction:column}
+.bentocard.wide{grid-column:1/-1}
+.bentohead{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:var(--sp-sm);
+  padding-bottom:var(--sp-sm);border-bottom:1px solid var(--surface-highest)}
+.bentobubble{width:38px;height:38px;border-radius:99px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface-c);color:var(--on-surface-var);flex:0 0 auto}
+.bentohead h2{font:700 1.05rem/1.3 var(--f-display);color:var(--primary);text-transform:none;letter-spacing:0;margin:0}
+
+.chkrow{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-sm);
+  padding:var(--sp-sm);border-radius:var(--r-lg);min-height:52px;border:1px solid transparent}
+.chkrow:hover{background:var(--surface-low);border-color:var(--outline-var)}
+.chkrow.zone{border-left:4px solid var(--eco)}
+.chklabel{display:flex;align-items:center;gap:var(--sp-sm);flex:1 1 auto;cursor:pointer;min-width:0}
+.chklabel input[type=checkbox]{width:20px;height:20px;flex:0 0 auto;accent-color:var(--secondary)}
+.chktext{display:flex;flex-direction:column;min-width:0}
+.chktext .ttl{font:500 .92rem/1.3 var(--f-body);color:var(--on-surface)}
+.chkrow.done .ttl{text-decoration:line-through;opacity:.6}
+.chktext .sub{font:400 .74rem/1.3 var(--f-body);color:var(--on-surface-var)}
+.pill{font:700 .62rem/1 var(--f-display);letter-spacing:.02em;color:var(--amber);
+  background:var(--amber-container);border:1px solid var(--amber-line);padding:2px 7px;border-radius:var(--r-md);
+  margin-left:6px;white-space:nowrap;vertical-align:middle}
+.infobtn{width:28px;height:28px;flex:0 0 auto;border:0;background:none;color:var(--on-surface-var);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:99px}
+.infobtn:hover{color:var(--secondary);background:var(--surface-highest)}
+.blockerbar{display:flex;gap:var(--sp-sm);align-items:flex-start;background:var(--error-container);
+  border:1px solid var(--error);color:var(--on-error-container);border-radius:var(--r-lg);
+  padding:var(--sp-sm);margin-bottom:var(--sp-md)}
+.blockerbar .icon{color:var(--error);flex:0 0 auto;margin-top:2px}
+.blockerbar p{font-size:.84rem;line-height:1.5;margin:0 0 4px}
+.blockerbar p:last-child{margin-bottom:0}
+
+/* ================= Landeninformatie-pagina ================= */
+.landchips{display:flex;gap:8px;overflow-x:auto;padding-bottom:var(--sp-sm);margin-bottom:var(--sp-md)}
+.landchip{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--r-full);
+  border:1px solid var(--outline-var);background:var(--surface-lowest);font:600 .8rem/1 var(--f-display);
+  color:var(--on-surface-var);white-space:nowrap;cursor:pointer;flex:0 0 auto}
+.landchip:hover{border-color:var(--secondary)}
+.landchip.active{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
+
+.landhero{position:relative;border-radius:var(--r-xl);overflow:hidden;padding:var(--sp-lg) var(--sp-md) var(--sp-md);
+  background-image:linear-gradient(to top,var(--navy) 0%,rgba(var(--navy-rgb),.75) 55%,rgba(var(--navy-rgb),.15) 100%),
+    radial-gradient(var(--outline-var) 1px,transparent 1px);
+  background-size:auto,24px 24px;background-color:var(--surface-highest);color:#fff;margin-bottom:var(--sp-md)}
+.landhero .regio{display:flex;align-items:center;gap:var(--sp-sm);opacity:.85;font:600 .72rem/1 var(--f-display);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.landhero .regio .flag{width:34px;height:24px}
+.landhero h2{font:700 2rem/1.1 var(--f-display);color:#fff;margin:0 0 8px}
+.landhero p{font-size:.92rem;opacity:.9;max-width:60ch;margin:0}
+
+.landgrid{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter)}
+@media (min-width:1000px){ .landgrid{grid-template-columns:2fr 1fr} }
+.landmain,.landside{display:flex;flex-direction:column;gap:var(--sp-gutter);min-width:0}
+.landcard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-md)}
+.landcardhead{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:var(--sp-md)}
+.landcardhead .icon{color:var(--amber)}
+.landcardhead h3{margin:0;text-transform:none;letter-spacing:0;font:700 1.05rem/1.3 var(--f-display);color:var(--primary)}
+.eqgrid{display:grid;grid-template-columns:1fr;gap:var(--sp-sm)}
+@media (min-width:560px){ .eqgrid{grid-template-columns:1fr 1fr} }
+.eqcard{display:flex;gap:var(--sp-sm);padding:var(--sp-sm);border-radius:var(--r-lg);background:var(--surface-low);
+  border:1px solid var(--outline-var)}
+.eqcard .eqicon{width:36px;height:36px;border-radius:99px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;background:var(--surface-highest);color:var(--on-surface-var)}
+.eqcard.must .eqicon{background:var(--amber-container);color:var(--amber)}
+.eqcard h4{margin:0 0 3px;font:600 .85rem/1.3 var(--f-display);color:var(--primary)}
+.eqcard p{font-size:.78rem;color:var(--on-surface-var);line-height:1.4;margin:0}
+
+.milieupanel{background:var(--navy);color:#fff;border-radius:var(--r-xl)}
+.milieupanel .landcardhead h3{color:#fff}
+.milieupanel .landcardhead .icon{color:var(--eco)}
+.milieucols{display:grid;grid-template-columns:1fr;gap:var(--sp-sm)}
+@media (min-width:560px){ .milieucols{grid-template-columns:1fr 1fr} }
+.milieucol{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:var(--sp-sm)}
+.milieucol h4{margin:0 0 8px;font:600 .82rem/1 var(--f-display);color:#fff;text-transform:none;letter-spacing:0;
+  padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:8px}
+.milieucol p{font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.5;margin:0}
+
+/* De brondata is niet altijd een kaal getal — soms een hele zin met
+   uitzonderingen per regio of tijdstip (zie DE/BE). Het bord toont het eerste
+   getal uit de tekst als representatief verkeersbord; de volle tekst staat er
+   altijd naast, dus een uitzondering raakt nooit verborgen achter het bord. */
+.speedrow{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm) 0;
+  border-bottom:1px solid var(--surface-highest)}
+.speedrow:last-child{border-bottom:0}
+.speedsign{width:46px;height:46px;border-radius:50%;background:#fff;border:4px solid var(--error);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}
+.speedsign span{font:800 1.02rem/1 var(--f-mono);color:#141414;letter-spacing:-.02em}
+.speedsign.leeg{color:var(--outline)}
+.speedsign.leeg .icon{width:20px;height:20px}
+.speedtext{display:flex;flex-direction:column;gap:2px;min-width:0}
+.speedrow .slabel{font:600 .72rem/1 var(--f-display);letter-spacing:.03em;
+  text-transform:uppercase;color:var(--on-surface-var)}
+.speedrow .sval{font:500 .82rem/1.4 var(--f-body);color:var(--on-surface)}
+.speednote{margin-top:var(--sp-sm);padding:var(--sp-sm);background:var(--surface-low);
+  border-left:3px solid var(--secondary);border-radius:0 var(--r-md) var(--r-md) 0;font-size:.8rem;color:var(--on-surface-var)}
+
+.verbodenpanel{background:var(--error-container);border:1px solid var(--error);border-radius:var(--r-xl)}
+.verbodenpanel .landcardhead h3{color:var(--error)}
+.verbodenpanel .landcardhead .icon{color:var(--error)}
+.verbodlist{display:flex;flex-direction:column;gap:var(--sp-sm);list-style:none;margin:0;padding:0}
+.verbodlist li{display:flex;gap:var(--sp-sm);padding-top:var(--sp-sm);border-top:1px solid rgba(186,26,26,.18)}
+.verbodlist li:first-child{padding-top:0;border-top:0}
+.verbodlist .icon{color:var(--error);flex:0 0 auto;margin-top:2px}
+.verbodlist h4{margin:0 0 2px;font:600 .85rem/1.3 var(--f-display);color:var(--on-surface)}
+.verbodlist p{font-size:.78rem;color:var(--on-surface-var);line-height:1.4;margin:0}
+
+/* ================= Mijn Reizen-pagina ================= */
+.reizenhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:var(--sp-md);
+  margin-bottom:var(--sp-lg);padding-bottom:var(--sp-md);border-bottom:1px solid var(--surface-highest)}
+.reizenhead h2{font:700 1.6rem/1.2 var(--f-display);letter-spacing:-.01em;margin:0}
+.reizenhead p{color:var(--on-surface-var);margin-top:6px;max-width:60ch}
+
+.tripgrid{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter)}
+@media (min-width:760px){ .tripgrid{grid-template-columns:1fr 1fr} }
+@media (min-width:1200px){ .tripgrid{grid-template-columns:repeat(3,1fr)} }
+.tripcard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.tripcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+.tripbanner{height:110px;position:relative;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--navy),var(--secondary-container));color:rgba(255,255,255,.4)}
+.tripbanner .icon{width:44px;height:44px}
+.tripbadge{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.92);color:var(--navy);
+  font:600 .68rem/1 var(--f-mono);padding:5px 9px;border-radius:var(--r-md);display:flex;align-items:center;gap:5px}
+.tripbody{padding:var(--sp-md);display:flex;flex-direction:column;gap:var(--sp-sm);flex:1 1 auto}
+.triptop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.triptop h3{margin:0;font:700 1.05rem/1.3 var(--f-display);color:var(--primary)}
+.tripactions{display:flex;gap:2px;flex:0 0 auto}
+.tripactions button{width:30px;height:30px;border:0;background:none;color:var(--on-surface-var);
+  border-radius:99px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tripactions button:hover{background:var(--surface-highest);color:var(--on-surface)}
+.tripactions button.danger:hover{background:var(--error-container);color:var(--error)}
+.tripvan{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--on-surface-var)}
+.tripvan .icon{flex:0 0 auto}
+.tripvan .arrow{color:var(--outline)}
+.tripchips{display:flex;flex-wrap:wrap;gap:6px}
+.tripchip{display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-md);
+  background:var(--surface-low);border:1px solid var(--outline-var);font:600 .74rem/1 var(--f-mono);color:var(--on-surface-var)}
+.tripprogress{border-top:1px solid var(--surface-highest);padding-top:var(--sp-sm);margin-top:auto;
+  display:flex;align-items:center;gap:var(--sp-sm)}
+.progresswrap{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
+.tripprogress .prow{display:flex;align-items:center;gap:6px;justify-content:space-between;
+  font:600 .72rem/1 var(--f-display);color:var(--on-surface-var)}
+.tripprogress .prow b{font-family:var(--f-mono);color:var(--primary);font-weight:600}
+.tripgo{width:34px;height:34px;border-radius:99px;border:0;flex:0 0 auto;
+  background:var(--secondary-container);color:var(--on-secondary-container);display:flex;align-items:center;
+  justify-content:center;cursor:pointer}
+.tripgo:hover{background:var(--secondary);color:var(--on-secondary)}
+.tripwarn{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--error-container);
+  border:1px solid var(--error);border-radius:var(--r-lg);padding:8px 10px;font-size:.76rem;color:var(--on-error-container)}
+.tripwarn .l{display:flex;align-items:center;gap:6px;font-weight:600}
+.tripwarn .icon{color:var(--error)}
+
+.tripnew{grid-column:span 1;border:2px dashed var(--outline-var);border-radius:var(--r-xl);background:var(--surface-low);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:var(--sp-xl) var(--sp-md);cursor:pointer;min-height:220px;color:var(--on-surface-var)}
+.tripnew:hover{border-color:var(--secondary);background:var(--surface-c)}
+.tripnew .bubble{width:52px;height:52px;border-radius:99px;background:var(--surface-c);display:flex;
+  align-items:center;justify-content:center;color:var(--secondary);margin-bottom:var(--sp-sm)}
+.tripnew h3{margin:0 0 4px;color:var(--primary);text-transform:none;letter-spacing:0}
+.tripnew p{font-size:.82rem;max-width:26ch;margin:0 0 8px}
+.tripnew .go{color:var(--secondary);font:600 .82rem/1 var(--f-display);display:flex;align-items:center;gap:4px}
+
+/* ================= Reiservaring-pagina =================
+   Scrollytelling: een weg loopt door de kaarten heen, met een markering die
+   met het scrollen meebeweegt en haltes op "voltooid" zet zodra hij ze
+   passeert. #view-reis is hier bewust op elke breedte zélf de scrollcontainer
+   (i.p.v. pas vanaf 1024px zoals de andere .view-page's), anders werkt de
+   IntersectionObserver/scroll-koppeling niet consistent op mobiel. */
+#view-reis{overflow-y:auto;height:calc(100vh - var(--topbar-h) - 64px)}
+@media (min-width:1024px){ #view-reis{height:100vh} }
+
+.journeyhead{text-align:center;max-width:640px;margin:0 auto var(--sp-xl)}
+.journeyhead p{color:var(--on-surface-var);margin-top:8px}
+
+.journeyroad-wrap{position:relative}
+/* Zoals het voorbeeld: breed donker asfalt met een dikke halfdoorzichtige
+   rand en een animerende witte streep in het midden — geen dun lijntje. */
+.journeyroad{position:absolute;left:24px;top:0;bottom:0;width:48px;transform:translateX(-50%);
+  background:var(--asphalt);border-radius:var(--r-md);overflow:hidden;
+  border-left:4px solid var(--asphalt-border);border-right:4px solid var(--asphalt-border);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
+@media (min-width:768px){ .journeyroad{left:50%;width:64px} }
+.journeyroad::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(to bottom,#fff 50%,transparent 50%);
+  background-size:4px 40px;background-repeat:repeat-y;background-position:center 0;
+  animation:jdash 1.5s linear infinite}
+@keyframes jdash{ to{ background-position:center 40px; } }
+.journeyroad-progress{position:absolute;top:0;left:0;width:100%;height:4%;background:transparent}
+/* Zusterelement van .journeyroad, niet erin genest: .journeyroad heeft zelf
+   overflow:hidden (voor de nette afgeronde randen van het wegdek), en zou de
+   markering anders afsnijden. De positie komt daarom niet uit nesting in
+   #journey-progress, maar wordt in de scroll-tick() rechtstreeks als top:%
+   gezet, in lockstep met de hoogte van #journey-progress. De pijl (uit
+   pijl/code.html) wijst standaard omhoog; 180° gedraaid wijst hij mee met de
+   reisrichting, naar beneden de pagina in. */
+.journeymarker{position:absolute;left:24px;top:0;transform:translate(-50%,-50%) rotate(180deg);
+  z-index:6;width:34px;height:34px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
+.journeymarker svg{display:block;width:100%;height:100%}
+@media (min-width:768px){ .journeymarker{left:50%} }
+
+.journeynodes{position:relative;display:flex;flex-direction:column}
+.journeynode{position:relative;display:flex;flex-direction:column;width:100%;margin-bottom:var(--sp-xl);
+  opacity:0;transform:translateY(28px);
+  transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+.journeynode.is-visible{opacity:1;transform:translateY(0)}
+@media (min-width:768px){
+  .journeynode{flex-direction:row;align-items:flex-start}
+  .journeynode.alt{flex-direction:row-reverse}
 }
+.jnode-spacer{display:none}
+@media (min-width:768px){ .jnode-spacer{display:block;width:50%;flex:0 0 auto} }
+.jnode-icon{position:absolute;left:24px;top:0;transform:translateX(-50%);z-index:5;
+  width:44px;height:44px;border-radius:50%;background:var(--surface-lowest);
+  border:2px solid var(--outline-var);display:flex;align-items:center;justify-content:center;
+  overflow:hidden;transition:all .35s cubic-bezier(.34,1.56,.64,1)}
+@media (min-width:768px){ .jnode-icon{left:50%} }
+.journeynode.is-visible .jnode-icon{border-color:var(--secondary);
+  box-shadow:0 0 0 4px rgba(0,88,190,.15)}
+.journeynode.is-passed .jnode-icon{background:#10b981;border-color:#10b981;
+  box-shadow:0 0 0 4px rgba(16,185,129,.18)}
+.jnode-icon .flag{width:26px;height:19px}
+.jnode-icon .jcheck{display:none;color:#fff}
+.journeynode.is-passed .jnode-icon .flag{display:none}
+.journeynode.is-passed .jnode-icon .jcheck{display:block}
+.jnode-icon.dest{width:56px;height:56px;background:var(--navy);border-color:var(--surface-lowest);
+  border-width:3px;color:#fff}
+.jnode-icon.dest .icon{width:26px;height:26px}
 
-/* ---- print: terug naar zwart op wit ---- */
-@media print{
-  :root{--bg:#fff;--panel:#fff;--panel-2:#fff;--ink:#000;--ink-bright:#000;--ink-2:#000;
-    --muted:#333;--faint:#555;--accent:#000;--amber:#000;--rood:#000;--groen:#000;
-    --line:#ccc;--line-2:#bbb;
-    --must:#000;--must-bg:#fff;--must-line:#000;--ok:#000;--ok-bg:#fff;--ok-line:#888;
-    --warn:#000;--warn-bg:#fff;--warn-line:#000;--advice:#000;--advice-bg:#fff;--advice-line:#888;
-    --na:#555;--na-bg:#fff;--na-line:#ccc}
-  @page{margin:14mm}
-  body{background:#fff;color:#000;font-size:10.5pt}
-  .wrap{max-width:none;padding:0}
-  .noprint{display:none !important}
-  .printonly{display:block}
-  .card{break-inside:avoid;page-break-inside:avoid;padding:16px 0 4px}
-  h1{font-size:19pt}
-  h2{font-size:14pt}
-  h2::after{color:#666}
-  .grid{display:block}
-  .grp{border:1px solid #bbb;margin-bottom:10px;break-inside:avoid;page-break-inside:avoid}
-  .tolgrid{grid-template-columns:1fr}
-  .tolkaart,.tolnote{border:1px solid #bbb;break-inside:avoid;page-break-inside:avoid}
-  .tolrij{break-inside:avoid;page-break-inside:avoid}
-  .tolrij .code{background:#eee;border:1px solid #bbb}
-  .kalgrid{grid-template-columns:1fr}
-  .kalkaart,.kallegenda,.kalwaarschuwing{border:1px solid #bbb;break-inside:avoid;page-break-inside:avoid}
-  .kalkop .bladeren{display:none}
-  /* Achtergrondkleuren drukken niet af: de dagen krijgen hun betekenis van het label. */
-  /* De kleuren staan inline, dus ze moeten hier met !important weg: zet de lezer
-     "achtergronden afdrukken" aan, dan wordt zwart op donkerrood anders onleesbaar. */
-  .dag{border:1px solid #ddd;aspect-ratio:auto;min-height:52px;background:#fff !important}
-  .dag.leeg{border:0}
-  .dag .nr,.dag .tag{color:#000 !important}
-  .dag .tag{display:block}
-  .kallegenda i{border:1px solid #999}
-  .stats{grid-template-columns:repeat(3,1fr)}
-  .stat{border:1px solid #bbb}
-  .masthead .merk::before{background:#000}
-  details.country{break-inside:avoid;page-break-inside:avoid;border:1px solid #bbb}
-  details.country>summary{cursor:default}
-  details.country>summary .caret{display:none}
-  details.country:not([open])>.cbody{display:block}
-  .chk input[type=checkbox]{appearance:none;-webkit-appearance:none;width:12px;height:12px;
-    border:1.2px solid #000;border-radius:3px;background:#fff}
-  .chk input[type=checkbox]:checked{background:#fff}
-  .chk input[type=checkbox]:checked::after{border-color:#000;left:3px;top:0;width:4px;height:8px}
-  .chk.done .ttl{text-decoration:line-through;opacity:1}
-  /* Achtergronden drukken standaard niet af, dus vlaggen worden lege hokjes: namen terug. */
-  .chk .vlaggen{display:none}
-  .chk .printnamen{display:block}
-  .tasks li{border:1px solid #000;background:#fff}
-  .tasks .what,.tasks .mark{color:#000;background:none}
-  .price{color:#000}
-  details.profile>summary::after,.disclaimer summary::after{content:""}
-  details.profile>.pbody{display:none}
-  a{color:#000;border-bottom:0}
-  .foot a::after{content:" (" attr(href) ")";font-size:.85em;word-break:break-all;color:#555}
+.jcard-wrap{width:100%;padding-left:76px}
+@media (min-width:768px){
+  .jcard-wrap{width:50%;flex:0 0 auto;padding-left:var(--sp-lg);padding-right:0}
+  .journeynode.alt .jcard-wrap{padding-left:0;padding-right:var(--sp-lg)}
+  .journeynode.alt .jcard{text-align:right}
+  .journeynode.alt .jcardtop,.journeynode.alt .jchips,.journeynode.alt .jtol{justify-content:flex-end}
 }
+.jcard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-md);transition:transform .25s,box-shadow .25s}
+.jcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-2)}
+.jcard.dest{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
+.jcardtop{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:4px}
+.jcardtop h2{margin:0;font:700 1.1rem/1.3 var(--f-display);color:var(--primary)}
+.jcard.dest .jcardtop h2{color:inherit}
+.jbadge{font:700 .64rem/1 var(--f-display);letter-spacing:.03em;text-transform:uppercase;
+  background:var(--surface-c);color:var(--on-surface-var);padding:3px 8px;border-radius:var(--r-md)}
+.jbadge.dest{background:rgba(255,255,255,.25);color:inherit}
+.jcard p{color:var(--on-surface-var);font-size:.88rem;line-height:1.5;margin:0}
+.jcard.dest p{color:inherit;opacity:.9}
+.jsubkop{font:600 .68rem/1 var(--f-display);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--on-surface-var);margin:var(--sp-sm) 0 6px}
+.jcard.dest .jsubkop{color:inherit;opacity:.85}
+.jchips{display:flex;flex-wrap:wrap;gap:6px}
+.jchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--r-lg);
+  font:600 .78rem/1 var(--f-mono);background:var(--surface-c);color:var(--on-surface)}
+.jchip.must{background:var(--amber-container);color:var(--amber-ink);border:1px solid var(--amber-line)}
+.jtol{display:flex;align-items:center;gap:6px;margin-top:var(--sp-sm);font:600 .82rem/1 var(--f-mono);
+  color:var(--primary)}
+.jcard.dest .jtol{color:inherit}
+.jcard .btn{margin-top:var(--sp-md)}
+
+.journeyempty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--sp-sm);
+  padding:var(--sp-xl) var(--sp-md);color:var(--on-surface-var);max-width:36ch;margin:var(--sp-xl) auto}
+.journeyempty .icon{color:var(--outline)}
+.journeyempty h1{margin:0}
+
+/* ---------------- fout bij laden ---------------- */
+.loaderr{border:1px solid var(--amber-line);background:var(--amber-container);color:var(--amber-ink);
+  padding:var(--sp-md);margin:var(--sp-md);border-radius:var(--r-lg)}
+.loaderr code{background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;font-family:var(--f-mono);font-size:.85em}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-<div class="masthead">
-  <span class="merk">Grenschecklist</span>
-  <span class="route-line" id="masthead-route"></span>
-</div>
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-add" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></symbol>
+  <symbol id="i-checklist" viewBox="0 0 24 24"><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><path d="M4 6l1.2 1.2L7 5"/><path d="M4 12l1.2 1.2L7 11"/><path d="M4 18l1.2 1.2L7 17"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="3" y="13" width="18" height="5" rx="1.5"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 1 1 4.9 2.5c-.8.6-1.5 1.1-1.5 2.5"/><circle cx="12" cy="17.5" r=".6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-pin-start" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="9"/></symbol>
+  <symbol id="i-pin-end" viewBox="0 0 24 24"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.5"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M8 3v14"/><path d="M4 13l4 4 4-4"/><path d="M16 21V7"/><path d="M20 11l-4-4-4 4"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="8" rx="1"/><path d="M7 8v3"/><path d="M11 8v3"/><path d="M15 8v3"/><path d="M19 8v3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="i-payments" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="3"/><path d="M6 6V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-eco" viewBox="0 0 24 24"><path d="M5 21c8-1 14-7 15-16-9 1-15 7-16 15z"/><path d="M5 21c3-4 7-8 11-11"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 3 21 8 12 13 3 8"/><polyline points="3 13 12 18 21 13"/></symbol>
+  <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/></symbol>
+  <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6"/><path d="M8 11h6"/></symbol>
+  <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6"/></symbol>
+  <symbol id="i-account" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r=".6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-warning" viewBox="0 0 24 24"><path d="M12 3 22 20 H2 Z"/><line x1="12" y1="9" x2="12" y2="14"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="5.5" y1="18.5" x2="18.5" y2="5.5"/></symbol>
+  <symbol id="i-speed" viewBox="0 0 24 24"><path d="M4 15a8 8 0 1 1 16 0"/><line x1="12" y1="15" x2="16" y2="10"/><circle cx="12" cy="15" r="1.3" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><line x1="9.5" y1="12" x2="14.5" y2="12"/><line x1="9.5" y1="15.5" x2="14.5" y2="15.5"/></symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 1 5.4-5.4l-3 3-2-2z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1z"/></symbol>
+  <symbol id="i-plus-pin" viewBox="0 0 24 24"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z"/><line x1="12" y1="6" x2="12" y2="11"/><line x1="9.5" y1="8.5" x2="14.5" y2="8.5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><polyline points="4 12 9 17 20 6"/></symbol>
+  <symbol id="i-journey" viewBox="0 0 24 24"><path d="M4 4v16"/><path d="M4 4h11l-2 3 2 3H4"/><circle cx="18" cy="18" r="3"/></symbol>
+</svg>
 
-<header class="hero">
-  <div class="hero-text">
-    <h1>Klaar voor vertrek <em>over de grens.</em></h1>
-    <p class="sub">Wat er mee moet en wat de wet eist, wat de tol kost, en waar je auto
-    niet naar binnen mag.</p>
-  </div>
-  <div class="stats" id="stats" hidden></div>
-</header>
+<div id="loaderr" class="loaderr" hidden></div>
 
-<div id="loaderr" class="card loaderr" hidden></div>
+<div id="app">
 
-<details class="card disclaimer noprint">
-  <summary><span class="tekst"><b>Regels veranderen.</b> Controleer de officiële bron vlak voor vertrek.</span></summary>
-  <p class="body">Verkeersregels, vignetprijzen en milieuzones wijzigen doorlopend, soms midden in het jaar.
-  Deze lijst is een geheugensteun, geen juridisch advies. De bron per land staat onderaan elke landkaart.</p>
-  <ul id="general-sources"></ul>
-</details>
-
-<nav class="nav noprint" id="nav" hidden aria-label="Secties">
-  <a href="#builder" data-sec="builder">Route</a>
-  <a href="#checklist" data-sec="checklist">Checklist <span class="n" id="nav-pack" hidden></span></a>
-  <a href="#tol" data-sec="tol" id="nav-tol" hidden>Tol</a>
-  <a href="#wanneer" data-sec="wanneer" id="nav-wanneer" hidden>Wanneer</a>
-  <a href="#steden" data-sec="steden" id="nav-steden" hidden>Steden <span class="n" id="nav-zones" hidden></span></a>
-  <a href="#countries" data-sec="countries">Landen</a>
+<nav class="topbar">
+  <span class="brand">Grenschecklist</span>
+  <button type="button" class="icon-toggle" id="dark-toggle-mobiel" aria-label="Donkere modus omschakelen">
+    <svg class="icon"><use href="#i-moon"></use></svg>
+  </button>
 </nav>
 
-<section class="card noprint" id="builder">
-  <h2 data-label="01 — Route">Je route</h2>
+<nav class="bottomnav">
+  <button type="button" class="bnitem active" data-view="route"><svg class="icon"><use href="#i-map"></use></svg><span>Route</span></button>
+  <button type="button" class="bnitem" data-view="landen"><svg class="icon"><use href="#i-flag"></use></svg><span>Info</span></button>
+  <button type="button" class="bnitem" data-view="checklist"><svg class="icon"><use href="#i-checklist"></use></svg><span>Check</span></button>
+  <button type="button" class="bnitem" data-view="reizen"><svg class="icon"><use href="#i-car"></use></svg><span>Reizen</span></button>
+  <button type="button" class="bnitem" data-view="reis"><svg class="icon"><use href="#i-journey"></use></svg><span>Reis</span></button>
+</nav>
 
-  <div class="planner" id="planner" hidden>
-    <h3>Laat de landen bepalen</h3>
-    <div class="row2" style="margin-top:0">
+<aside class="sidebar">
+  <div class="brandblock">
+    <div class="brand">Grenschecklist</div>
+    <div class="tagline">Klaar voor de grens</div>
+  </div>
+  <button type="button" class="btn primary newtrip" id="btn-reset">
+    <svg class="icon sm"><use href="#i-add"></use></svg> Nieuwe rit
+  </button>
+  <nav class="sidenav">
+    <button type="button" class="navitem active" data-view="route" aria-current="page">
+      <svg class="icon"><use href="#i-map"></use></svg> Routeplanner
+    </button>
+    <button type="button" class="navitem" data-view="landen">
+      <svg class="icon"><use href="#i-flag"></use></svg> Landeninformatie
+    </button>
+    <button type="button" class="navitem" data-view="checklist">
+      <svg class="icon"><use href="#i-checklist"></use></svg> Checklist
+    </button>
+    <button type="button" class="navitem" data-view="reizen">
+      <svg class="icon"><use href="#i-car"></use></svg> Mijn reizen
+    </button>
+    <button type="button" class="navitem" data-view="reis">
+      <svg class="icon"><use href="#i-journey"></use></svg> Reiservaring
+    </button>
+  </nav>
+  <div class="sidefoot">
+    <div class="navitem" style="cursor:default">
+      <svg class="icon"><use href="#i-settings"></use></svg> Instellingen
+    </div>
+    <label class="switchrow">
+      <span>Donkere modus</span>
+      <span class="switch">
+        <input type="checkbox" id="dark-toggle">
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+      </span>
+    </label>
+    <span class="navitem disabled" aria-disabled="true">
+      <svg class="icon"><use href="#i-help"></use></svg> Help
+    </span>
+    <p class="rstat hint" id="offline-state"></p>
+  </div>
+</aside>
+
+<main class="main">
+<section class="view view-route" id="view-route">
+  <section class="panel-route">
+    <h1>Route Plan</h1>
+
+    <div class="fields" id="planner" hidden>
       <div class="field">
-        <label for="from">Van</label>
+        <label for="from"><svg class="icon sm"><use href="#i-pin-start"></use></svg>Van</label>
         <input type="search" id="from" placeholder="Vertrekplaats" autocomplete="off"
                autocapitalize="off" spellcheck="false">
         <ul class="results" id="from-res" role="listbox"></ul>
       </div>
+      <button type="button" class="swapbtn" id="btn-swap" title="Omdraaien" aria-label="Omdraaien">
+        <svg class="icon sm"><use href="#i-swap"></use></svg>
+      </button>
       <div class="field">
-        <label for="to">Naar</label>
+        <label for="to"><svg class="icon sm"><use href="#i-pin-end"></use></svg>Naar</label>
         <input type="search" id="to" placeholder="Bestemming" autocomplete="off"
                autocapitalize="off" spellcheck="false">
         <ul class="results" id="to-res" role="listbox"></ul>
       </div>
+      <button type="button" class="btn primary wide" id="btn-route">Route berekenen</button>
+      <p class="rstat" id="route-status"></p>
     </div>
-    <div class="actions" style="margin-top:10px">
-      <button class="btn primary" id="btn-route">Landen bepalen</button>
-      <button class="btn" id="btn-swap" title="Omdraaien">&#8646;</button>
-    </div>
-    <p class="rstat" id="route-status"></p>
-    <div id="route-result"></div>
-  </div>
 
-  <div id="route-list"></div>
-  <div class="picker">
-    <input type="search" id="q" placeholder="Land toevoegen — typ bv. fr, oost, spa…"
-           autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Land zoeken">
-    <ul class="results" id="results" role="listbox"></ul>
-  </div>
-  <details class="profile" id="profile">
-    <summary><span class="lbl">Je auto</span><span class="val" id="profile-sum">—</span></summary>
-    <div class="pbody">
-      <div class="row2">
-        <div class="field">
-          <label for="home">Kenteken uit</label>
-          <select id="home"></select>
+    <div class="statgrid" id="stat-cards" hidden></div>
+
+    <button type="button" class="btn primary wide" id="btn-bekijk-reis" hidden>
+      <svg class="icon sm"><use href="#i-journey"></use></svg> Bekijk je reiservaring
+    </button>
+
+    <div id="landenblok" hidden>
+      <h3>Landen op deze route</h3>
+      <div id="landenlijst"></div>
+    </div>
+
+    <div class="milieukaart" id="milieukaart" hidden></div>
+
+    <details class="profile" id="profile">
+      <summary><span class="lbl">Voertuigprofiel</span><span class="val" id="profile-sum">—</span></summary>
+      <div class="pbody">
+        <div class="row2">
+          <div class="field">
+            <label for="home">Kenteken uit</label>
+            <select id="home"></select>
+          </div>
+          <div class="field">
+            <label for="depart">Vertrekdatum</label>
+            <input type="date" id="depart">
+          </div>
         </div>
-        <div class="field">
-          <label for="depart">Vertrekdatum</label>
-          <input type="date" id="depart">
+        <div class="row2">
+          <div class="field">
+            <label for="fuel">Brandstof</label>
+            <select id="fuel">
+              <option value="petrol">Benzine</option>
+              <option value="diesel">Diesel</option>
+              <option value="ev">Elektrisch of waterstof</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="euro">Euronorm</label>
+            <select id="euro">
+              <option value="">Weet ik niet</option>
+              <option value="6">Euro 6 (vanaf ± 2015)</option>
+              <option value="5">Euro 5 (± 2011–2014)</option>
+              <option value="4">Euro 4 (± 2006–2010)</option>
+              <option value="3">Euro 3 (± 2001–2005)</option>
+              <option value="2">Euro 2 (± 1997–2000)</option>
+              <option value="1">Euro 1 of ouder</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="vtype">Voertuig</label>
+            <select id="vtype">
+              <option value="auto">Personenauto</option>
+              <option value="aanhanger">Met aanhanger of caravan</option>
+              <option value="camper">Camper</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div class="row2">
-        <div class="field">
-          <label for="fuel">Brandstof</label>
-          <select id="fuel">
-            <option value="petrol">Benzine</option>
-            <option value="diesel">Diesel</option>
-            <option value="ev">Elektrisch of waterstof</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="euro">Euronorm</label>
-          <select id="euro">
-            <option value="">Weet ik niet</option>
-            <option value="6">Euro 6 (vanaf ± 2015)</option>
-            <option value="5">Euro 5 (± 2011–2014)</option>
-            <option value="4">Euro 4 (± 2006–2010)</option>
-            <option value="3">Euro 3 (± 2001–2005)</option>
-            <option value="2">Euro 2 (± 1997–2000)</option>
-            <option value="1">Euro 1 of ouder</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="vtype">Voertuig</label>
-          <select id="vtype">
-            <option value="auto">Personenauto</option>
-            <option value="aanhanger">Met aanhanger of caravan</option>
-            <option value="camper">Camper</option>
-          </select>
-        </div>
-      </div>
-      <p class="hint">Kentekenland bepaalt wat je écht verplicht bent; brandstof en euronorm bepalen of je de
-      milieuzones in mag. Je euronorm staat op je kentekenbewijs, bij de RDW onder “emissieklasse”.</p>
-    </div>
-  </details>
+    </details>
 
-  <div class="actions" style="margin-top:14px">
-    <button class="btn" id="btn-print">Afdrukken / opslaan als pdf</button>
-    <button class="btn" id="btn-reset">Route wissen</button>
-  </div>
-  <p class="hint" id="offline-state"></p>
+    <details class="disclaimer">
+      <summary><span class="tekst"><b>Regels veranderen.</b> Controleer de officiële bron vlak voor vertrek.</span></summary>
+      <p class="body">Verkeersregels, vignetprijzen en milieuzones wijzigen doorlopend, soms midden in het jaar.
+      Deze route-informatie is een geheugensteun, geen juridisch advies.</p>
+      <ul id="general-sources"></ul>
+      <p class="colofon" id="colofon"></p>
+    </details>
+  </section>
+
+  <section class="panel-map">
+    <div class="mapwrap" id="mapwrap"></div>
+    <div class="mapctrl top">
+      <button type="button" id="map-layers" aria-label="Kaartlagen"><svg class="icon sm"><use href="#i-layers"></use></svg></button>
+      <button type="button" id="map-locate" aria-label="Centreren"><svg class="icon sm"><use href="#i-locate"></use></svg></button>
+    </div>
+    <div class="mapctrl bottom">
+      <button type="button" id="map-zoom-in" aria-label="Inzoomen"><svg class="icon sm"><use href="#i-zoom-in"></use></svg></button>
+      <button type="button" id="map-zoom-out" aria-label="Uitzoomen"><svg class="icon sm"><use href="#i-zoom-out"></use></svg></button>
+    </div>
+  </section>
 </section>
 
-<div class="printonly" id="print-head"></div>
+<section class="view view-page" id="view-landen" hidden>
+  <div class="landchips" id="land-chips"></div>
+  <div id="land-detail"></div>
+</section>
 
+<section class="view view-page" id="view-checklist" hidden>
+  <div id="checklist-wrap"></div>
+</section>
 
-<section class="card" id="checklist" hidden></section>
-<section class="card" id="tol" hidden></section>
-<section class="card" id="wanneer" hidden></section>
-<section class="card" id="steden" hidden></section>
-<section id="countries"></section>
+<section class="view view-page" id="view-reizen" hidden>
+  <div id="reizen-wrap"></div>
+</section>
 
-<div class="melddialoog noprint" id="melddialoog" hidden role="dialog" aria-modal="true"
-     aria-label="Correctie kopieren">
-  <div class="melddoos">
-    <h3>Kopieer deze melding</h3>
-    <p class="hint" style="margin-top:0">Je browser laat automatisch kopieren hier niet toe.
-    Selecteer de tekst hieronder, kopieer hem en stuur hem naar de beheerder van deze lijst.</p>
-    <textarea rows="9" readonly aria-label="Tekst van de melding"></textarea>
-    <div class="meldknoppen">
-      <button type="button" data-meldsluit>Sluiten</button>
-    </div>
-  </div>
-</div>
-
-<footer class="sub" id="colofon" style="margin-top:24px"></footer>
+<section class="view view-page" id="view-reis" hidden>
+  <div id="reis-wrap"></div>
+</section>
+</main>
 
 </div>
 
@@ -636,7 +859,20 @@ var STORE_HOME  = "grenschecklist.home.v1";
 var STORE_TICK  = "grenschecklist.ticked.v1";
 var STORE_DATA  = "grenschecklist.data.v1";
 var STORE_VEH   = "grenschecklist.vehicle.v1";
+var STORE_TRIPS  = "grenschecklist.trips.v1";
+var STORE_ACTIVE = "grenschecklist.activeTrip.v1";
+var STORE_THEME  = "grenschecklist.theme.v1";
 var STALE_DAYS  = 240;
+
+/* Meerdere ritten: TRIPS is de opgeslagen lijst, ACTIVE_TRIP_ID wijst naar welke
+   trip het huidige werkgeheugen is. De globals hieronder (ROUTE, HOME, VEH, ...)
+   blijven gewoon "het werkgeheugen van de actieve trip" — alle bestaande
+   route-/checklist-logica die op die globals leest, blijft ongewijzigd werken.
+   Alleen saveRoute()/boot() weten van het bestaan van TRIPS. */
+var TRIPS = [], ACTIVE_TRIP_ID = null;
+var VIEW = "route";
+var VIEW_ORDER = ["route", "landen", "checklist", "reizen", "reis"];
+var LANDEN_ACTIEF = null;
 
 var DATA = null, BY_CODE = {}, ROUTE = [], HOME = "", TICKED = {}, DEPART = null;
 var VEH = { fuel:"petrol", euro:null, type:"auto" };
@@ -647,6 +883,9 @@ var FROM_CACHE = false;
 var CITIES = null, BORDERS = null;
 var ZONES = null, ROUTE_ZONES = [], ROUTE_RES = null, ROUTE_TOLLS = [];
 var FROM_CITY = null, TO_CITY = null, ROUTING = false;
+var ROUTE_COORDS = null, ROUTE_DURATION = null;
+var MAP_ZOOM = 1;
+
 /* ================= externe diensten =================
    Let op: hier staat met opzet GEEN sleutelveld. Alles wat de browser meekrijgt
    is publiek, ook een sleutel die je "alleen in de JS" zet. Wil je een dienst
@@ -687,7 +926,7 @@ function proxyBeschikbaar(){
 }
 
 function dienstFout(r){
-  if(r.status === 429) throw new Error("te veel aanvragen \u2014 probeer het zo nog eens");
+  if(r.status === 429) throw new Error("te veel aanvragen — probeer het zo nog eens");
   throw new Error("HTTP " + r.status);
 }
 var SAMPLE_KM = 2;      // om de hoeveel km we de route bemonsteren
@@ -696,6 +935,30 @@ var SHORT_KM = 15;      // daaronder melden we "even aangeraakt, controleer dit"
 /* ---------------- storage helpers (never throw) ---------------- */
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+/* ---------------- donkere modus ----------------
+   Volgt het systeem (prefers-color-scheme) totdat de gebruiker de schakelaar
+   onder Instellingen zelf omzet; dan staat de keuze vast in localStorage en
+   wint hij van het systeem. Het flits-vrije scriptje bovenin <head> zet het
+   data-theme-attribuut al vóór de eerste render; dit hier houdt de twee
+   schakelaars (zijbalk + mobiele topbar) in de juiste stand. */
+function huidigThema(){
+  var t = lsGet(STORE_THEME);
+  if(t === "dark" || t === "light") return t;
+  return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+}
+function toepassenThema(){
+  var t = lsGet(STORE_THEME);
+  if(t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
+  else document.documentElement.removeAttribute("data-theme");
+  var donker = huidigThema() === "dark";
+  var toggle = document.getElementById("dark-toggle");
+  if(toggle) toggle.checked = donker;
+}
+function wisselThema(donker){
+  lsSet(STORE_THEME, donker ? "dark" : "light");
+  toepassenThema();
+}
 
 /* ---------------- loading ----------------
    countries.json is the single source of truth. Browsers block fetch() of a
@@ -723,7 +986,7 @@ function loadData(){
 function showLoadError(){
   var el = document.getElementById("loaderr");
   el.hidden = false;
-  document.getElementById("builder").hidden = true;
+  document.getElementById("app").hidden = true;
   el.innerHTML =
     '<strong>countries.json kon niet geladen worden.</strong>' +
     '<p style="margin:6px 0 0;font-size:.9rem">Je browser blokkeert het lezen van een databestand naast een pagina die je met ' +
@@ -742,6 +1005,7 @@ function showLoadError(){
         if(!d || !d.countries) throw new Error("geen countries-array");
         lsSet(STORE_DATA, JSON.stringify(d));
         el.hidden = true;
+        document.getElementById("app").hidden = false;
         boot(d);
       }catch(e){ alert("Dit bestand kon niet gelezen worden als countries.json: " + e.message); }
     };
@@ -758,7 +1022,7 @@ function meldCachekopie(){
   d.open = true;
   var w = document.createElement("p");
   w.className = "body cachewarn";
-  w.style.color = "var(--warn)";
+  w.style.color = "var(--amber)";
   w.textContent = "Let op: countries.json kon niet opgehaald worden, dus je ziet een eerder " +
     "opgeslagen kopie. Die kan verouderd zijn. Onderzoeksdatum van deze kopie: " +
     fmtDate(DATA.meta.researchDate) + ".";
@@ -830,6 +1094,9 @@ function flagHTML(c){
 }
 function countryChip(c){
   return '<span class="chip">' + flagHTML(c) + esc(c.name) + '</span>';
+}
+function iconUse(name){
+  return '<svg class="icon sm"><use href="#i-' + name + '"></use></svg>';
 }
 
 /* Aliases fold near-identical wordings from different countries onto one line in
@@ -924,9 +1191,9 @@ function geocodeViaNominatim(q){
   });
 }
 
-/* Levert altijd dezelfde vorm op: { geometry:{ coordinates:[[lon,lat],...] } }.
-   De rest van de app kent de provider niet, en dat is precies de bedoeling \u2014
-   de landanalyse draait op die co\u00f6rdinaten en verder op niets. */
+/* Levert altijd dezelfde vorm op: { geometry:{ coordinates:[[lon,lat],...] }, distance, duration }.
+   De rest van de app kent de provider niet, en dat is precies de bedoeling —
+   de landanalyse draait op die coördinaten en verder op niets. */
 function fetchRoute(a, b){
   return proxyBeschikbaar().then(function(viaProxy){
     return viaProxy ? routeViaProxy(a, b) : routeViaOsrm(a, b);
@@ -942,7 +1209,7 @@ function routeViaProxy(a, b){
   }).then(function(j){
     if(!j.coordinates || !j.coordinates.length) throw new Error(j.error || "geen route gevonden");
     DIENST_IN_GEBRUIK = j.provider || "proxy";
-    return { geometry:{ coordinates:j.coordinates }, distance:j.meters || 0 };
+    return { geometry:{ coordinates:j.coordinates }, distance:j.meters || 0, duration:j.seconds || 0 };
   });
 }
 
@@ -1099,7 +1366,8 @@ function zonesLangsRoute(coords){
   return uit;
 }
 
-/* Zelfde oordeelslogica als op landniveau, maar tegen de drempel van deze zone. */
+/* Zelfde oordeelslogica als op landniveau, maar tegen de drempel van deze zone.
+   Dormant: er is nog geen steden-pagina om dit te tonen. */
 function zoneStadVerdict(z){
   if(!z.threshold) return { level:"unknown", text:"Geen euronorm-drempel: dit is een toegangsverbod, geen emissiezone." };
   if(VEH.fuel === "ev") return { level:"ok", text:"Elektrisch — je voldoet." };
@@ -1165,17 +1433,14 @@ function tolSchatting(res){
 }
 
 /* Mag dit voertuig de strengste milieuzone van dit land in, en moet je vooraf
-   iets regelen? Levert altijd een oordeel op, ook als het "dat weet ik niet" is. */
+   iets regelen? Levert altijd een oordeel op, ook als het "dat weet ik niet" is.
+   Dormant op deze pagina: de milieuzonekaart toont nu alleen welke steden je
+   raakt, de volledige euro-norm-verdicts komen terug op de Checklist-pagina. */
 var ACTION_TEXT = {
   sticker:     "Je moet vooraf een sticker regelen.",
   registratie: "Je moet je kenteken vooraf registreren — ook als je voldoet.",
   betaling:    "Je moet per dag betalen of vooraf registreren."
 };
-/* Wélke handeling jij moet verrichten hangt van je kentekenland af. De registratie
-   voor de Belgische LEZ geldt bijvoorbeeld alleen voor buitenlandse kentekens:
-   Belgische auto's staan al in de DIV-databank. Spanje werkt andersom — daar
-   krijgt een lokaal kenteken een sticker en meldt een buitenlands kenteken zich
-   per stad aan. Levert null op als er voor jou niets te regelen valt. */
 function zoneAction(c){
   var z = c.environmentalZone || {};
   var act = z.actionRequired;
@@ -1234,14 +1499,14 @@ function verdictHTML(v){
   return '<div class="verdict v-' + v.level + '"><span class="vi">' + icon + "</span><span>" + esc(txt) + "</span></div>";
 }
 
-/* Notities die alleen gelden voor een aanhanger of camper. */
+/* Notities die alleen gelden voor een aanhanger of camper. Dormant. */
 function vehicleNotesFor(c){
   return (c.vehicleNotes || []).filter(function(n){
     return (n.applies || []).indexOf(VEH.type) !== -1;
   });
 }
 
-/* Is a dated winter period active on the departure date? */
+/* Is a dated winter period active on the departure date? Dormant. */
 function seasonActive(w){
   if(!w || !w.periodStart || !w.periodEnd || !DEPART) return null;
   var d = DEPART.slice(5);
@@ -1250,13 +1515,165 @@ function seasonActive(w){
     : (d >= w.periodStart || d <= w.periodEnd);
 }
 
+/* ---------------- ritten (meerdere opgeslagen trips) ----------------
+   Elke trip is een momentopname van het werkgeheugen: route, voertuigprofiel,
+   afvinkstatus en de routegeometrie (uitgedund, alleen voor de kaartschets en
+   om zones/tolpunten lokaal te herberekenen — geen nieuwe routeberekening nodig
+   bij het activeren van een opgeslagen trip). */
+function nieuwTripId(){ return "t" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+function legeTrip(){
+  var nu = new Date().toISOString();
+  return { id: nieuwTripId(), naam: "Nieuwe rit", createdAt: nu, updatedAt: nu,
+    route: [], home: (BY_CODE[HOME] ? HOME : "NL"), veh: { fuel:"petrol", euro:null, type:"auto" },
+    depart: null, ticked: {}, fromCity: null, toCity: null,
+    routeCoords: null, routeRes: null, routeDuration: null };
+}
+
+/* Om de zoveel punten bewaren: genoeg voor een herkenbare routeschets en om
+   zones/tolpunten opnieuw te bepalen, zonder de volle (soms 10.000+ punten
+   tellende) geometrie in localStorage te duwen. */
+function downsample(coords){
+  if(!coords || !coords.length) return null;
+  var out = [];
+  for(var i = 0; i < coords.length; i += 3) out.push(coords[i]);
+  var last = coords[coords.length - 1];
+  if(out[out.length - 1] !== last) out.push(last);
+  return out;
+}
+
+function tripIndex(id){
+  for(var i = 0; i < TRIPS.length; i++){ if(TRIPS[i].id === id) return i; }
+  return -1;
+}
+function tripById(id){ var i = tripIndex(id); return i === -1 ? null : TRIPS[i]; }
+
+/* Bouwt een tripobject uit het huidige werkgeheugen; behoudt id/createdAt en
+   een handmatig gezette naam, leidt anders de naam af uit Van/Naar. */
+function tripUitGlobals(basis){
+  var naam = basis.naam;
+  if((!naam || naam === "Nieuwe rit") && FROM_CITY && TO_CITY){
+    naam = FROM_CITY[0] + " → " + TO_CITY[0];
+  }
+  return {
+    id: basis.id, naam: naam || "Nieuwe rit",
+    createdAt: basis.createdAt, updatedAt: new Date().toISOString(),
+    route: ROUTE.slice(), home: HOME, veh: { fuel:VEH.fuel, euro:VEH.euro, type:VEH.type }, depart: DEPART,
+    ticked: TICKED, fromCity: FROM_CITY, toCity: TO_CITY,
+    routeCoords: downsample(ROUTE_COORDS), routeRes: ROUTE_RES, routeDuration: ROUTE_DURATION
+  };
+}
+
+/* Zet het werkgeheugen op de gegeven trip. Zones/tolpunten worden lokaal
+   herleid uit de opgeslagen (uitgedunde) coördinaten — geen netwerkaanroep. */
+function hydrateerVanuitTrip(trip){
+  ROUTE = (trip.route || []).filter(function(c){ return BY_CODE[c]; });
+  HOME = BY_CODE[trip.home] ? trip.home : (DATA.countries[0] && DATA.countries[0].code) || "NL";
+  VEH = { fuel: (trip.veh && trip.veh.fuel) || "petrol",
+          euro: (trip.veh && trip.veh.euro != null) ? Number(trip.veh.euro) : null,
+          type: (trip.veh && trip.veh.type) || "auto" };
+  DEPART = trip.depart || new Date().toISOString().slice(0, 10);
+  TICKED = trip.ticked || {};
+  FROM_CITY = trip.fromCity || null;
+  TO_CITY = trip.toCity || null;
+  ROUTE_COORDS = trip.routeCoords || null;
+  ROUTE_RES = trip.routeRes || null;
+  ROUTE_DURATION = trip.routeDuration || null;
+  ROUTE_ZONES = (ROUTE_COORDS && ZONES) ? zonesLangsRoute(ROUTE_COORDS) : [];
+  ROUTE_TOLLS = ROUTE_COORDS ? tolPuntenLangsRoute(ROUTE_COORDS) : [];
+}
+
+/* Ververst de losstaande formuliervelden na een trip-wissel (buiten render()
+   om, want render() bouwt alleen de huidige VIEW, niet dit formulier). */
+function verversFormulier(){
+  document.getElementById("home").value = HOME;
+  document.getElementById("depart").value = DEPART || "";
+  document.getElementById("fuel").value = VEH.fuel;
+  document.getElementById("euro").value = VEH.euro === null ? "" : String(VEH.euro);
+  document.getElementById("vtype").value = VEH.type;
+  document.getElementById("from").value = FROM_CITY ? FROM_CITY[0] : "";
+  document.getElementById("to").value = TO_CITY ? TO_CITY[0] : "";
+}
+
+function activeerTrip(id, gaNaarRoute){
+  var t = tripById(id);
+  if(!t) return;
+  ACTIVE_TRIP_ID = id;
+  lsSet(STORE_ACTIVE, id);
+
+  function klaar(){
+    hydrateerVanuitTrip(t);
+    verversFormulier();
+    plannerStatus("");
+    if(gaNaarRoute !== false) switchView("route"); else render();
+  }
+  if(t.routeCoords && !ZONES){
+    Promise.all([
+      BORDERS ? Promise.resolve() : loadJSON("borders.json").then(function(b){ BORDERS = b; }),
+      loadJSON("zones.json").then(function(z){ ZONES = z.zones || z; }).catch(function(){ ZONES = []; })
+    ]).then(klaar, klaar);
+  } else klaar();
+}
+
+function nieuweTrip(){
+  var t = legeTrip();
+  TRIPS.push(t);
+  lsSet(STORE_TRIPS, JSON.stringify(TRIPS));
+  activeerTrip(t.id, true);
+}
+
+function verwijderTrip(id){
+  var t = tripById(id);
+  if(!t) return;
+  if(!confirm('"' + t.naam + '" verwijderen? Dit kan niet ongedaan gemaakt worden.')) return;
+  TRIPS = TRIPS.filter(function(x){ return x.id !== id; });
+  lsSet(STORE_TRIPS, JSON.stringify(TRIPS));
+  if(id === ACTIVE_TRIP_ID){
+    if(!TRIPS.length) TRIPS.push(legeTrip());
+    activeerTrip(TRIPS[0].id, false);
+  }
+  renderMijnReizen();
+}
+
+function hernoemTrip(id){
+  var t = tripById(id);
+  if(!t) return;
+  var naam = prompt("Naam voor deze rit:", t.naam);
+  if(naam === null) return;
+  naam = naam.trim();
+  if(!naam) return;
+  t.naam = naam;
+  t.updatedAt = new Date().toISOString();
+  lsSet(STORE_TRIPS, JSON.stringify(TRIPS));
+  renderMijnReizen();
+}
+
+/* Laat buildGroups()/buildTasks()/checklistTelling() (die overal op de globals
+   lezen) heel even tegen een ANDERE trip draaien dan de actieve — nodig voor de
+   voortgangsbalk op elke tripkaart in Mijn Reizen, zonder die functies te
+   herschrijven om een tripobject als parameter te accepteren. */
+function metTrip(trip, fn){
+  var save = { ROUTE:ROUTE, HOME:HOME, VEH:VEH, DEPART:DEPART, TICKED:TICKED };
+  ROUTE = (trip.route || []).filter(function(c){ return BY_CODE[c]; });
+  HOME = trip.home;
+  VEH = trip.veh || { fuel:"petrol", euro:null, type:"auto" };
+  DEPART = trip.depart;
+  TICKED = trip.ticked || {};
+  var out = fn();
+  ROUTE = save.ROUTE; HOME = save.HOME; VEH = save.VEH; DEPART = save.DEPART; TICKED = save.TICKED;
+  return out;
+}
+
 /* ---------------- route state ---------------- */
 function saveRoute(){
-  lsSet(STORE_ROUTE, JSON.stringify(ROUTE));
-  lsSet(STORE_HOME, HOME);
-  lsSet(STORE_TICK, JSON.stringify(TICKED));
-  lsSet(STORE_VEH, JSON.stringify(VEH));
+  var i = tripIndex(ACTIVE_TRIP_ID);
+  if(i === -1) return;
+  TRIPS[i] = tripUitGlobals(TRIPS[i]);
+  lsSet(STORE_TRIPS, JSON.stringify(TRIPS));
 }
+/* Dormant: horen bij de handmatige routebouwer, die op deze pagina niet in
+   beeld is (hier bepaalt alleen de planner de landenlijst). Komt terug zodra
+   een routebouw-achtige pagina aan de beurt is. */
 function addCountry(code){
   if(ROUTE.indexOf(code) === -1){ ROUTE.push(code); saveRoute(); render(); }
 }
@@ -1267,41 +1684,7 @@ function moveItem(from,to){
   saveRoute(); render();
 }
 
-/* ---------------- render: route builder ---------------- */
-function renderRoute(){
-  var box = document.getElementById("route-list");
-  if(!ROUTE.length){
-    box.innerHTML = '<p class="empty">Nog geen landen gekozen. Voeg ze toe in de volgorde waarin je ze doorkruist — ook de landen waar je alleen doorheen rijdt.</p>';
-    return;
-  }
-  box.innerHTML = ROUTE.map(function(code,i){
-    var c = BY_CODE[code];
-    if(!c) return "";
-    return '<div class="route-item" draggable="true" data-i="' + i + '">' +
-      '<span class="idx">' + (i+1) + '</span>' + flagHTML(c) +
-      '<span class="nm">' + esc(c.name) + '</span>' +
-      '<button class="iconbtn" data-up="' + i + '" ' + (i===0?"disabled":"") + ' aria-label="Omhoog">&#9650;</button>' +
-      '<button class="iconbtn" data-down="' + i + '" ' + (i===ROUTE.length-1?"disabled":"") + ' aria-label="Omlaag">&#9660;</button>' +
-      '<button class="iconbtn rm" data-rm="' + i + '" aria-label="Verwijderen">&times;</button>' +
-      '</div>';
-  }).join("");
-}
-
-function renderPicker(){
-  var q = fold(document.getElementById("q").value.trim());
-  var ul = document.getElementById("results");
-  var hits = DATA.countries.filter(function(c){
-    if(ROUTE.indexOf(c.code) !== -1) return false;
-    if(!q) return false;
-    return fold(c.name).indexOf(q) !== -1 || fold(c.code).indexOf(q) === 0;
-  }).slice(0,8);
-  ul.innerHTML = hits.map(function(c){
-    return '<li role="option" data-add="' + c.code + '">' + flagHTML(c) + esc(c.name) +
-           '<span class="cnt" style="margin-left:auto">' + esc(c.code) + '</span></li>';
-  }).join("");
-}
-
-/* ---------------- render: combined checklist ---------------- */
+/* ---------------- render: combined checklist (dormant tot Checklist-pagina) ---------------- */
 function buildGroups(){
   var map = {};
   ROUTE.forEach(function(code){
@@ -1311,7 +1694,6 @@ function buildGroups(){
       var k = itemKey(it), eff = effectiveStatus(it, c);
       if(!map[k]) map[k] = { key:k, label:it.item, entries:[], rank:0 };
       var g = map[k];
-      // Keep the wording from the strictest country that actually binds you.
       var rank = eff === "must" ? 3 : (eff === "advice" ? 2 : 1);
       if(rank > g.rank){ g.rank = rank; g.label = it.item; }
       g.entries.push({ country:c, item:it, eff:eff });
@@ -1330,11 +1712,6 @@ function buildGroups(){
   return out;
 }
 
-/* Eén regel in de checklist. De groepskop draagt de betekenis (verplicht,
-   aanbevolen, niet voor jouw kenteken), dus een badge per item is overbodig. */
-/* Vlaggenrij onder een checklistregel. Fel = daar geldt het, dof = wel op je route
-   maar niet afdwingbaar. De toelichting per land staat op de landkaart, niet hier;
-   dat hield de lijst onleesbaar lang. */
 function vlaggenRij(fel, dof){
   var h = "";
   fel.forEach(function(c){
@@ -1351,7 +1728,6 @@ function chkRow(row){
   var done = !!TICKED[key];
   var fel = row.main.map(function(e){ return e.country; });
   var dof = row.other.map(function(e){ return e.country; });
-  // Op papier drukken vlaggen niet af: daar zetten we de landnamen terug.
   var namen = fel.map(function(c){ return c.name; }).join(" · ");
   if(dof.length) namen += (namen ? " · " : "") + "(" +
     dof.map(function(c){ return c.name; }).join(" · ") + ")";
@@ -1365,11 +1741,9 @@ function chkRow(row){
     "</div></div>";
 }
 
-/* Een taak uit buildTasks als checklistregel. */
 function taakRow(t){
   var key = "task:" + t.key;
   var done = !!TICKED[key];
-  // t.cs zit alleen op taken die niet al een land in hun titel noemen.
   var meer = t.cs && t.cs.length;
   var vlaggen = meer ? vlaggenRij(t.cs, []) : "";
   var namen = meer ? "Geldt in " + t.cs.map(function(c){ return c.name; }).join(", ") : "";
@@ -1382,17 +1756,15 @@ function taakRow(t){
     "</div></div>";
 }
 
-/* Losse mededeling zonder vinkje. */
 function letopRow(t){
   return '<div class="chk noti"><span class="mark">i</span>' +
     '<div class="body"><div class="ttl">' + (t.c ? esc(t.c.name) : "") + "</div>" +
     '<div class="why"><p>' + esc(t.what) + "</p></div></div></div>";
 }
 
-/* Alles wat je vóór vertrek afvinkt staat op één plek: kopen én inpakken.
-   De groepen zijn de kolommen uit het ontwerp. */
 function renderChecklist(){
   var sec = document.getElementById("checklist");
+  if(!sec) return;
   if(!ROUTE.length){ sec.hidden = true; return; }
   sec.hidden = false;
 
@@ -1411,12 +1783,8 @@ function renderChecklist(){
     { titel:"Let op",          qual:voertuigLabel(),        rows:T.notices.map(letopRow) }
   ].filter(function(g){ return g.rows.length; });
 
-  var html = '<h2 data-label="02 — Checklist">Voor je vertrekt</h2>' +
-    '<p class="legenda noprint"><span class="vb"></span> waar het geldt' +
-    '<span class="vb dim"></span> op je route, niet afdwingbaar' +
-    '<a href="#countries">Toelichting per land</a></p>';
+  var html = '<h2 data-label="02 — Checklist">Voor je vertrekt</h2>';
 
-  // Blokkades staan boven het raster: dat is geen afvinkwerk maar een probleem.
   if(T.blockers.length){
     html += '<ul class="tasks blockers">' +
       T.blockers.map(function(t){ return taskRow(t, "blocker"); }).join("") + "</ul>";
@@ -1427,22 +1795,27 @@ function renderChecklist(){
       '<span class="qual">' + esc(g.qual) + "</span></h3>" +
       g.rows.join("") + "</section>";
   }).join("") + "</div>";
-
-  if(G.na.length){
-    html += '<p class="hint" style="margin-top:26px;max-width:var(--leesbreedte)">' +
-      esc(DATA.meta.principle.text) + "</p>";
-  }
   sec.innerHTML = html;
 }
 
 function voertuigLabel(){
-  return { auto:"deze route", aanhanger:"met aanhanger", camper:"met camper" }[VEH.type] || "deze route";
+  return { auto:"deze route", aanhanger:"met aanhanger", camper:"camper" }[VEH.type] || "deze route";
 }
 
-/* Alles wat afgevinkt kan worden, voor de teller bovenaan en in de navigatie. */
+/* Universeel, niet landafhankelijk — hoort bij elke grensoverschrijdende rit,
+   dus staat los van countries.json. Vinkstatus deelt gewoon TICKED, met een
+   eigen key-prefix ("doc:") zodat het niet met landspecifieke keys botst. */
+var DOC_ITEMS = [
+  { key:"rijbewijs",   naam:"Geldig rijbewijs",                 info:"Controleer de vervaldatum voor vertrek." },
+  { key:"kenteken",    naam:"Kentekenbewijs (deel I)",           info:"Het plastic pasje of de papieren versie." },
+  { key:"groenekaart", naam:"Groene kaart / verzekeringsbewijs", info:"In sommige landen nog als fysiek document verplicht." },
+  { key:"id",          naam:"ID-kaart of paspoort",              info:"Voor iedereen in de auto, ook kinderen." }
+];
+
 function checklistTelling(){
   var G = buildGroups(), T = buildTasks();
   var totaal = 0, gedaan = 0;
+  DOC_ITEMS.forEach(function(d){ totaal++; if(TICKED["doc:" + d.key]) gedaan++; });
   G.must.concat(G.advice, G.na).forEach(function(r){
     totaal++; if(TICKED[r.g.key]) gedaan++;
   });
@@ -1451,12 +1824,7 @@ function checklistTelling(){
   });
   return { totaal:totaal, gedaan:gedaan, open:totaal - gedaan, blockers:T.blockers.length };
 }
-/* ---------------- render: takenlijst ----------------
-   Alleen wat je vóór vertrek moet dóén. Alle uitleg staat al per land verderop;
-   die hier herhalen maakte de pagina twee keer zo lang zonder iets toe te voegen. */
 
-/* Boeteomschrijvingen zijn soms een hele zin met nuance; in de takenlijst is de
-   kop ervan genoeg. De volledige tekst staat op de landkaart. */
 function kortBedrag(s){
   if(!s) return "";
   var t = String(s).split(/\s+[—-]\s+|;/)[0].trim();
@@ -1478,13 +1846,11 @@ function buildTasks(){
     var c = BY_CODE[code];
     if(!c) return;
 
-    // milieuzone: mag je erin, en moet je iets regelen?
     var z = c.environmentalZone || {}, v = zoneVerdict(c);
     if(v.level === "bad"){
       blockers.push({ c:c, what:"Je auto mag de milieuzone van " + c.name + " niet in", meta:v.text });
     } else {
       var act = zoneAction(c);
-      // De zonenaam is vaak een hele volzin; die hoort op de landkaart, niet hier.
       if(z.required && act){
         todo.push({ key:"zone:" + code, c:c,
           what:(ZONE_VERB[act] || "Regelen") + " voor " + c.name,
@@ -1492,7 +1858,6 @@ function buildTasks(){
       }
     }
 
-    // vignet
     var t = c.tollVignette || {};
     if(t.required){
       todo.push({ key:"vig:" + code, c:c,
@@ -1500,7 +1865,6 @@ function buildTasks(){
         meta:t.fineIndication ? "Boete zonder: " + kortBedrag(t.fineIndication) : "" });
     }
 
-    // winteruitrusting, alleen als het in deze periode speelt
     var w = c.winterEquipment;
     if(w && w.required && w.required !== "nee"){
       var actief = seasonActive(w);
@@ -1516,14 +1880,12 @@ function buildTasks(){
       }
     }
 
-    // apparatuur die je thuis moet laten of uitzetten
     (c.quirks || []).forEach(function(q){
       if(!/verboden/i.test(q)) return;
       if(/flitsapp|radarverklikker/i.test(q) && flits.indexOf(c) === -1) flits.push(c);
       if(/dashcam/i.test(q) && dash.indexOf(c) === -1) dash.push(c);
     });
 
-    // regels die alleen bij aanhanger of camper spelen
     vehicleNotesFor(c).forEach(function(n){
       notices.push({ c:c, what:n.text });
     });
@@ -1558,54 +1920,15 @@ function taskRow(t, kind){
     (t.meta ? '<span class="meta">' + esc(t.meta) + "</span>" : "") + "</div></li>";
 }
 
-/* Steden met een eigen zone op de route, plus de tolschatting. Alleen zinvol als
-   de routeplanner gebruikt is: bij een handmatige landenlijst weten we niet
-   langs welke steden je komt. */
+/* Dormant: hoort bij de Landeninformatie/Steden-pagina. */
 function renderSteden(){
   var sec = document.getElementById("steden");
+  if(!sec) return;
   if(!ROUTE_ZONES.length){ sec.hidden = true; return; }
-
-  var html = "";
-  if(ROUTE_ZONES.length){
-    html += "<h2 data-label=\"05 — Steden\">Steden op je route</h2>";
-    var blokkades = ROUTE_ZONES.filter(function(o){ return zoneStadVerdict(o.zone).level === "bad"; }).length;
-    html += '<p class="hint" style="margin:-6px 0 14px">' +
-      ROUTE_ZONES.length + " plaats" + (ROUTE_ZONES.length === 1 ? "" : "en") +
-      " met een eigen milieuzone of toegangsverbod" +
-      (blokkades ? ", waarvan " + blokkades + " waar je auto niet in mag" : "") +
-      ". Dit geldt als je de stad in rijdt — passeer je op de snelweg eromheen, dan meestal niet.</p>";
-
-    html += ROUTE_ZONES.map(function(o){
-      var z = o.zone, c = BY_CODE[z.cc], v = zoneStadVerdict(z);
-      var badge = z.type === "ztl" ? '<span class="badge b-warn">toegangsverbod</span>'
-                : z.type === "tolzone" ? '<span class="badge b-warn">betaalzone</span>' : "";
-      return '<details class="country"><summary>' +
-        (c ? flagHTML(c) : "") + esc(z.city) + " " + badge +
-        (v.level === "bad" ? ' <span class="badge b-must">niet toegestaan</span>' : "") +
-        '<span class="caret">&#9654;</span></summary><div class="cbody">' +
-        '<div class="sec">' + verdictHTML(v) +
-        '<p class="kv"><b>' + esc(z.name) + "</b></p>" +
-        "<p>" + esc(z.rule) + "</p>" +
-        (z.note ? '<p style="color:var(--muted)">' + esc(z.note) + "</p>" : "") +
-        (z.needsVerification ? '<p class="kv"><span class="badge b-warn">onzeker</span> Controleer dit bij de gemeente.</p>' : "") +
-        '<p class="kv" style="color:var(--muted)">Route komt tot circa ' + Math.round(o.afstandKm) +
-        " km van het centrum.</p></div>" +
-        '<div class="foot"><span>Laatst geverifieerd: ' + esc(fmtDate(z.lastVerified)) + "</span>" +
-        (z.sourceUrl ? '<a href="' + esc(z.sourceUrl) + '" target="_blank" rel="noopener">Bron</a>' : "") +
-        "</div></div></details>";
-    }).join("");
-  }
-
-  if(!html){ sec.hidden = true; return; }
   sec.hidden = false;
-  sec.innerHTML = html;
 }
 
-/* ================= tol onderweg =================
-   Eerst de bedragen die je kunt optellen, dan pas de uitleg. De linkerkaart is
-   een kasboekje: één regel per post, in de volgorde waarin je ze tegenkomt.
-   Vignetten staan er wel in maar zonder bedrag — de prijs hangt af van hoe lang
-   je blijft, en die staat alleen als lopende tekst in de bron. */
+/* ================= tol onderweg (dormant tot Checklist/Tol-pagina) ================= */
 function tolRegels(){
   var rijen = [];
   var sch = {};
@@ -1624,7 +1947,6 @@ function tolRegels(){
 
     var v = c.tollVignette || {};
     if(v.required){
-      // Naam afkappen op de eerste toelichting; de volledige tekst staat op de landkaart.
       var naam = String(v.name || "Vignet").split(/\s+[—-]\s+|,/)[0];
       rijen.push({ c:c, naam:c.name, detail:naam + " verplicht op de snelweg", zacht:"vignet" });
       had = true;
@@ -1640,8 +1962,6 @@ function tolRegels(){
     }
 
     (punten[code] || []).forEach(function(o){
-      // De eerste zin van de toelichting zegt bijna altijd meer dan een vaste
-      // formule: welke weg het is, of het vignet het dekt, wie er vrijgesteld is.
       rijen.push({ c:c, naam:o.p.name,
         detail:o.p.note ? eersteZin(o.p.note) : "apart betalen, ook met vignet",
         vast:(typeof o.p.priceEur === "number" ? o.p.priceEur : null),
@@ -1650,8 +1970,6 @@ function tolRegels(){
       had = true;
     });
 
-    // Niets gevonden is ook een antwoord, maar alleen als er een route gereden is:
-    // zonder coördinaten weten we niet welke tunnels of kilometers je raakt.
     if(!had){
       if(ROUTE_RES) rijen.push({ c:c, naam:c.name, detail:"geen tol gezien op deze route", vast:0 });
       else rijen.push({ c:c, naam:c.name, detail:"vul een route in voor de kilometerkosten",
@@ -1679,79 +1997,20 @@ function tolBedragHTML(r){
 
 function renderTol(){
   var sec = document.getElementById("tol");
+  if(!sec) return;
   var rijen = ROUTE.length ? tolRegels() : [];
   if(!rijen.length){ sec.hidden = true; sec.innerHTML = ""; return; }
   sec.hidden = false;
-
-  var totaal = tolTotaalRetour();
-  var html = '<h2 data-label="03 — Tol">Tol onderweg</h2><div class="tolgrid">';
-
-  html += '<div class="tolkaart">' + rijen.map(function(r){
-    return '<div class="tolrij"><div class="code">' + esc(r.c.code) + "</div>" +
-      '<div><div class="naam">' + esc(r.naam) + "</div>" +
-      '<div class="detail">' + esc(r.detail) + "</div></div>" +
-      tolBedragHTML(r) + "</div>";
-  }).join("");
-  html += '<div class="toltotaal"><div class="lbl">Totaal retour</div><div class="val">' +
-    (totaal
-      ? '<span class="cur">&euro;</span>' + totaal.bedrag.toLocaleString("nl-NL") +
-        (totaal.zeker ? "" : " <small>of meer</small>")
-      : "—") +
-    "</div></div></div>";
-
-  // ---- rechterkolom: alleen kaarten waarvoor we echt tekst hebben ----
-  html += '<div class="tolzij">';
-
-  var vignetten = ROUTE.map(function(code){ return BY_CODE[code]; })
-    .filter(function(c){ return c && (c.tollVignette || {}).required && c.tollVignette.howToGet; });
-  if(vignetten.length){
-    html += '<div class="tolnote"><div class="k">Vooraf kopen</div>' +
-      vignetten.map(function(c){
-        return "<p><b>" + esc(c.name) + ".</b> " + esc(eersteZin(c.tollVignette.howToGet)) + "</p>";
-      }).join("") + "</div>";
-  }
-
-  var omwegen = ROUTE.map(function(code){ return BY_CODE[code]; })
-    .filter(function(c){ return c && c.tollRoads && c.tollRoads.note; });
-  if(omwegen.length){
-    html += '<div class="tolnote"><div class="k">Goedkoper rijden</div>' +
-      omwegen.map(function(c){
-        return "<p><b>" + esc(c.name) + ".</b> " + esc(c.tollRoads.note) + "</p>";
-      }).join("") + "</div>";
-  }
-
-  var treinen = ROUTE_TOLLS.filter(function(o){ return o.p.optional; });
-  if(treinen.length){
-    html += '<div class="tolnote"><div class="k">Autotreinen</div>' +
-      '<p>Geen tol maar een alternatief, vooral als de bergpassen dicht zijn.</p>' +
-      treinen.map(function(o){
-        return "<p><b>" + esc(o.p.name) + ".</b> " + esc(o.p.price) + "</p>";
-      }).join("") + "</div>";
-  }
-
-  html += '<div class="tolfijn">Een tilde betekent dat het tarief niet geverifieerd is. ' +
-    "Bedragen zijn enkele reis; het totaal is heen en terug. " +
-    "Bereiken per kilometer lopen van ongeveer de helft tolweg tot alles tolweg — reken op de " +
-    "bovenkant als je de snelste route rijdt, en die bovenkant staat ook in het totaal. " +
-    "Vignetten en brandstof zitten er niet in.</div>";
-
-  html += "</div></div>";
-  sec.innerHTML = html;
 }
 
-/* Eerste zin van een lange toelichting; de rest staat op de landkaart. */
 function eersteZin(t){
   var m = String(t).match(/^[^.]+\./);
   return m ? m[0] : String(t);
 }
 
-/* ================= wanneer rijden =================
-   Twee bronnen van waarheid, in die volgorde: een gepubliceerde prognose voor een
-   concrete datum wint altijd van een regel. De regels vullen de rest van het jaar,
-   zodat de kalender ook werkt voor een maand waarvoor niemand iets publiceerde —
-   maar dan staat er ook bij dat het een afleiding is. */
+/* ================= wanneer rijden (dormant tot Kalender-pagina) ================= */
 var DRUKTE = null;
-var KAL_MAAND = null;   // eerste van de getoonde maand
+var KAL_MAAND = null;
 
 function drukteVoor(iso){
   if(!DRUKTE) return null;
@@ -1763,7 +2022,6 @@ function drukteVoor(iso){
   var uit = null;
   (DRUKTE.regels || []).forEach(function(r){
     if(r.weekdagen.indexOf(wd) === -1) return;
-    // Een periode mag over de jaarwisseling lopen.
     var binnen = r.van <= r.tot ? (mmdd >= r.van && mmdd <= r.tot)
                                 : (mmdd >= r.van || mmdd <= r.tot);
     if(binnen) uit = { niveau:r.niveau, tekst:r.tekst, bron:null, hard:false };
@@ -1775,85 +2033,11 @@ var DRUKTE_RANG = { rustig:0, matig:1, druk:2, zeerdruk:3, zwart:4 };
 
 function renderKalender(){
   var sec = document.getElementById("wanneer");
+  if(!sec) return;
   if(!ROUTE.length || !DRUKTE){ sec.hidden = true; sec.innerHTML = ""; return; }
   sec.hidden = false;
-
-  if(!KAL_MAAND) KAL_MAAND = (DEPART || new Date().toISOString().slice(0,10)).slice(0,7) + "-01";
-  var eerste = new Date(KAL_MAAND + "T12:00:00");
-  var jaar = eerste.getFullYear(), maand = eerste.getMonth();
-  var dagenInMaand = new Date(jaar, maand + 1, 0).getDate();
-  // Maandag als eerste kolom: getDay() geeft zondag = 0.
-  var offset = (eerste.getDay() + 6) % 7;
-
-  var html = '<h2 data-label="04 — Wanneer">Wanneer rijden</h2><div class="kalgrid">';
-
-  html += '<div class="kalkaart"><div class="kalkop">' +
-    '<div class="maand">' + esc(MAANDEN[maand] + " " + jaar) + "</div>" +
-    '<div class="richting">' + esc(kalRichting()) + "</div>" +
-    '<div class="bladeren noprint">' +
-      '<button type="button" data-maand="-1" aria-label="Vorige maand">&lsaquo;</button>' +
-      '<button type="button" data-maand="1" aria-label="Volgende maand">&rsaquo;</button>' +
-    "</div></div>";
-
-  html += '<div class="kalraster">' +
-    ["ma","di","wo","do","vr","za","zo"].map(function(w){
-      return '<div class="wd">' + w + "</div>";
-    }).join("");
-
-  var i;
-  for(i = 0; i < offset; i++) html += '<div class="dag leeg"></div>';
-
-  var ergste = null;
-  for(i = 1; i <= dagenInMaand; i++){
-    var iso = jaar + "-" + pad2(maand + 1) + "-" + pad2(i);
-    var d = drukteVoor(iso);
-    var niv = (d && d.niveau) || "rustig";
-    var st = (DRUKTE.niveaus || {})[niv] || {};
-    if(d && d.hard && (!ergste || DRUKTE_RANG[niv] > DRUKTE_RANG[ergste.niveau])){
-      ergste = { niveau:niv, iso:iso, tekst:d.tekst, bron:d.bron };
-    }
-    html += '<div class="dag' + (iso === DEPART ? " vertrek" : "") +
-      '" style="background:' + esc(st.kleur || "transparent") + '" title="' +
-      esc(fmtDate(iso) + " — " + (st.label || "Rustig")) + '">' +
-      '<span class="nr" style="color:' + esc(st.ink || "var(--muted)") + '">' + i + "</span>" +
-      '<span class="tag" style="color:' + esc(st.ink || "var(--muted)") + '">' +
-        esc(st.tag || "") + "</span></div>";
-  }
-  html += "</div></div>";
-
-  // ---- rechterkolom ----
-  html += '<div class="kalzij"><div class="kallegenda"><div class="k">Drukte</div><ul>' +
-    ["rustig","matig","druk","zeerdruk","zwart"].map(function(k){
-      var st = (DRUKTE.niveaus || {})[k] || {};
-      return "<li><i style=\"background:" + esc(st.legenda || st.kleur || "#333") + "\"></i>" +
-        esc(st.label || k) + "</li>";
-    }).join("") + "</ul></div>";
-
-  // Alleen waarschuwen over de dag die er in deze maand echt uitspringt.
-  if(ergste && DRUKTE_RANG[ergste.niveau] >= 3){
-    var st2 = (DRUKTE.niveaus || {})[ergste.niveau] || {};
-    html += '<div class="kalwaarschuwing"><div class="k">' + esc(st2.label || "Let op") + "</div>" +
-      "<p><b>" + esc(fmtDate(ergste.iso)) + ".</b> " + esc(ergste.tekst || "") + "</p></div>";
-  }
-
-  // En apart over jouw eigen vertrekdag, als die in beeld staat.
-  var eigen = DEPART && DEPART.slice(0,7) === KAL_MAAND.slice(0,7) ? drukteVoor(DEPART) : null;
-  if(eigen && DRUKTE_RANG[eigen.niveau] >= 2 && (!ergste || ergste.iso !== DEPART)){
-    html += '<div class="tolnote"><div class="k">Jouw vertrekdag</div><p>' +
-      esc(eigen.tekst || "") + "</p></div>";
-  }
-
-  var m = DRUKTE.meta || {};
-  html += '<div class="tolfijn">' + esc(m.disclaimer || "") + " " + esc(m.scope || "") +
-    (m.lastVerified ? " Laatst geverifieerd: " + esc(fmtDate(m.lastVerified)) + "." : "") +
-    "</div>";
-
-  html += "</div></div>";
-  sec.innerHTML = html;
 }
 
-/* Ligt de bestemming zuidelijker dan het vertrekpunt? Dan gaat de vertrekgolf
-   dezelfde kant op als jij, en is de heenreis de kolom die telt. */
 function kalRichting(){
   if(!ROUTE_RES || ROUTE_RES.zuidwaarts === null || ROUTE_RES.zuidwaarts === undefined){
     return "vertrekrichting";
@@ -1876,7 +2060,8 @@ function renderProfile(){
   if(DEPART) bits.push("vertrek " + fmtDate(DEPART));
   el.textContent = bits.join(" · ");
 }
-/* ---------------- render: country cards ---------------- */
+
+/* ---------------- render: country cards (dormant tot Landeninformatie-pagina) ---------------- */
 function eqBadge(it, c){
   var eff = effectiveStatus(it, c);
   if(eff === "must")   return '<span class="badge b-must">verplicht — boete mogelijk</span>';
@@ -1884,20 +2069,14 @@ function eqBadge(it, c){
   return '<span class="badge b-na">alleen voor ' + esc(c.name) + 's kenteken</span>';
 }
 
-/* De kop van een melding: land, datum en de bron die de app zelf gebruikt. Zo
-   hoeft de melder niets op te zoeken en weet de ontvanger waar het over gaat. */
 function correctionTekst(c){
-  return "Grenschecklist \u2014 correctie " + c.name + " (" + c.code + ")\n" +
+  return "Grenschecklist — correctie " + c.name + " (" + c.code + ")\n" +
     "Laatst geverifieerd in de app: " + (c.lastVerified || "onbekend") + "\n" +
-    "Bron in de app: " + (c.sourceUrl || "\u2014") + "\n\n" +
+    "Bron in de app: " + (c.sourceUrl || "—") + "\n\n" +
     "Wat klopt er niet:\n\n\n" +
     "Bron waaruit dat blijkt:\n";
 }
 
-/* Twee routes, en geen van beide zet een adres in de data. Staat er een
-   formulier-URL in meta, dan gaat de knop daarheen. Zo niet, dan kopieert hij de
-   melding naar het klembord en verstuurt de melder hem zelf, via welk kanaal ook.
-   Geen account nodig, en niets voor scrapers om te oogsten. */
 function correctionLinks(c){
   var m = DATA.meta || {};
   if(m.correctionFormUrl){
@@ -1909,8 +2088,6 @@ function correctionLinks(c){
   return '<a href="#" data-melden="' + esc(c.code) + '">Klopt dit niet? Kopieer een melding</a>';
 }
 
-/* De klembord-API vereist https of localhost; via file:// bestaat hij niet.
-   Daarom altijd een tweede weg: een tekstvak waaruit je zelf kunt kopieren. */
 function kopieerMelding(code, link){
   var c = BY_CODE[code];
   if(!c) return;
@@ -1919,7 +2096,7 @@ function kopieerMelding(code, link){
   function gelukt(){
     var oud = link.getAttribute("data-oud") || link.textContent;
     link.setAttribute("data-oud", oud);
-    link.textContent = "Gekopieerd \u2014 plak het in een mail of bericht";
+    link.textContent = "Gekopieerd — plak het in een mail of bericht";
     setTimeout(function(){ link.textContent = oud; }, 4000);
   }
 
@@ -1932,6 +2109,7 @@ function kopieerMelding(code, link){
 
 function toonMelding(tekst){
   var dlg = document.getElementById("melddialoog");
+  if(!dlg) return;
   var ta = dlg.querySelector("textarea");
   ta.value = tekst;
   dlg.hidden = false;
@@ -1944,130 +2122,13 @@ function speedRow(lbl, val){
 }
 
 function countryCard(c, i){
-  var flags = [];
-  if(c.tollVignette && c.tollVignette.required) flags.push('<span class="badge b-warn">vignet</span>');
-  if(c.environmentalZone && c.environmentalZone.required) flags.push('<span class="badge b-warn">milieuzone</span>');
-
-  var h = '<details class="country"><summary>' +
-    '<span class="idx" style="width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--accent);font-size:.75rem;display:grid;place-items:center">' + (i+1) + '</span>' +
-    flagHTML(c) + esc(c.name) + " " + flags.join(" ") +
-    '<span class="caret">&#9654;</span></summary><div class="cbody">';
-
-  // environmental zone
-  var z = c.environmentalZone || {};
-  h += '<div class="sec"><h4>Milieuzone</h4>';
-  h += verdictHTML(zoneVerdict(c));
-  if(z.required){
-    h += '<p class="kv"><b>' + esc(z.name || "Vereist") + '</b></p>';
-    if(z.howToGet) h += "<p>" + esc(z.howToGet) + "</p>";
-    if(z.note) h += '<p style="color:var(--muted)">' + esc(z.note) + "</p>";
-    if(z.fineIndication) h += '<p class="kv"><b>Boete:</b> ' + esc(z.fineIndication) + "</p>";
-  } else {
-    h += "<p>" + esc(z.note || "Geen milieuzone.") + "</p>";
-  }
-  var et = z.emissionThreshold;
-  if(et && et.note) h += '<p style="color:var(--muted)">' + esc(et.note) + "</p>";
-  if(et && et.needsVerification) h += '<p class="kv"><span class="badge b-warn">onzeker</span> Deze drempel is in beweging — controleer hem bij de bron.</p>';
-  if(z.needsVerification) h += '<p class="kv"><span class="badge b-warn">onzeker</span> ' + esc(z.verificationNote || "Niet hard bevestigd — check de bron.") + "</p>";
-  h += "</div>";
-
-  // regels die alleen bij het gekozen voertuigtype spelen
-  var vnotes = vehicleNotesFor(c);
-  if(vnotes.length){
-    h += '<div class="sec"><h4>' + (VEH.type === "camper" ? "Met een camper" : "Met aanhanger") + "</h4><ul class='plain'>" +
-      vnotes.map(function(n){ return "<li>" + esc(n.text) + "</li>"; }).join("") + "</ul></div>";
-  }
-
-  // toll / vignette
-  var t = c.tollVignette || {};
-  h += '<div class="sec"><h4>Tol en vignet</h4>';
-  if(t.required){
-    h += '<p class="kv"><b>' + esc(t.name || "Vignet verplicht") + '</b></p>';
-    if(t.howToGet) h += "<p>" + esc(t.howToGet) + "</p>";
-    if(t.note) h += '<p style="color:var(--muted)">' + esc(t.note) + "</p>";
-    if(t.fineIndication) h += '<p class="kv"><b>Boete:</b> ' + esc(t.fineIndication) + "</p>";
-  } else {
-    h += "<p>" + esc(t.note || "Geen vignet vereist.") + "</p>";
-  }
-  if(t.needsVerification) h += '<p class="kv"><span class="badge b-warn">onzeker</span> ' + esc(t.verificationNote || "Check het actuele tarief bij de bron.") + "</p>";
-  h += "</div>";
-
-  // equipment
-  h += '<div class="sec"><h4>Uitrusting</h4><ul class="eq">';
-  (c.mandatoryEquipment||[]).forEach(function(it){
-    h += "<li><div class='hd'><b>" + esc(it.item) + "</b> " + eqBadge(it, c) +
-         (it.needsVerification ? ' <span class="badge b-warn">onzeker</span>' : "") + "</div>" +
-         (it.note ? '<div style="color:var(--muted);margin-top:3px">' + esc(it.note) + "</div>" : "") + "</li>";
-  });
-  h += "</ul></div>";
-
-  // winter
-  var w = c.winterEquipment || {};
-  h += '<div class="sec"><h4>Winteruitrusting</h4>';
-  h += '<p class="kv"><b>Verplicht:</b> ' + esc(w.required || "onbekend") + "</p>";
-  if(w.period) h += '<p class="kv"><b>Periode:</b> ' + esc(w.period) + "</p>";
-  if(w.note) h += '<p style="color:var(--muted)">' + esc(w.note) + "</p>";
-  h += "</div>";
-
-  // speed
-  var s = c.speedLimits || {}, n = s.normal || {}, wt = s.wet || {};
-  h += '<div class="sec"><h4>Snelheid</h4>';
-  h += speedRow("Snelweg", n.motorway) + speedRow("Autoweg", n.expressway) +
-       speedRow("Buiten de bebouwde kom", n.rural) + speedRow("Bebouwde kom", n.builtUp);
-  if(wt.motorway || wt.expressway || wt.rural){
-    h += '<p class="kv" style="margin-top:6px"><b>Bij regen:</b> ' +
-      [wt.motorway && "snelweg " + wt.motorway, wt.expressway && "autoweg " + wt.expressway,
-       wt.rural && "buiten de kom " + wt.rural].filter(Boolean).map(esc).join(", ") + "</p>";
-  } else if(wt.note){
-    h += '<p class="kv"><b>Bij regen:</b> ' + esc(wt.note) + "</p>";
-  }
-  if(s.notes) h += '<p style="color:var(--muted)">' + esc(s.notes) + "</p>";
-  h += "</div>";
-
-  // quirks
-  if((c.quirks||[]).length){
-    h += '<div class="sec"><h4>Let op</h4><ul class="plain">' +
-      c.quirks.map(function(q){ return "<li>" + esc(q) + "</li>"; }).join("") + "</ul></div>";
-  }
-
-  // footer: verified date + sources + correction
-  var age = daysSince(c.lastVerified);
-  var stale = age !== null && age > STALE_DAYS;
-  h += '<div class="foot"><span' + (stale ? ' class="stale"' : "") + '>Laatst geverifieerd: ' +
-       esc(fmtDate(c.lastVerified)) + (stale ? " — verouderd, dubbelcheck de bron" : "") + "</span>";
-  (c.sources && c.sources.length ? c.sources : [{ label:"Bron", url:c.sourceUrl }]).forEach(function(s2){
-    if(s2 && s2.url) h += '<a href="' + esc(s2.url) + '" target="_blank" rel="noopener">' + esc(s2.label || s2.url) + "</a>";
-  });
-  var cl = correctionLinks(c);
-  if(cl) h += '<span class="noprint">' + cl + "</span>";
-  h += "</div></div></details>";
-  return h;
+  return "";
 }
 
 function renderCountries(){
   var box = document.getElementById("countries");
-  if(!ROUTE.length){ box.innerHTML = ""; return; }
-  box.innerHTML = '<h2 data-label="06 — Per land">Per land</h2>' +
-    ROUTE.map(function(code,i){
-      var c = BY_CODE[code];
-      return c ? countryCard(c,i) : "";
-    }).join("");
-}
-
-function renderPrintHead(){
-  var el = document.getElementById("print-head");
-  if(!ROUTE.length){ el.innerHTML = ""; return; }
-  var names = ROUTE.map(function(c){ return BY_CODE[c] ? BY_CODE[c].name : c; }).join(" → ");
-  var home = BY_CODE[HOME] ? BY_CODE[HOME].name : HOME;
-  var fuelName = { petrol:"benzine", diesel:"diesel", ev:"elektrisch" }[VEH.fuel] || VEH.fuel;
-  var typeName = { auto:"personenauto", aanhanger:"met aanhanger", camper:"camper" }[VEH.type] || VEH.type;
-  el.innerHTML = "<h2>" + esc(names) + "</h2>" +
-    '<p style="font-size:.9rem;color:#444">Kenteken: ' + esc(home) +
-    " &middot; " + esc(typeName) + ", " + esc(fuelName) +
-    (VEH.euro !== null ? " Euro " + VEH.euro : "") +
-    (DEPART ? " &middot; vertrek " + esc(fmtDate(DEPART)) : "") +
-    " &middot; afgedrukt " + esc(fmtDate(new Date().toISOString().slice(0,10))) +
-    "<br>Regels wijzigen doorlopend — controleer de officiële bron vlak voor vertrek.</p>";
+  if(!box) return;
+  box.innerHTML = "";
 }
 
 /* ================= routeplanner: UI ================= */
@@ -2165,55 +2226,6 @@ function wireCityField(inputId, listId, onPick){
   return input;
 }
 
-function renderRouteResult(res, route){
-  var box = document.getElementById("route-result");
-  if(!res){ box.innerHTML = ""; return; }
-
-  var known = [], unknown = [], short = [];
-  res.order.forEach(function(code){
-    var km = res.km[code];
-    if(BY_CODE[code]) known.push(code); else unknown.push(code);
-    if(km < SHORT_KM) short.push(code);
-  });
-
-  function naam(code){
-    return (BY_CODE[code] && BY_CODE[code].name) || (BORDERS[code] && BORDERS[code].n) || code;
-  }
-
-  var uur = Math.floor(route.duration / 3600);
-  var min = Math.round((route.duration % 3600) / 60);
-  var html = "<div class='rsum'><b>" + Math.round(route.distance / 1000) + " km</b> · circa " +
-    uur + " u " + min + " min rijden<div class='rchips'>" +
-    res.order.map(function(code){
-      var c = BY_CODE[code];
-      var km = Math.round(res.km[code]);
-      return '<span class="chip">' + (c ? flagHTML(c) : "") + esc(naam(code)) +
-             '<span class="cnt">' + km + " km</span></span>";
-    }).join("") + "</div>";
-
-  var warns = [];
-  if(unknown.length){
-    warns.push("Deze landen staan nog niet in de checklist: <b>" +
-      unknown.map(function(c){ return esc(naam(c)); }).join(", ") +
-      "</b>. Ze zijn niet aan je route toegevoegd.");
-  }
-  if(short.length){
-    warns.push("Je raakt " + short.map(function(c){
-      return "<b>" + esc(naam(c)) + "</b> (" + Math.round(res.km[c]) + " km)";
-    }).join(" en ") + " maar kort aan. Dat kan kloppen — een vignet is dan vaak alsnog verplicht — " +
-      "maar controleer het even, want vlak langs een grens is de detectie het minst zeker.");
-  }
-  if(res.unknownKm > 20){
-    warns.push(Math.round(res.unknownKm) + " km van de route viel buiten alle landsgrenzen. " +
-      "Meestal is dat een veerboot of een stuk kustweg.");
-  }
-  if(warns.length){
-    html += "<div class='rwarn'><ul><li>" + warns.join("</li><li>") + "</li></ul></div>";
-  }
-  html += "</div>";
-  box.innerHTML = html;
-}
-
 function doRoute(){
   if(ROUTING) return;
   if(!FROM_CITY || !TO_CITY){
@@ -2241,40 +2253,34 @@ function doRoute(){
     ROUTE_RES = res;
     ROUTE_ZONES = zonesLangsRoute(route.geometry.coordinates);
     ROUTE_TOLLS = tolPuntenLangsRoute(route.geometry.coordinates);
+    ROUTE_COORDS = route.geometry.coordinates;
+    ROUTE_DURATION = route.duration || null;
     saveRoute();
     render();
-    renderRouteResult(res, route);
-    plannerStatus("Klaar — de landen hieronder zijn ingevuld. Je kunt ze nog aanpassen." +
-      dienstNotitie());
+    plannerStatus("Klaar — de landen hieronder zijn ingevuld." + dienstNotitie());
   }).catch(function(err){
     var m = String(err && err.message || err);
-    plannerStatus("Route bepalen lukte niet (" + m + "). Voeg de landen hieronder handmatig toe.", true);
+    plannerStatus("Route bepalen lukte niet (" + m + "). Controleer de plaatsnamen en probeer het opnieuw.", true);
   }).then(function(){
     ROUTING = false;
     document.getElementById("btn-route").disabled = false;
   });
 }
 
-/* Sticky navigatie: alleen zinvol zodra er een route is, met tellers voor wat er
-   nog openstaat. De actieve sectie wordt bij het scrollen bijgewerkt. */
-/* Het paneel bovenaan: afstand, tol heen en terug, en hoeveel je al ingepakt hebt.
-   Afstand en tol kennen we alleen als de routeplanner gebruikt is; bij een
-   handmatige landenlijst tonen we een streepje in plaats van een verzonnen getal. */
+/* ---------------- render: tolsamenvatting (bovenkant, retour) ---------------- */
 function tolTotaalRetour(){
   if(!ROUTE_RES) return null;
   var enkel = 0, zeker = true;
 
   tolSchatting(ROUTE_RES).forEach(function(t){
-    enkel += t.hoog;                       // bovenkant: hele route over tolwegen
+    enkel += t.hoog;
     if(t.onzeker) zeker = false;
   });
   ROUTE_TOLLS.forEach(function(o){
-    if(o.p.optional) return;               // autotreinen zijn een keuze, geen kost
+    if(o.p.optional) return;
     if(typeof o.p.priceEur === "number") enkel += o.p.priceEur;
-    else zeker = false;                    // tarief onbekend: totaal is onvolledig
+    else zeker = false;
   });
-  // Vignetprijzen hangen af van hoe lang je blijft en staan alleen als lopende tekst
-  // in de bron. Ze tellen dus niet mee — maar je betaalt ze wel.
   ROUTE.forEach(function(code){
     var c = BY_CODE[code];
     if(c && (c.tollVignette || {}).required) zeker = false;
@@ -2284,215 +2290,577 @@ function tolTotaalRetour(){
   return { bedrag: Math.round(enkel * 2), zeker: zeker };
 }
 
-function renderStats(){
-  var el = document.getElementById("stats");
-  if(!el) return;
-  if(!ROUTE.length){ el.hidden = true; el.innerHTML = ""; return; }
+function fmtDuur(sec){
+  if(!sec) return null;
+  var uur = Math.floor(sec / 3600), min = Math.round((sec % 3600) / 60);
+  if(min === 60){ uur++; min = 0; }
+  return uur + "u " + (min < 10 ? "0" : "") + min + "m";
+}
+
+function renderDashboardStats(){
+  var el = document.getElementById("stat-cards");
+  var reisBtn = document.getElementById("btn-bekijk-reis");
+  if(!ROUTE_RES){ el.hidden = true; el.innerHTML = ""; reisBtn.hidden = true; return; }
   el.hidden = false;
+  reisBtn.hidden = false;
 
-  function cel(label, waarde, extraClass){
-    return '<div class="stat' + (extraClass ? " " + extraClass : "") + '">' +
-      '<span class="lbl">' + esc(label) + "</span>" +
-      '<span class="val">' + waarde + "</span></div>";
-  }
-
-  // afstand
-  var afstand = ROUTE_RES
-    ? Math.round(ROUTE_RES.total).toLocaleString("nl-NL") + ' <small>km</small>'
-    : '<i>—</i>';
-
-  // tol
+  var afstand = Math.round(ROUTE_RES.total).toLocaleString("nl-NL");
+  var duur = fmtDuur(ROUTE_DURATION);
   var tol = tolTotaalRetour();
   var tolWaarde = tol
-    ? '<span class="cur">&euro;</span> ' + tol.bedrag.toLocaleString("nl-NL") +
-      (tol.zeker ? "" : ' <small>of meer</small>')
-    : '<i>—</i>';
-
-  // ingepakt
-  var t = checklistTelling();
-  var totaalItems = t.totaal;
-  var gedaan = t.gedaan;
+    ? '&euro;' + euroTekst(tol.bedrag) + (tol.zeker ? "" : ' <small>of meer</small>')
+    : "—";
 
   el.innerHTML =
-    cel("Afstand", afstand) +
-    cel("Tol retour", tolWaarde, "money") +
-    cel("Inpakken", gedaan + ' <i>/</i> ' + totaalItems);
+    '<div class="statcard"><span class="slbl">' + iconUse("ruler") + 'Afstand</span>' +
+      '<span class="sval">' + afstand + ' <small>km</small></span></div>' +
+    '<div class="statcard"><span class="slbl">' + iconUse("clock") + 'Reistijd</span>' +
+      '<span class="sval">' + (duur || "—") + '</span></div>' +
+    '<div class="statcard wide"><span class="slbl">' + iconUse("payments") + 'Verwachte tol</span>' +
+      '<span class="sval">' + tolWaarde + '</span></div>';
 }
 
-/* De regel rechtsboven, in de stijl van een roadbook: NL → FR · AUG 2026 */
-function renderMasthead(){
-  var el = document.getElementById("masthead-route");
-  if(!el) return;
-  if(!ROUTE.length){ el.textContent = ""; return; }
-  var maanden = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
-  var datum = "";
-  if(DEPART){
-    var p = DEPART.split("-");
-    datum = " · " + maanden[Number(p[1]) - 1] + " " + p[0];
-  }
-  el.textContent = ROUTE.join(" → ") + datum;
+function renderLandenLijst(){
+  var wrap = document.getElementById("landenblok");
+  var box = document.getElementById("landenlijst");
+  if(!ROUTE.length){ wrap.hidden = true; box.innerHTML = ""; return; }
+  wrap.hidden = false;
+  box.innerHTML = ROUTE.map(function(code){
+    var c = BY_CODE[code];
+    if(!c) return "";
+    return '<div class="landrow" data-land="' + esc(code) + '" role="button" tabindex="0">' + flagHTML(c) +
+      '<span class="landnaam">' + esc(c.name) + '</span>' +
+      iconUse("chevron-right") + '</div>';
+  }).join("");
 }
 
-function renderNav(){
-  var nav = document.getElementById("nav");
-  if(!ROUTE.length){ nav.hidden = true; return; }
-  nav.hidden = false;
-
-  var t = checklistTelling();
-
-  function teller(id, n){
-    var el = document.getElementById(id);
-    if(!el) return;
-    el.textContent = n;
-    el.hidden = n === 0;
-  }
-  teller("nav-pack", t.open + t.blockers);
-
-  // De steden-sectie bestaat alleen als de routeplanner gebruikt is.
-  var tolLink = document.getElementById("nav-tol");
-  if(tolLink) tolLink.hidden = document.getElementById("tol").hidden;
-
-  var wanneerLink = document.getElementById("nav-wanneer");
-  if(wanneerLink) wanneerLink.hidden = document.getElementById("wanneer").hidden;
-
-  var stedenLink = document.getElementById("nav-steden");
-  var stedenSec = document.getElementById("steden");
-  stedenLink.hidden = stedenSec.hidden;
-  var geblokkeerd = ROUTE_ZONES.filter(function(o){ return zoneStadVerdict(o.zone).level === "bad"; }).length;
-  teller("nav-zones", geblokkeerd);
+function renderMilieuzones(){
+  var el = document.getElementById("milieukaart");
+  if(!ROUTE_ZONES.length){ el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  var namen = ROUTE_ZONES.slice(0, 8).map(function(o){ return esc(o.zone.city); });
+  el.innerHTML =
+    '<div class="milieuhead">' + iconUse("eco") +
+      '<div><h3>Milieuzones gedetecteerd</h3>' +
+      '<p>Let op: voor deze steden heb je mogelijk een vignet of milieusticker nodig.</p></div></div>' +
+    '<div class="milieuchips">' + namen.map(function(n){ return '<span class="mchip">' + n + "</span>"; }).join("") + "</div>";
 }
 
-function markNavActive(){
-  var nav = document.getElementById("nav");
-  if(nav.hidden) return;
-  // Ruimer dan de navbalk zelf: een sectie die op zijn scroll-margin (62px) landt,
-  // moet ook echt als de actieve sectie tellen.
-  var grens = nav.getBoundingClientRect().bottom + 20;
-  var links = nav.querySelectorAll("a[data-sec]"), actief = links[0];
-  for(var i = 0; i < links.length; i++){
-    var sec = document.getElementById(links[i].getAttribute("data-sec"));
-    if(sec && !sec.hidden && sec.getBoundingClientRect().top <= grens) actief = links[i];
+/* ================= Checklist-pagina =================
+   Hergebruikt buildGroups()/buildTasks()/checklistTelling() ongewijzigd —
+   alleen de render-laag is nieuw (bento-kaarten i.p.v. de oude 6-koloms grid). */
+function bentoRow(key, titel, sub, badge, extraClass){
+  var done = !!TICKED[key];
+  return '<div class="chkrow' + (done ? " done" : "") + (extraClass ? " " + extraClass : "") + '">' +
+    '<label class="chklabel">' +
+      '<input type="checkbox" data-tick="' + esc(key) + '"' + (done ? " checked" : "") + '>' +
+      '<span class="chktext"><span class="ttl">' + esc(titel) + (badge || "") + '</span>' +
+        (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + '</span>' +
+    '</label>' +
+    (sub ? '<button type="button" class="infobtn" title="' + esc(sub) + '">' + iconUse("info") + '</button>' : "") +
+  '</div>';
+}
+
+function renderChecklistPagina(){
+  var wrap = document.getElementById("checklist-wrap");
+  if(!wrap) return;
+  var G = buildGroups(), T = buildTasks(), tel = checklistTelling();
+  var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
+
+  var docRows = DOC_ITEMS.map(function(d){ return bentoRow("doc:" + d.key, d.naam, d.info); }).join("");
+
+  var autoRows = G.must.map(function(row){
+    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "", '<span class="pill">Verplicht</span>');
+  }).concat(G.advice.map(function(row){
+    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "");
+  })).join("");
+
+  var landRows = T.todo.map(function(t){
+    var isZone = /^zone:/.test(t.key);
+    return bentoRow("task:" + t.key, t.what, t.meta || "", isZone ? '<span class="pill">Verplicht</span>' : "", isZone ? "zone" : "");
+  }).join("");
+
+  var blokHtml = T.blockers.length
+    ? '<div class="blockerbar">' + iconUse("block") + '<div>' +
+      T.blockers.map(function(t){ return "<p><b>" + esc(t.c.name) + ".</b> " + esc(t.what) + "</p>"; }).join("") +
+      "</div></div>"
+    : "";
+
+  wrap.innerHTML =
+    "<h1>Jouw Reis Checklist</h1>" +
+    '<div class="progresscard"><div class="prow"><span class="plbl">Voortgang</span>' +
+      '<span class="pval">' + pct + '% gereed</span></div>' +
+      '<div class="progressbar"><i style="width:' + pct + '%"></i></div></div>' +
+    blokHtml +
+    '<div class="bento">' +
+      '<div class="bentocard"><div class="bentohead"><div class="bentobubble">' + iconUse("doc") + '</div>' +
+        "<h2>Documenten</h2></div>" + docRows + "</div>" +
+      '<div class="bentocard"><div class="bentohead"><div class="bentobubble">' + iconUse("tool") + '</div>' +
+        "<h2>Auto Uitrusting</h2></div>" +
+        (autoRows || '<p class="hint">Plan eerst een route voor de verplichte uitrusting per land.</p>') + "</div>" +
+      '<div class="bentocard wide"><div class="bentohead"><div class="bentobubble">' + iconUse("globe") + '</div>' +
+        "<h2>Land-specifiek</h2></div>" +
+        (landRows || '<p class="hint">Geen extra acties gevonden voor je route.</p>') + "</div>" +
+    "</div>";
+}
+
+/* ================= Landeninformatie-pagina =================
+   Doorbladerbaar voor elk land in countries.json (niet alleen de route),
+   met dezelfde databronnen als de dormant countryCard()/renderCountries(). */
+
+/* Zelf gehoste bannerfoto's per land, zodat de app offline blijft werken.
+   Nog niet elk land heeft er een; ontbreekt de foto, dan valt de banner terug
+   op het navy verloop van hiervoor. */
+var LAND_PHOTOS = {
+  NL: "images/Landbanner/Nederland.png"
+};
+function landChipsHTML(){
+  var route = ROUTE.slice();
+  var overig = DATA.countries.map(function(c){ return c.code; })
+    .filter(function(c){ return route.indexOf(c) === -1; })
+    .sort(function(a, b){ return BY_CODE[a].name.localeCompare(BY_CODE[b].name); });
+  return route.concat(overig).map(function(code){
+    var c = BY_CODE[code];
+    if(!c) return "";
+    return '<button type="button" class="landchip' + (code === LANDEN_ACTIEF ? " active" : "") + '" data-land="' + esc(code) + '">' +
+      flagHTML(c) + esc(c.name) + "</button>";
+  }).join("");
+}
+
+function landDetailHTML(c){
+  var eqCards = (c.mandatoryEquipment || []).map(function(it){
+    var must = effectiveStatus(it, c) === "must";
+    return '<div class="eqcard' + (must ? " must" : "") + '">' +
+      '<div class="eqicon">' + iconUse(must ? "warning" : "info") + "</div>" +
+      "<div><h4>" + esc(it.item) + (must ? ' <span class="pill">Verplicht</span>' : "") + "</h4>" +
+      "<p>" + esc(it.note || "") + "</p></div></div>";
+  }).join("") || '<p class="hint">Geen verplichte uitrusting geregistreerd.</p>';
+
+  var z = c.environmentalZone || {}, tv = c.tollVignette || {}, tr = c.tollRoads || {};
+  var milieuTxt = z.required ? (z.note || z.name || "Vereist — controleer de voorwaarden.")
+                              : (z.note || "Geen milieuzone in dit land.");
+  var tolTxt = tv.required ? (tv.note || tv.name || "Vignet verplicht.")
+             : (tr.perKm ? "Tolwegen: circa €" + tr.perKm.toFixed(2).replace(".", ",") + " per km." + (tr.note ? " " + tr.note : "")
+             : "Geen vignet- of tolweginfo geregistreerd.");
+
+  var s = c.speedLimits || {}, n = s.normal || {}, wt = s.wet || {};
+  function speedRij(label, val){
+    if(!val) return "";
+    var getal = String(val).match(/\d+/);
+    var bord = getal
+      ? '<div class="speedsign"><span>' + esc(getal[0]) + "</span></div>"
+      : '<div class="speedsign leeg">' + iconUse("speed") + "</div>";
+    return '<div class="speedrow">' + bord +
+      '<div class="speedtext"><span class="slabel">' + esc(label) + '</span>' +
+      '<span class="sval">' + esc(val) + "</span></div></div>";
   }
-  // Onderaan de pagina kan de laatste sectie de bovenkant niet meer halen; dan is
-  // "je bent bij het laatste blok" het eerlijke antwoord.
-  if(window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2){
-    for(var k = links.length - 1; k >= 0; k--){
-      var laatste = document.getElementById(links[k].getAttribute("data-sec"));
-      if(laatste && !laatste.hidden){ actief = links[k]; break; }
+  var speedRows = speedRij("Snelweg", n.motorway) + speedRij("Autoweg", n.expressway) +
+    speedRij("Buiten de kom", n.rural) + speedRij("Bebouwde kom", n.builtUp);
+  var wetTxt = (wt.motorway || wt.expressway || wt.rural)
+    ? [wt.motorway && ("snelweg " + wt.motorway), wt.expressway && ("autoweg " + wt.expressway), wt.rural && ("buiten de kom " + wt.rural)]
+        .filter(Boolean).join(", ")
+    : (wt.note || "");
+
+  var verboden = (c.quirks || []).filter(function(q){ return /verboden/i.test(q); });
+  var verbodItems = verboden.length
+    ? verboden.map(function(q){ return "<li>" + iconUse("block") + "<div><h4>Let op</h4><p>" + esc(q) + "</p></div></li>"; }).join("")
+    : "<li>" + iconUse("info") + "<div><h4>Niets geregistreerd</h4><p>Voor dit land staan geen specifieke verboden in de data.</p></div></li>";
+
+  var foto = LAND_PHOTOS[c.code];
+  var heroStyle = foto ? ' style="background-image:linear-gradient(to top,var(--navy) 0%,rgba(var(--navy-rgb),.75) 55%,rgba(var(--navy-rgb),.15) 100%),url(' + foto + ');background-size:auto,cover;background-position:center,center 35%"' : '';
+
+  return (
+    '<div class="landhero"' + heroStyle + '><div class="regio">' + flagHTML(c) + "<span>Europa</span></div>" +
+      "<h2>" + esc(c.name) + "</h2><p>Reisregels, verplichtingen en belangrijke informatie voor deze doorreis.</p></div>" +
+    '<div class="landgrid"><div class="landmain">' +
+      '<div class="landcard"><div class="landcardhead">' + iconUse("warning") + "<h3>Verplicht in de auto</h3></div>" +
+      '<div class="eqgrid">' + eqCards + "</div></div>" +
+      '<div class="landcard milieupanel"><div class="landcardhead">' + iconUse("eco") + "<h3>Milieuzones &amp; tol</h3></div>" +
+      '<div class="milieucols">' +
+        '<div class="milieucol"><h4>' + iconUse("eco") + "Milieuzone</h4><p>" + esc(milieuTxt) + "</p></div>" +
+        '<div class="milieucol"><h4>' + iconUse("payments") + "Tol</h4><p>" + esc(tolTxt) + "</p></div>" +
+      "</div></div>" +
+    '</div><div class="landside">' +
+      '<div class="landcard"><div class="landcardhead">' + iconUse("speed") + "<h3>Maximumsnelheden</h3></div>" +
+      (speedRows || '<p class="hint">Geen snelheidslimieten geregistreerd.</p>') +
+      (wetTxt ? '<div class="speednote"><b>Let op (regen):</b> ' + esc(wetTxt) + "</div>" : "") +
+      "</div>" +
+      '<div class="landcard verbodenpanel"><div class="landcardhead">' + iconUse("block") + "<h3>Strikt verboden</h3></div>" +
+      '<ul class="verbodlist">' + verbodItems + "</ul></div>" +
+    "</div></div>"
+  );
+}
+
+function renderLandenInfo(){
+  var chips = document.getElementById("land-chips");
+  var detail = document.getElementById("land-detail");
+  if(!chips || !detail) return;
+  if(!LANDEN_ACTIEF || !BY_CODE[LANDEN_ACTIEF]){
+    LANDEN_ACTIEF = ROUTE.length ? ROUTE[0] : (DATA.countries[0] && DATA.countries[0].code);
+  }
+  chips.innerHTML = landChipsHTML();
+  var c = BY_CODE[LANDEN_ACTIEF];
+  detail.innerHTML = c ? landDetailHTML(c) : '<p class="hint">Geen landen beschikbaar.</p>';
+}
+
+/* ================= Mijn Reizen-pagina ================= */
+function tripStatChips(trip){
+  var chips = ['<span class="tripchip">' + iconUse("globe") + (trip.route ? trip.route.length : 0) + " landen</span>"];
+  if(trip.routeRes) chips.push('<span class="tripchip">' + iconUse("ruler") + Math.round(trip.routeRes.total).toLocaleString("nl-NL") + " km</span>");
+  var duur = fmtDuur(trip.routeDuration);
+  if(duur) chips.push('<span class="tripchip">' + iconUse("clock") + duur + "</span>");
+  return chips.join("");
+}
+
+function tripKaartHTML(trip){
+  var van = trip.fromCity ? trip.fromCity[0] : null;
+  var naar = trip.toCity ? trip.toCity[0] : null;
+  var tel = metTrip(trip, checklistTelling);
+  var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
+  var actief = trip.id === ACTIVE_TRIP_ID;
+  var blockerNote = tel.blockers
+    ? '<div class="tripwarn"><span class="l">' + iconUse("warning") + " Blokkade op route</span>" +
+      "<span>Checklist: " + tel.gedaan + "/" + tel.totaal + "</span></div>"
+    : "";
+
+  return (
+    '<article class="tripcard" data-trip="' + esc(trip.id) + '">' +
+    '<div class="tripbanner">' + (actief ? '<span class="tripbadge">' + iconUse("locate") + " actief</span>" : "") +
+      iconUse("map").replace('class="icon sm"', 'class="icon"') + "</div>" +
+    '<div class="tripbody">' +
+      '<div class="triptop"><h3>' + esc(trip.naam) + "</h3>" +
+        '<div class="tripactions">' +
+          '<button type="button" data-actie="hernoem" aria-label="Naam wijzigen" title="Naam wijzigen">' + iconUse("edit") + "</button>" +
+          '<button type="button" data-actie="verwijder" class="danger" aria-label="Verwijderen" title="Verwijderen">' + iconUse("trash") + "</button>" +
+        "</div></div>" +
+      (van && naar
+        ? '<div class="tripvan">' + iconUse("map") + esc(van) + '<span class="arrow">→</span>' + esc(naar) + "</div>"
+        : '<div class="tripvan">Nog geen route ingevuld</div>') +
+      '<div class="tripchips">' + tripStatChips(trip) + "</div>" +
+      blockerNote +
+      '<div class="tripprogress"><div class="progresswrap">' +
+        '<div class="prow"><span>' + iconUse("checklist") + " Checklist</span><b>" + tel.gedaan + "/" + tel.totaal + "</b></div>" +
+        '<div class="progressbar"><i style="width:' + pct + '%"></i></div></div>' +
+        '<button type="button" class="tripgo" data-actie="open" aria-label="Openen">' + iconUse("arrow-right") + "</button></div>" +
+    "</div></article>"
+  );
+}
+
+function renderMijnReizen(){
+  var wrap = document.getElementById("reizen-wrap");
+  if(!wrap) return;
+  var kaarten = TRIPS.map(function(t){ return tripKaartHTML(t); }).join("");
+  wrap.innerHTML =
+    '<div class="reizenhead"><div><h2>Mijn Reizen</h2>' +
+      "<p>Beheer opgeslagen routes en controleer je voorbereidingen voor komende reizen.</p></div>" +
+      '<button type="button" class="btn primary" id="btn-nieuwe-reis">' + iconUse("plus-pin") + " Nieuwe reis plannen</button>" +
+    "</div>" +
+    '<div class="tripgrid">' + kaarten +
+      '<div class="tripnew" id="btn-tripnew"><div class="bubble">' + iconUse("plus-pin") + "</div>" +
+      "<h3>Plan een nieuwe reis</h3><p>Vind de veiligste route, bereken tolkosten en check lokale regelgeving.</p>" +
+      '<span class="go">Start routeplanner ' + iconUse("arrow-right") + "</span></div>" +
+    "</div>";
+}
+
+/* ================= Reiservaring-pagina =================
+   Scrollytelling-weergave van de actieve rit: één halte per land op de route,
+   met de echte verplichte/aanbevolen uitrusting en tolinfo — dezelfde
+   databronnen als de Checklist- en Landeninformatie-pagina, alleen visueel
+   verteld als een reis in plaats van een lijst. */
+/* Exact de pijl uit pijl/code.html — eigen vaste kleuren (net als het
+   verkeersbord), dus niet via de gedeelde .icon-sprite (die zet fill:none/
+   stroke:currentColor, wat deze eigen fill/stroke zou overschrijven). */
+var JOURNEY_PIJL_SVG = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">' +
+  '<path d="M32 4L12 56L32 46L52 56L32 4Z" fill="#3b82f6" stroke="#1d4ed8" stroke-width="3" stroke-linejoin="round"/></svg>';
+
+function jTolBits(code, c){
+  var bits = [];
+  if((c.tollVignette || {}).required) bits.push("Vignet vereist");
+  var sch = tolSchatting(ROUTE_RES).filter(function(t){ return t.c.code === code; })[0];
+  if(sch) bits.push("Tol circa €" + euroTekst(sch.hoog));
+  var punten = ROUTE_TOLLS.filter(function(o){ return o.c.code === code && !o.p.optional; })
+    .map(function(o){ return o.p.name; });
+  if(punten.length) bits.push(punten.slice(0, 2).join(", "));
+  return bits;
+}
+
+function reisNodeHTML(code, idx, eerste, laatste){
+  var c = BY_CODE[code];
+  if(!c) return "";
+  var must = (c.mandatoryEquipment || []).filter(function(it){ return effectiveStatus(it, c) === "must"; });
+  var advice = (c.mandatoryEquipment || []).filter(function(it){ return effectiveStatus(it, c) === "advice"; });
+  var tolBits = jTolBits(code, c);
+
+  var badge = eerste ? '<span class="jbadge">Start</span>'
+            : laatste ? '<span class="jbadge dest">Bestemming</span>' : "";
+  var tekst = eerste ? "Je reis begint hier. Goede reis en rijd voorzichtig!"
+            : laatste ? "Je hebt je bestemming bereikt. Check de checklist nog één keer voor vertrek." : "";
+
+  return '<div class="journeynode' + (idx % 2 ? " alt" : "") + '" data-idx="' + idx + '">' +
+    '<div class="jnode-spacer"></div>' +
+    '<div class="jnode-icon' + (laatste ? " dest" : "") + '">' +
+      flagHTML(c) + '<span class="jcheck">' + iconUse("check") + "</span></div>" +
+    '<div class="jcard-wrap"><div class="jcard' + (laatste ? " dest" : "") + '">' +
+      '<div class="jcardtop"><h2>' + esc(c.name) + "</h2>" + badge + "</div>" +
+      (tekst ? "<p>" + esc(tekst) + "</p>" : "") +
+      (must.length
+        ? '<div class="jsubkop">Verplicht</div><div class="jchips">' +
+          must.map(function(it){ return '<span class="jchip must">' + esc(it.item) + "</span>"; }).join("") + "</div>"
+        : "") +
+      (advice.length
+        ? '<div class="jsubkop">Aanbevolen</div><div class="jchips">' +
+          advice.map(function(it){ return '<span class="jchip">' + esc(it.item) + "</span>"; }).join("") + "</div>"
+        : "") +
+      (tolBits.length ? '<div class="jtol">' + iconUse("payments") + esc(tolBits.join(" · ")) + "</div>" : "") +
+      (laatste ? '<button type="button" class="btn primary wide" id="btn-reis-checklist">' + iconUse("checklist") + " Bekijk checklist</button>" : "") +
+    "</div></div></div>";
+}
+
+function renderReisErvaring(){
+  var wrap = document.getElementById("reis-wrap");
+  if(!wrap) return;
+  if(!ROUTE.length){
+    wrap.innerHTML =
+      '<div class="journeyempty">' + iconUse("journey").replace('class="icon sm"', 'class="icon lg"') +
+      "<h1>Nog geen reis gepland</h1>" +
+      "<p>Bereken eerst een route op de Routeplanner-pagina, dan verschijnt hier je reisbeleving.</p>" +
+      '<button type="button" class="btn primary" id="btn-reis-naar-planner">Naar Routeplanner</button></div>';
+    return;
+  }
+
+  var nodes = ROUTE.map(function(code, i){ return reisNodeHTML(code, i, i === 0, i === ROUTE.length - 1); }).join("");
+  wrap.innerHTML =
+    '<div class="journeyhead"><h1>Reis Route Ervaring</h1>' +
+    "<p>Scroll naar beneden om je reis te ervaren en de verplichtingen per land te ontdekken.</p></div>" +
+    '<div class="journeyroad-wrap">' +
+      '<div class="journeyroad"><div class="journeyroad-progress" id="journey-progress"></div></div>' +
+      '<div class="journeymarker" id="journey-marker">' + JOURNEY_PIJL_SVG + "</div>" +
+      '<div class="journeynodes">' + nodes + "</div>" +
+    "</div>";
+  initJourneyScroll();
+}
+
+/* Scroll-gekoppelde animatie: een marker beweegt mee met de scrollpositie en
+   zet haltes op "voltooid" (groen, vinkje) zodra hij ze passeert. Draait
+   alleen terwijl deze pagina zichtbaar is — switchView() stopt 'm bij het
+   wegnavigeren, en elke render() hier start 'm schoon opnieuw op. */
+var JOURNEY_RAF = null;
+var JOURNEY_SCROLL_EL = null, JOURNEY_SCROLL_HANDLER = null;
+function stopJourneyScroll(){
+  if(JOURNEY_RAF){ cancelAnimationFrame(JOURNEY_RAF); JOURNEY_RAF = null; }
+  if(JOURNEY_SCROLL_EL && JOURNEY_SCROLL_HANDLER) JOURNEY_SCROLL_EL.removeEventListener("scroll", JOURNEY_SCROLL_HANDLER);
+  JOURNEY_SCROLL_EL = null; JOURNEY_SCROLL_HANDLER = null;
+}
+
+function initJourneyScroll(){
+  stopJourneyScroll();
+  var scroller = document.getElementById("view-reis");
+  var nodes = document.querySelectorAll("#reis-wrap .journeynode");
+  var progress = document.getElementById("journey-progress");
+  var marker = document.getElementById("journey-marker");
+  if(!scroller || !nodes.length || !marker) return;
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting) entry.target.classList.add("is-visible");
+    });
+  }, { root: scroller, rootMargin: "0px 0px -15% 0px", threshold: 0.2 });
+  for(var i = 0; i < nodes.length; i++) observer.observe(nodes[i]);
+
+  var target = 0, current = 0;
+
+  function checkPassed(){
+    var markerRect = marker.getBoundingClientRect();
+    var markerY = markerRect.top + markerRect.height / 2;
+    for(var j = 0; j < nodes.length; j++){
+      var icon = nodes[j].querySelector(".jnode-icon");
+      var iconRect = icon.getBoundingClientRect();
+      var iconY = iconRect.top + iconRect.height / 2;
+      nodes[j].classList.toggle("is-passed", markerY >= iconY);
     }
   }
 
-  for(var j = 0; j < links.length; j++) links[j].classList.toggle("on", links[j] === actief);
+  function tick(){
+    current += (target - current) * 0.08;
+    var pct = Math.min(current + 4, 100);
+    progress.style.height = pct + "%";
+    marker.style.top = pct + "%";
+    checkPassed();
+    JOURNEY_RAF = requestAnimationFrame(tick);
+  }
+
+  function onScroll(){
+    var max = scroller.scrollHeight - scroller.clientHeight;
+    target = max > 0 ? (scroller.scrollTop / max) * 100 : 0;
+  }
+
+  JOURNEY_SCROLL_EL = scroller;
+  JOURNEY_SCROLL_HANDLER = onScroll;
+  scroller.addEventListener("scroll", onScroll);
+  onScroll();
+  JOURNEY_RAF = requestAnimationFrame(tick);
 }
 
+/* ---------------- render: routeschets (SVG, offline — geen kaarttegels) ---------------- */
+var MAP_VB_W = 1000, MAP_VB_H = 700, MAP_PAD = 60;
+
+function projecteerRoute(coords){
+  var minLon=Infinity,maxLon=-Infinity,minLat=Infinity,maxLat=-Infinity;
+  for(var i=0;i<coords.length;i++){
+    var lon=coords[i][0], lat=coords[i][1];
+    if(lon<minLon) minLon=lon; if(lon>maxLon) maxLon=lon;
+    if(lat<minLat) minLat=lat; if(lat>maxLat) maxLat=lat;
+  }
+  var cosLat = Math.max(0.2, Math.cos((minLat+maxLat)/2 * Math.PI/180));
+  var dataW = Math.max(1e-6,(maxLon-minLon)*cosLat), dataH = Math.max(1e-6,(maxLat-minLat));
+  var W = MAP_VB_W - MAP_PAD*2, H = MAP_VB_H - MAP_PAD*2;
+  var scale = Math.min(W/dataW, H/dataH);
+  var offX = MAP_PAD + (W - dataW*scale)/2;
+  var offY = MAP_PAD + (H - dataH*scale)/2;
+  return function(lon, lat){
+    return [offX + (lon-minLon)*cosLat*scale, offY + (maxLat-lat)*scale];
+  };
+}
+
+function renderRouteSchets(coords){
+  var host = document.getElementById("mapwrap");
+  if(!coords || !coords.length){
+    host.innerHTML = '<div class="mapempty">' + iconUse("map").replace('class="icon sm"','class="icon lg"') +
+      '<p>Vul een van en naar in om de route te zien.</p></div>';
+    return;
+  }
+  var proj = projecteerRoute(coords);
+  var step = Math.max(1, Math.floor(coords.length / 600));
+  var pts = [];
+  for(var i=0;i<coords.length;i+=step) pts.push(proj(coords[i][0], coords[i][1]));
+  pts.push(proj(coords[coords.length-1][0], coords[coords.length-1][1]));
+
+  var d = pts.map(function(p,i){ return (i===0?"M":"L") + p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" ");
+  var start = proj(coords[0][0], coords[0][1]);
+  var end = proj(coords[coords.length-1][0], coords[coords.length-1][1]);
+
+  host.innerHTML =
+    '<svg id="routesvg" viewBox="0 0 ' + MAP_VB_W + ' ' + MAP_VB_H + '" preserveAspectRatio="xMidYMid meet" style="transform:scale(' + MAP_ZOOM + ')">' +
+      '<path d="' + d + '" class="routeline-glow"></path>' +
+      '<path d="' + d + '" class="routeline"></path>' +
+      '<circle cx="' + start[0] + '" cy="' + start[1] + '" r="7" class="pt-start"></circle>' +
+      '<circle cx="' + end[0] + '" cy="' + end[1] + '" r="8" class="pt-end"></circle>' +
+    '</svg>';
+}
+
+function applyMapZoom(){
+  var svg = document.getElementById("routesvg");
+  if(svg) svg.style.transform = "scale(" + MAP_ZOOM + ")";
+}
+
+/* ---------------- orkestratie ----------------
+   Bouwt alleen de zichtbare VIEW opnieuw op — de andere secties staan toch
+   achter [hidden], dus dat werk zou verspild zijn. switchView() roept dit aan
+   na het omschakelen; alle state-mutaties (checkbox, profielveld, nieuwe route)
+   roepen dit ook gewoon aan zoals voorheen. */
 function render(){
-  renderRoute();
-  renderPicker();
   renderProfile();
-  renderSteden();
-  renderChecklist();
-  renderTol();
-  renderKalender();
-  renderCountries();
-  renderPrintHead();
-  renderMasthead();
-  renderStats();
-  renderNav();
-  markNavActive();
+  if(VIEW === "route"){
+    renderDashboardStats();
+    renderLandenLijst();
+    renderMilieuzones();
+    renderRouteSchets(ROUTE_COORDS);
+  } else if(VIEW === "landen"){
+    renderLandenInfo();
+  } else if(VIEW === "checklist"){
+    renderChecklistPagina();
+  } else if(VIEW === "reizen"){
+    renderMijnReizen();
+  } else if(VIEW === "reis"){
+    renderReisErvaring();
+  }
+}
+
+/* ---------------- view-switching ---------------- */
+function switchView(naam, geenHash){
+  if(VIEW_ORDER.indexOf(naam) === -1) naam = "route";
+  stopJourneyScroll(); // alleen actief terwijl VIEW==="reis"; render() start 'm zo nodig weer op
+  VIEW = naam;
+  VIEW_ORDER.forEach(function(v){
+    var sec = document.getElementById("view-" + v);
+    if(sec) sec.hidden = (v !== naam);
+  });
+  var knoppen = document.querySelectorAll("[data-view]");
+  for(var i = 0; i < knoppen.length; i++){
+    knoppen[i].classList.toggle("active", knoppen[i].getAttribute("data-view") === naam);
+  }
+  if(!geenHash && location.hash !== "#" + naam) location.hash = naam;
+  window.scrollTo(0, 0);
+  render();
 }
 
 /* ---------------- events ---------------- */
 function wire(){
-  // De landkaarten worden telkens opnieuw opgebouwd; luisteren op het document
-  // scheelt het opnieuw koppelen van elke meldknop.
+  document.getElementById("btn-reset").addEventListener("click", nieuweTrip);
+
+  document.getElementById("dark-toggle").addEventListener("change", function(e){
+    wisselThema(e.target.checked);
+  });
+  document.getElementById("dark-toggle-mobiel").addEventListener("click", function(){
+    wisselThema(huidigThema() !== "dark");
+  });
+
+  // Sidebar- en onderbalk-navigatie delen dezelfde data-view-knoppen.
   document.addEventListener("click", function(e){
-    var link = e.target.closest("a[data-melden]");
-    if(link){
-      e.preventDefault();
-      kopieerMelding(link.getAttribute("data-melden"), link);
-      return;
-    }
-    if(e.target.closest("[data-meldsluit]") || e.target.id === "melddialoog"){
-      document.getElementById("melddialoog").hidden = true;
-    }
+    var b = e.target.closest("[data-view]");
+    if(b){ switchView(b.getAttribute("data-view")); return; }
   });
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape") document.getElementById("melddialoog").hidden = true;
+  window.addEventListener("hashchange", function(){
+    var v = (location.hash || "").replace("#", "");
+    if(v && v !== VIEW) switchView(v, true);
   });
 
-  // De kalender wordt telkens opnieuw opgebouwd, dus luisteren we op de sectie zelf.
-  document.getElementById("wanneer").addEventListener("click", function(e){
-    var b = e.target.closest("button[data-maand]");
-    if(!b) return;
-    var d = new Date(KAL_MAAND + "T12:00:00");
-    d.setMonth(d.getMonth() + Number(b.getAttribute("data-maand")));
-    KAL_MAAND = d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-01";
-    renderKalender();
-  });
-
-  var q = document.getElementById("q");
-  q.addEventListener("input", renderPicker);
-  q.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-      var first = document.querySelector("#results li[data-add]");
-      if(first){ addCountry(first.getAttribute("data-add")); q.value = ""; renderPicker(); }
-    }
-  });
-  document.getElementById("results").addEventListener("click", function(e){
-    var li = e.target.closest("li[data-add]");
-    if(li){ addCountry(li.getAttribute("data-add")); q.value = ""; renderPicker(); q.focus(); }
-  });
-
-  document.getElementById("route-list").addEventListener("click", function(e){
-    var b = e.target.closest("button");
-    if(!b) return;
-    if(b.hasAttribute("data-rm"))   removeAt(+b.getAttribute("data-rm"));
-    else if(b.hasAttribute("data-up"))   { var u = +b.getAttribute("data-up");   moveItem(u, u-1); }
-    else if(b.hasAttribute("data-down")) { var d = +b.getAttribute("data-down"); moveItem(d, d+1); }
-  });
-
-  // drag to reorder (desktop; arrows remain the reliable path on touch)
-  var dragFrom = null;
-  var list = document.getElementById("route-list");
-  list.addEventListener("dragstart", function(e){
-    var it = e.target.closest(".route-item");
-    if(!it) return;
-    dragFrom = +it.getAttribute("data-i");
-    it.classList.add("dragging");
-    e.dataTransfer.effectAllowed = "move";
-    try{ e.dataTransfer.setData("text/plain", String(dragFrom)); }catch(err){}
-  });
-  list.addEventListener("dragover", function(e){ e.preventDefault(); e.dataTransfer.dropEffect = "move"; });
-  list.addEventListener("drop", function(e){
-    e.preventDefault();
-    var it = e.target.closest(".route-item");
-    if(it && dragFrom !== null) moveItem(dragFrom, +it.getAttribute("data-i"));
-    dragFrom = null;
-  });
-  list.addEventListener("dragend", function(){
-    dragFrom = null;
-    var d = list.querySelector(".dragging");
-    if(d) d.classList.remove("dragging");
-  });
-
-  document.getElementById("checklist").addEventListener("change", function(e){
+  // Checkbox-vinkjes: gedeeld tussen de bento-rijen van de Checklist-pagina
+  // (data-tick op "doc:", equipment- en task-keys); TICKED is toch al één pot.
+  document.addEventListener("change", function(e){
     var cb = e.target.closest("input[data-tick]");
     if(!cb) return;
     var k = cb.getAttribute("data-tick");
     if(cb.checked) TICKED[k] = 1; else delete TICKED[k];
     saveRoute();
-    var row = cb.closest(".chk");
+    var row = cb.closest(".chkrow");
     if(row) row.classList.toggle("done", cb.checked);
-    renderStats();
-    renderNav();
+    var tel = checklistTelling();
+    var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
+    var pval = document.querySelector(".progresscard .pval");
+    var bar = document.querySelector(".progresscard .progressbar>i");
+    if(pval) pval.textContent = pct + "% gereed";
+    if(bar) bar.style.width = pct + "%";
   });
 
-  var navTicking = false;
-  window.addEventListener("scroll", function(){
-    if(navTicking) return;
-    navTicking = true;
-    requestAnimationFrame(function(){ markNavActive(); navTicking = false; });
-  }, { passive:true });
+  document.getElementById("land-chips").addEventListener("click", function(e){
+    var b = e.target.closest(".landchip");
+    if(!b) return;
+    LANDEN_ACTIEF = b.getAttribute("data-land");
+    renderLandenInfo();
+  });
+  document.getElementById("landenlijst").addEventListener("click", function(e){
+    var row = e.target.closest(".landrow");
+    if(!row) return;
+    LANDEN_ACTIEF = row.getAttribute("data-land");
+    switchView("landen");
+  });
+
+  document.getElementById("view-reizen").addEventListener("click", function(e){
+    if(e.target.closest("#btn-nieuwe-reis") || e.target.closest("#btn-tripnew")){
+      nieuweTrip();
+      return;
+    }
+    var actieBtn = e.target.closest("[data-actie]");
+    if(actieBtn){
+      var kaart = actieBtn.closest(".tripcard");
+      var id = kaart && kaart.getAttribute("data-trip");
+      var actie = actieBtn.getAttribute("data-actie");
+      if(actie === "open") activeerTrip(id, true);
+      else if(actie === "hernoem") hernoemTrip(id);
+      else if(actie === "verwijder") verwijderTrip(id);
+    }
+  });
 
   document.getElementById("home").addEventListener("change", function(e){
     HOME = e.target.value; saveRoute(); render();
@@ -2510,6 +2878,7 @@ function wire(){
   document.getElementById("vtype").addEventListener("change", function(e){
     VEH.type = e.target.value; saveRoute(); render();
   });
+
   wireCityField("from", "from-res", function(c){ FROM_CITY = c; });
   wireCityField("to",   "to-res",   function(c){ TO_CITY   = c; });
   document.getElementById("btn-route").addEventListener("click", doRoute);
@@ -2519,27 +2888,69 @@ function wire(){
     var tc = FROM_CITY; FROM_CITY = TO_CITY; TO_CITY = tc;
   });
 
-  document.getElementById("btn-print").addEventListener("click", function(){ window.print(); });
+  document.getElementById("map-zoom-in").addEventListener("click", function(){
+    MAP_ZOOM = Math.min(3, MAP_ZOOM * 1.25); applyMapZoom();
+  });
+  document.getElementById("map-zoom-out").addEventListener("click", function(){
+    MAP_ZOOM = Math.max(0.6, MAP_ZOOM / 1.25); applyMapZoom();
+  });
+  document.getElementById("map-locate").addEventListener("click", function(){
+    MAP_ZOOM = 1; applyMapZoom();
+  });
+  document.getElementById("map-layers").addEventListener("click", function(){
+    document.querySelector(".panel-map").classList.toggle("alt");
+  });
 
-  // Modern browsers hide closed <details> in a way CSS alone can't undo, so open
-  // everything for the printout and put it back afterwards.
-  window.addEventListener("beforeprint", function(){
-    var ds = document.querySelectorAll("details");
-    for(var i=0;i<ds.length;i++){
-      if(!ds[i].open){ ds[i].setAttribute("data-reclose",""); ds[i].open = true; }
-    }
+  document.getElementById("btn-bekijk-reis").addEventListener("click", function(){
+    switchView("reis");
   });
-  window.addEventListener("afterprint", function(){
-    var ds = document.querySelectorAll("details[data-reclose]");
-    for(var i=0;i<ds.length;i++){ ds[i].open = false; ds[i].removeAttribute("data-reclose"); }
-  });
-  document.getElementById("btn-reset").addEventListener("click", function(){
-    if(!confirm("Route en afvinklijst wissen?")) return;
-    ROUTE = []; TICKED = {}; saveRoute(); render();
+  document.getElementById("view-reis").addEventListener("click", function(e){
+    if(e.target.closest("#btn-reis-naar-planner")){ switchView("route"); return; }
+    if(e.target.closest("#btn-reis-checklist")){ switchView("checklist"); return; }
   });
 }
 
 /* ---------------- boot ---------------- */
+
+/* Was er al een rit van vóór de meerdere-ritten-datalaag (de losse sleutels uit
+   fase 1), dan verhuist die eenmalig naar de eerste trip — niets gaat verloren. */
+function migreerOudeStaat(){
+  var route = [], ticked = {}, veh = { fuel:"petrol", euro:null, type:"auto" };
+  try{ route = JSON.parse(lsGet(STORE_ROUTE) || "[]"); }catch(e){}
+  try{ ticked = JSON.parse(lsGet(STORE_TICK) || "{}"); }catch(e){}
+  try{
+    var v = JSON.parse(lsGet(STORE_VEH) || "null");
+    if(v && typeof v === "object"){
+      veh.fuel = v.fuel || "petrol";
+      veh.euro = (v.euro === null || v.euro === undefined) ? null : Number(v.euro);
+      veh.type = v.type || "auto";
+    }
+  }catch(e){}
+  var home = lsGet(STORE_HOME) || "NL";
+  var nu = new Date().toISOString();
+  return { id: nieuwTripId(), naam: "Nieuwe rit", createdAt: nu, updatedAt: nu,
+    route: route.filter(function(c){ return BY_CODE[c]; }), home: (BY_CODE[home] ? home : "NL"), veh: veh,
+    depart: null, ticked: ticked, fromCity: null, toCity: null,
+    routeCoords: null, routeRes: null, routeDuration: null };
+}
+
+function laadTrips(){
+  try{
+    var raw = lsGet(STORE_TRIPS);
+    TRIPS = raw ? JSON.parse(raw) : [];
+    if(!Array.isArray(TRIPS)) TRIPS = [];
+  }catch(e){ TRIPS = []; }
+
+  if(!TRIPS.length){
+    TRIPS = [(lsGet(STORE_ROUTE) || lsGet(STORE_TICK)) ? migreerOudeStaat() : legeTrip()];
+    lsSet(STORE_TRIPS, JSON.stringify(TRIPS));
+  }
+
+  ACTIVE_TRIP_ID = lsGet(STORE_ACTIVE);
+  if(!tripById(ACTIVE_TRIP_ID)) ACTIVE_TRIP_ID = TRIPS[0].id;
+  lsSet(STORE_ACTIVE, ACTIVE_TRIP_ID);
+}
+
 function boot(d){
   DATA = d;
   DATA.meta = DATA.meta || {};
@@ -2547,38 +2958,21 @@ function boot(d){
   BY_CODE = {};
   DATA.countries.forEach(function(c){ BY_CODE[c.code] = c; });
 
-  try{ ROUTE = JSON.parse(lsGet(STORE_ROUTE) || "[]"); }catch(e){ ROUTE = []; }
-  ROUTE = ROUTE.filter(function(c){ return BY_CODE[c]; });
-  try{ TICKED = JSON.parse(lsGet(STORE_TICK) || "{}"); }catch(e){ TICKED = {}; }
+  toepassenThema();
 
-  try{
-    var v = JSON.parse(lsGet(STORE_VEH) || "null");
-    if(v && typeof v === "object"){
-      VEH.fuel = v.fuel || "petrol";
-      VEH.euro = (v.euro === null || v.euro === undefined) ? null : Number(v.euro);
-      VEH.type = v.type || "auto";
-    }
-  }catch(e){}
-  document.getElementById("fuel").value  = VEH.fuel;
-  document.getElementById("euro").value  = VEH.euro === null ? "" : String(VEH.euro);
-  document.getElementById("vtype").value = VEH.type;
+  laadTrips();
+  hydrateerVanuitTrip(tripById(ACTIVE_TRIP_ID));
 
-  HOME = lsGet(STORE_HOME) || "NL";
-  if(!BY_CODE[HOME]) HOME = DATA.countries[0].code;
   var sel = document.getElementById("home");
   sel.innerHTML = DATA.countries.map(function(c){
     return '<option value="' + esc(c.code) + '"' + (c.code === HOME ? " selected" : "") + ">" + esc(c.name) + "</option>";
   }).join("");
+  verversFormulier();
 
-  DEPART = new Date().toISOString().slice(0,10);
-  document.getElementById("depart").value = DEPART;
+  var hashView = (location.hash || "").replace("#", "");
+  if(VIEW_ORDER.indexOf(hashView) !== -1) VIEW = hashView;
 
   meldCachekopie();
-
-  /* De drukteprognose is een extra bestand: lukt het laden niet, dan blijft de
-     kalender simpelweg weg en werkt de rest gewoon door. */
-  loadJSON("drukte.json").then(function(dr){ DRUKTE = dr; render(); })
-    .catch(function(){ /* stil: geen kalender */ });
 
   var gs = document.getElementById("general-sources");
   gs.innerHTML = (DATA.meta.generalSources || []).map(function(s){
@@ -2587,26 +2981,36 @@ function boot(d){
 
   document.getElementById("colofon").innerHTML =
     "Data onderzocht op " + esc(fmtDate(DATA.meta.researchDate)) + ". " +
-    esc(DATA.meta.principle.title || "") + " — " + esc(DATA.meta.principle.text || "") +
-    '<br><br>Landsgrenzen en plaatsen: <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a> (publiek domein). ' +
+    'Landsgrenzen en plaatsen: <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a> (publiek domein). ' +
     'Routeberekening: <a href="https://project-osrm.org/" target="_blank" rel="noopener">OSRM</a> op kaartdata &copy; ' +
     '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-bijdragers. ' +
     'Zoeken naar plaatsen buiten de meegeleverde lijst gaat via ' +
     '<a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">Nominatim</a>.';
 
-  document.getElementById("builder").hidden = false;
   wire();
-  render();
+  switchView(VIEW, true);
+
+  /* Was de actieve trip al onderweg (routeCoords) maar liepen borders/zones nog
+     niet binnen toen hydrateerVanuitTrip draaide, dan is ROUTE_ZONES nu leeg —
+     alsnog laden en de zichtbare view opnieuw opbouwen zodra dat lukt. */
+  if(ROUTE_COORDS && !ZONES){
+    Promise.all([
+      BORDERS ? Promise.resolve() : loadJSON("borders.json").then(function(b){ BORDERS = b; }),
+      loadJSON("zones.json").then(function(z){ ZONES = z.zones || z; }).catch(function(){ ZONES = []; })
+    ]).then(function(){
+      ROUTE_ZONES = zonesLangsRoute(ROUTE_COORDS);
+      render();
+    }).catch(function(){});
+  }
 
   /* De planner heeft netwerk nodig (OSRM) en kan cities.json niet via file://
-     laden. Lukt dat niet, dan blijft hij verborgen en werkt de handmatige
-     bouwer gewoon — route-invoer is een versneller, geen vervanging. */
+     laden. Lukt dat niet, dan blijft hij verborgen. */
   if(location.protocol !== "file:"){
     loadJSON("cities.json").then(function(c){
       CITIES = c.cities || c;
       document.getElementById("planner").hidden = false;
     }).catch(function(){
-      /* stil: de handmatige bouwer staat er al */
+      /* stil */
     });
   }
 }
@@ -2629,8 +3033,6 @@ if("serviceWorker" in navigator && location.protocol !== "file:"){
     }).then(function(){
       offlineState("Offline klaar — deze app werkt nu ook zonder bereik.");
     }).catch(function(){
-      /* Onveilige origin, uitgeschakeld, of een browser die het blokkeert.
-         De app blijft werken; alleen de offline-garantie vervalt. */
       offlineState("Offline-cache niet beschikbaar in deze browser. De app werkt gewoon, maar heeft bereik nodig om te laden.");
     });
   });

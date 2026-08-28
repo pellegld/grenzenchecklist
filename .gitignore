@@ -4,6 +4,10 @@ tools/_cache/
 # Werkbestanden van de editor
 .claude/
 
+# Lokale veiligheidskopie van voor de Kinetic Route-redesign. Zit al vast in de
+# branch backup-voor-kinetic-route; hoeft niet nog eens mee de repo/deploy in.
+backup-20260828-huidige-site/
+
 # Sleutels. Deze horen bij je host in de omgeving te staan, niet in de repo.
 # .dev.vars is het lokale-ontwikkelbestand van wrangler.
 .dev.vars

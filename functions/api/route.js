@@ -6,7 +6,7 @@
  *
  * Contract naar de client:
  *   GET /api/route?from=<lon>,<lat>&to=<lon>,<lat>
- *   200 { coordinates:[[lon,lat],...], meters:<n>, provider:"<naam>" }
+ *   200 { coordinates:[[lon,lat],...], meters:<n>, seconds:<n>, provider:"<naam>" }
  *   4xx { error:"<uitleg>" }
  *
  * Instellen bij de host (Pages > Settings > Variables and Secrets):
@@ -104,10 +104,15 @@ export async function onRequestGet({ request, env }) {
   }
 }
 
-function antwoord(coordinates, meters, provider) {
+function antwoord(coordinates, meters, seconds, provider) {
   if (!coordinates || !coordinates.length) return fout("geen route gevonden", 404);
   return new Response(
-    JSON.stringify({ coordinates, meters: Math.round(meters || 0), provider }),
+    JSON.stringify({
+      coordinates,
+      meters: Math.round(meters || 0),
+      seconds: Math.round(seconds || 0),
+      provider,
+    }),
     { headers: JSON_HEADERS },
   );
 }
@@ -132,9 +137,11 @@ async function viaOrs([vanLon, vanLat], [naarLon, naarLat], env) {
   if (!r.ok) throw new Error("ORS " + r.status);
   const j = await r.json();
   const f = j.features && j.features[0];
+  const summary = f && f.properties && f.properties.summary;
   return antwoord(
     f && f.geometry && f.geometry.coordinates,
-    f && f.properties && f.properties.summary && f.properties.summary.distance,
+    summary && summary.distance,
+    summary && summary.duration,
     "openrouteservice",
   );
 }
@@ -154,6 +161,7 @@ async function viaGraphhopper([vanLon, vanLat], [naarLon, naarLat], env) {
   return antwoord(
     pad && pad.points && pad.points.coordinates,
     pad && pad.distance,
+    pad && pad.time && pad.time / 1000,
     "graphhopper",
   );
 }
@@ -172,6 +180,7 @@ async function viaOsrm([vanLon, vanLat], [naarLon, naarLat], env) {
   return antwoord(
     route && route.geometry && route.geometry.coordinates,
     route && route.distance,
+    route && route.duration,
     env.ROUTE_OSRM_URL ? "osrm-eigen" : "osrm-demo",
   );
 }

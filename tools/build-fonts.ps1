@@ -1,6 +1,6 @@
-# ASCII-only. Haalt de latijnse subsets van de drie fonts op en zet ze lokaal neer,
+# ASCII-only. Haalt de latijnse subsets van de fonts op en zet ze lokaal neer,
 # zodat de app offline blijft werken zonder Google Fonts aan te roepen.
-# Alle drie staan onder de SIL Open Font License; zelf hosten mag.
+# Geist en Inter staan allebei onder de SIL Open Font License; zelf hosten mag.
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $root = 'C:\Users\pelle\OneDrive\Documents\p\Programmeren\Claude Code\Apps\Verkeer'
@@ -11,7 +11,7 @@ if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null 
 $ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
 # Variabele assen: één bestand per subset dekt alle gewichten, veel kleiner dan
 # losse statische instanties.
-$url = 'https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap'
+$url = 'https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Inter:wght@400..600&display=swap'
 $css = (Invoke-WebRequest -Uri $url -Headers @{ 'User-Agent' = $ua } -UseBasicParsing).Content
 Write-Output ("css opgehaald: " + $css.Length + " tekens")
 
@@ -54,7 +54,7 @@ foreach ($b in $blokken) {
 
 $cssOut = @"
 /* Zelf gehoste subsets, zodat de app offline werkt en niets naar Google stuurt.
-   Instrument Serif, Karla en JetBrains Mono staan onder de SIL Open Font License.
+   Geist en Inter staan onder de SIL Open Font License.
    Opnieuw ophalen kan met tools/build-fonts.ps1. */
 $($manifest -join "`n")
 "@

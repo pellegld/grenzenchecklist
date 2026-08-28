@@ -9,14 +9,16 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v10";
+var CACHE = "grenschecklist-v13";
 var ASSETS = [
   "./", "./index.html", "./fonts.css",
   "./countries.json", "./cities.json", "./borders.json", "./zones.json", "./drukte.json",
   // Zelf gehost, zodat de app offline werkt en er niets naar Google gaat.
   // Variabele assen: één bestand per subset dekt alle gewichten.
-  "./fonts/manrope-400-latin.woff2",       "./fonts/manrope-400-latin-ext.woff2",
-  "./fonts/jetbrainsmono-400-latin.woff2", "./fonts/jetbrainsmono-400-latin-ext.woff2"
+  "./fonts/geist-400-latin.woff2",  "./fonts/geist-400-latin-ext.woff2",
+  "./fonts/inter-400-latin.woff2",  "./fonts/inter-400-latin-ext.woff2",
+  // Bannerfoto's per land voor de Landeninformatie-pagina.
+  "./images/Landbanner/Nederland.png"
 ];
 
 self.addEventListener("install", function(e){
