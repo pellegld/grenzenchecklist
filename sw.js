@@ -9,7 +9,7 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v13";
+var CACHE = "grenschecklist-v14";
 var ASSETS = [
   "./", "./index.html", "./fonts.css",
   "./countries.json", "./cities.json", "./borders.json", "./zones.json", "./drukte.json",
@@ -18,7 +18,8 @@ var ASSETS = [
   "./fonts/geist-400-latin.woff2",  "./fonts/geist-400-latin-ext.woff2",
   "./fonts/inter-400-latin.woff2",  "./fonts/inter-400-latin-ext.woff2",
   // Bannerfoto's per land voor de Landeninformatie-pagina.
-  "./images/Landbanner/Nederland.png"
+  "./images/Landbanner/Nederland.png",
+  "./images/Landbanner/Frankrijk.png"
 ];
 
 self.addEventListener("install", function(e){
