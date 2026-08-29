@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /* Build-pipeline voor Grenschecklist.
  *
- * Twee taken, allebei zonder dependencies:
+ * Drie taken, alle drie zonder dependencies:
  *
- *   node build/build.mjs        genereert statische pagina's uit countries.json
- *   node build/build.mjs --sw   ververst de ASSETS-lijst in sw.js
+ *   node build/build.mjs             genereert statische pagina's uit countries.json
+ *   node build/build.mjs --sw        ververst de ASSETS-lijst in sw.js
+ *   node build/build.mjs --versie    schrijft meta/version.json bij
  *
  * Waarom nu al, terwijl er nog geen pagina te genereren valt: de SEO-pagina's
  * uit §27 van de masterprompt (/autorijden-frankrijk, /vignet-oostenrijk, ...)
@@ -157,6 +158,47 @@ async function bouwPaginas() {
   }
 }
 
+/* ------------------------------------------------------------- versies */
+
+/* meta/version.json is een afgeleide, geen invoer. Met de hand bijhouden zou
+ * betekenen dat hij precies op het moment dat het uitmaakt — na een
+ * datacorrectie — nog de vorige waarde heeft. */
+async function bouwVersie() {
+  const bestanden = ["countries.json", "zones.json", "drukte.json"];
+  const data = {};
+  for (const naam of bestanden) {
+    const j = JSON.parse(await readFile(p(naam), "utf8"));
+    const meta = j.meta || j._meta || {};
+    data[naam] = {
+      schemaVersion: meta.schemaVersion ?? null,
+      geverifieerd: meta.researchDate || meta.lastVerified || null,
+      /* Waar de app op rekent, zodat een leeggelopen bestand opvalt. */
+      aantal: Array.isArray(j.countries) ? j.countries.length
+            : Array.isArray(j.zones) ? j.zones.length
+            : j.dagen ? Object.keys(j.dagen).length
+            : null,
+    };
+  }
+
+  const pkg = JSON.parse(await readFile(p("package.json"), "utf8"));
+  const changelog = JSON.parse(await readFile(p("meta", "changelog.json"), "utf8"));
+
+  const versie = {
+    app: pkg.version,
+    dataApi: "v1",
+    gegenereerd: new Date().toISOString().slice(0, 10),
+    data,
+    wijzigingen: changelog.wijzigingen.length,
+    laatsteWijziging: changelog.wijzigingen.length
+      ? changelog.wijzigingen[changelog.wijzigingen.length - 1].datum
+      : null,
+  };
+
+  await mkdir(p("meta"), { recursive: true });
+  await writeFile(p("meta", "version.json"), JSON.stringify(versie, null, 2) + "\n", "utf8");
+  console.log(`meta/version.json bijgewerkt (app ${versie.app}, ${versie.wijzigingen} wijzigingen).`);
+}
+
 /* ------------------------------------------------------- service worker */
 
 /* De ASSETS-lijst in sw.js met de hand bijhouden gaat een keer mis: een nieuw
@@ -217,7 +259,9 @@ async function bouwServiceWorker() {
 
 const argumenten = process.argv.slice(2);
 if (argumenten.includes("--sw")) await bouwServiceWorker();
+else if (argumenten.includes("--versie")) await bouwVersie();
 else if (argumenten.includes("--alles")) {
   await bouwPaginas();
+  await bouwVersie();
   await bouwServiceWorker();
 } else await bouwPaginas();

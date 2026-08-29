@@ -19,6 +19,10 @@
  *          bewuste markering, geen bug; de lijst is er om hem te kunnen slijten.
  *   LET OP  confidence en bron spreken elkaar tegen.
  *
+ * Ook: elk id in meta/changelog.json moet naar een bestaand feit wijzen. Een
+ * changelog die naar een verdwenen id verwijst, is een changelog die je niet
+ * meer kunt tonen — en dat merk je anders pas als de wijzigingenpagina er is.
+ *
  * De drempel staat op 180 dagen, strenger dan de 240 dagen waarop de app zelf
  * "verouderd" toont. Dat is met opzet: deze tool moet eerder aan de bel trekken
  * dan de gebruiker het ziet.
@@ -292,6 +296,25 @@ for (const f of feiten) {
   }
 }
 
+/* --- changelog: wijst elke regel nog ergens naar? --- */
+let changelog = { wijzigingen: [] };
+try {
+  changelog = JSON.parse(await readFile(path.join(ROOT, "meta", "changelog.json"), "utf8"));
+} catch (e) {
+  fouten.push({ soort: "changelog-onleesbaar", reden: String(e && e.message || e) });
+}
+for (const w of changelog.wijzigingen || []) {
+  if (!perId.has(w.id)) {
+    fouten.push({ soort: "changelog-verweesd", id: w.id, bestand: "meta/changelog.json" });
+  }
+  for (const veld of ["id", "onderwerp", "datum"]) {
+    if (!w[veld]) fouten.push({ soort: "changelog-mist-" + veld, id: w.id || "(geen id)" });
+  }
+  if (w.bron && !alsUrl(w.bron)) {
+    letop.push({ id: w.id, waarom: "bron in de changelog is geen URL" });
+  }
+}
+
 /* --- dode links --- */
 const unieke = [...new Set(urlPlekken.map((u) => u.url))];
 let linkResultaten = [];
@@ -318,6 +341,7 @@ const verslag = {
   drempelDagen: DREMPEL_DAGEN,
   feiten: feiten.length,
   unieke_ids: perId.size,
+  changelog_regels: (changelog.wijzigingen || []).length,
   bronnen_gecontroleerd: GEEN_NETWERK ? 0 : unieke.length,
   fouten,
   oud,
@@ -331,7 +355,8 @@ if (ALS_JSON) {
   const regel = (s) => console.log(s);
   regel("");
   regel(`Grenschecklist — datacontrole (${new Date().toISOString().slice(0, 10)})`);
-  regel(`${feiten.length} feiten, ${perId.size} unieke id's, drempel ${DREMPEL_DAGEN} dagen`);
+  regel(`${feiten.length} feiten, ${perId.size} unieke id's, ` +
+        `${(changelog.wijzigingen || []).length} changelogregels, drempel ${DREMPEL_DAGEN} dagen`);
   regel("");
 
   if (fouten.length) {

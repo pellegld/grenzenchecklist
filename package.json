@@ -11,6 +11,7 @@
     "build": "node build/build.mjs --alles",
     "build:pages": "node build/build.mjs",
     "build:sw": "node build/build.mjs --sw",
+    "build:version": "node build/build.mjs --versie",
     "verify:data": "node tools/verify-data.mjs",
     "verify:data:offline": "node tools/verify-data.mjs --geen-netwerk",
     "dev": "py -m http.server 8731"

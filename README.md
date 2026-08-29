@@ -34,7 +34,9 @@ borders.json             landsgrenzen voor de landdetectie
 zones.json               47 milieuzones en toegangsverboden op stadsniveau
 drukte.json              drukteprognoses per dag en per periode
 sw.js                    service worker voor offline gebruik
-build/build.mjs          genereert statische pagina's en de ASSETS-lijst van sw.js
+build/build.mjs          genereert statische pagina's, meta/version.json en de sw-assetlijst
+meta/changelog.json      inhoudelijke wijzigingen in de regeldata
+meta/version.json        afgeleide: versies en aantallen per databestand
 worker/                  Cloudflare Worker: de proxy, met cache en snelheidsbegrenzer
 functions/api/           dezelfde proxy als Pages Function (dunne wikkel om worker/src/)
 tools/build-geodata.ps1  genereert cities.json en borders.json opnieuw
@@ -664,6 +666,46 @@ Twee dingen die de linkcheck bewust anders doet dan naïef:
   anders lees je driehonderd keer dezelfde datum.
 
 Stand nu: 305 feiten, 305 unieke id's, geen fouten, 76 als onzeker gemarkeerd.
+
+### Wat er veranderd is
+
+`meta/changelog.json` houdt **inhoudelijke** wijzigingen in de regeldata bij: een
+vignetprijs die omhoog gaat, een euronorm-drempel die strenger wordt, een tolpunt
+dat gratis wordt. Niet wijzigingen aan de vórm van de data — die staan in
+`meta.schemaVersion` van het bestand zelf — en niet aan de app.
+
+```jsonc
+{
+  "id": "at.tollVignette",              // het stabiele id van het feit
+  "land": "AT",                          // of null als het feit niet aan één land hangt
+  "onderwerp": "prijs 10-dagenvignet",   // in gewone taal
+  "oud": "12,40 euro",                   // null als het feit nieuw is
+  "nieuw": "13,10 euro",                 // null als het feit vervallen is
+  "datum": "2026-12-01",                 // wanneer het in de data kwam
+  "ingegaan": "2027-01-01",              // wanneer de regel zelf veranderde, indien bekend
+  "bron": "https://www.asfinag.at/..."
+}
+```
+
+Twee data die je uit elkaar wil houden: `datum` is wanneer jij het verwerkt hebt,
+`ingegaan` is wanneer het voor de weggebruiker ging gelden. Voor "3 regels gewijzigd
+sinds je vorige controle" (§14) heb je de eerste nodig; voor "let op, dit verandert
+vlak na je vertrekdatum" de tweede.
+
+De lijst is nu leeg. Bij het opzetten van deze changelog is er geen enkele
+inhoudelijke waarde veranderd, alleen de vorm van de data. Een verzonnen regel
+toevoegen om de lijst te vullen zou precies de schijnzekerheid zijn die deze app
+moet vermijden; het voorbeeld staat daarom in `meta`, niet in `wijzigingen`.
+
+`tools/verify-data.mjs` controleert dat elk `id` in de changelog nog naar een
+bestaand feit wijst. Een changelog die naar een verdwenen id verwijst is een
+changelog die je niet meer kunt tonen, en dat merk je anders pas als de
+wijzigingenpagina er is.
+
+`meta/version.json` is een **afgeleide**, geen invoer: `npm run build:version`
+leest de schemaversie, de verificatiedatum en het aantal records uit de drie
+databestanden. Met de hand bijhouden zou betekenen dat hij precies op het moment
+dat het uitmaakt — vlak na een datacorrectie — nog de vorige waarde heeft.
 
 ### Correctielink instellen
 

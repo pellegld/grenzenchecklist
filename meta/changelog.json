@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "schemaVersion": 1,
+    "bijgehoudenSinds": "2026-08-29",
+    "waarvoor": "Inhoudelijke wijzigingen in de regeldata: een vignetprijs die omhoog gaat, een euronorm-drempel die strenger wordt, een tolpunt dat gratis wordt. Niet voor wijzigingen aan de vorm van de data — die staan in meta.schemaVersion van het bestand zelf — en niet voor de app.",
+    "velden": {
+      "id": "het stabiele id van het feit uit countries.json, zones.json of drukte.json",
+      "land": "ISO-landcode, of null als het feit niet aan één land hangt",
+      "onderwerp": "in gewone taal waar de wijziging over gaat, zoals de gebruiker hem zou lezen",
+      "oud": "de waarde zoals hij was; null als het feit nieuw is",
+      "nieuw": "de waarde zoals hij nu is; null als het feit vervallen is",
+      "datum": "ISO-datum waarop de wijziging is doorgevoerd in de data, niet waarop de regel inging",
+      "ingegaan": "ISO-datum waarop de regel zelf veranderde, als die bekend is",
+      "bron": "URL waaruit de wijziging blijkt"
+    },
+    "voorbeeld": {
+      "id": "at.tollVignette",
+      "land": "AT",
+      "onderwerp": "prijs 10-dagenvignet",
+      "oud": "12,40 euro",
+      "nieuw": "13,10 euro",
+      "datum": "2026-12-01",
+      "ingegaan": "2027-01-01",
+      "bron": "https://www.asfinag.at/maut-vignette/vignette/"
+    },
+    "toelichting": "Dit voorbeeld staat in meta en niet in de lijst hieronder, zodat het nooit als echte wijziging wordt gelezen. De lijst is nu leeg: bij het opzetten van deze changelog is er geen enkele inhoudelijke waarde veranderd, alleen de vorm van de data (schemaVersion 1 naar 2). Een verzonnen regel toevoegen om de lijst te vullen zou precies het soort schijnzekerheid zijn dat deze app moet vermijden."
+  },
+  "wijzigingen": []
+}

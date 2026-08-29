@@ -1,0 +1,24 @@
+{
+  "app": "2.0.0",
+  "dataApi": "v1",
+  "gegenereerd": "2026-08-29",
+  "data": {
+    "countries.json": {
+      "schemaVersion": 2,
+      "geverifieerd": "2026-08-19",
+      "aantal": 16
+    },
+    "zones.json": {
+      "schemaVersion": 2,
+      "geverifieerd": "2026-08-19",
+      "aantal": 47
+    },
+    "drukte.json": {
+      "schemaVersion": 2,
+      "geverifieerd": "2026-08-24",
+      "aantal": 19
+    }
+  },
+  "wijzigingen": 0,
+  "laatsteWijziging": null
+}
