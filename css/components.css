@@ -1,0 +1,233 @@
+/* Herbruikbare onderdelen: navigatie, layout, routepaneel, kaarten, knoppen.
+   
+   Media queries staan hier bij het onderdeel waar ze bij horen, niet in een apart
+   responsive-bestand: de app is mobile-first geschreven en een breakpoint hoort bij
+   de regel die hij aanpast, anders raakt de cascade zoek. */
+
+/* ---------------- topbar (mobiel) ---------------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;
+  height:var(--topbar-h);padding:0 var(--sp-md);
+  background:var(--topbar-bg);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--surface-highest);position:sticky;top:0;z-index:30}
+.topbar .brand{font:700 1.05rem/1 var(--f-display);color:var(--primary);letter-spacing:-.01em}
+.topbar .icon{color:var(--on-surface-var)}
+@media (min-width:1024px){ .topbar{display:none} }
+
+/* ---------------- onderbalk (mobiel) ---------------- */
+.bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface-lowest);
+  border-top:1px solid var(--surface-highest);box-shadow:0 -4px 12px rgba(30,41,59,.05)}
+@media (min-width:1024px){ .bottomnav{display:none} }
+.bnitem{appearance:none;flex:1 1 0;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 4px 10px;border:0;background:none;color:var(--on-surface-var);
+  font:600 .62rem/1 var(--f-display);cursor:pointer}
+.bnitem.active{color:var(--secondary)}
+@media (max-width:1023px){ .panel-route,.view-page{padding-bottom:76px} }
+
+/* ---------------- zijbalk ---------------- */
+.sidebar{display:none}
+@media (min-width:1024px){
+  .sidebar{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;
+    width:var(--sidebar-w);padding:var(--sp-md);background:var(--surface-low);
+    border-right:1px solid var(--surface-highest);z-index:40;overflow-y:auto}
+}
+.sidebar .brandblock{margin-bottom:var(--sp-lg)}
+.sidebar .brand{font:700 1.35rem/1.2 var(--f-display);color:var(--primary);letter-spacing:-.01em}
+.sidebar .tagline{font:500 .82rem/1 var(--f-body);color:var(--on-surface-var);margin-top:4px;opacity:.85}
+.newtrip{width:100%;margin-bottom:var(--sp-lg);display:flex;align-items:center;justify-content:center;gap:var(--sp-xs)}
+.sidenav{display:flex;flex-direction:column;gap:var(--sp-sm);flex:1 1 auto}
+.navitem{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm);border-radius:var(--r-lg);
+  font:600 .85rem/1 var(--f-display);text-decoration:none;color:var(--on-surface-var);cursor:pointer}
+button.navitem{appearance:none;background:none;border:0;width:100%;text-align:left}
+.navitem:hover{background:var(--surface-c)}
+.navitem.active{background:var(--secondary-container);color:var(--on-secondary-container)}
+.navitem.active:hover{background:var(--secondary-container)}
+.navitem.disabled{color:var(--outline);cursor:default}
+.navitem.disabled:hover{background:none}
+.navitem.disabled em{margin-left:auto;font:600 .58rem/1 var(--f-body);font-style:normal;
+  letter-spacing:.03em;text-transform:uppercase;color:var(--outline);background:var(--surface-c);
+  padding:2px 6px;border-radius:var(--r-full)}
+.sidefoot{margin-top:var(--sp-md);padding-top:var(--sp-md);border-top:1px solid var(--surface-highest);
+  display:flex;flex-direction:column;gap:var(--sp-xs)}
+.sidefoot .hint{margin-top:var(--sp-sm)}
+
+/* ---------------- instellingen: donkere-modus-schakelaar ---------------- */
+.switchrow{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-sm);
+  padding:var(--sp-sm);margin-left:8px;font:500 .82rem/1.3 var(--f-body);color:var(--on-surface-var)}
+.switch{position:relative;display:inline-block;width:38px;height:21px;flex:0 0 auto}
+.switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer;z-index:1}
+.switch-track{position:absolute;inset:0;background:var(--outline-var);border-radius:99px;transition:background .18s}
+.switch-thumb{position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .18s}
+.switch input:checked ~ .switch-track{background:var(--secondary)}
+.switch input:checked ~ .switch-track .switch-thumb{transform:translateX(17px)}
+.icon-toggle{width:36px;height:36px;border:0;background:none;color:var(--on-surface-var);
+  border-radius:99px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-toggle:hover{background:var(--surface-c)}
+
+/* ---------------- layout ----------------
+   .main is a neutral positioning shell; exactly one .view is visible at a time
+   (toggled via [hidden] by switchView()). The Routeplanner view keeps the
+   sidebar+map two-pane split (.view-route); the other views are simple
+   scrollable pages (.view-page), like their mockups. */
+#app{display:flex;flex-direction:column;min-height:100vh}
+.main{flex:1 1 auto;display:flex;flex-direction:column}
+@media (min-width:1024px){
+  #app{display:block}
+  .main{margin-left:var(--sidebar-w);min-height:100vh}
+}
+.view{flex:1 1 auto;display:flex;flex-direction:column;min-width:0}
+.view[hidden]{display:none}
+@media (min-width:1024px){
+  .view-route{flex-direction:row;height:100vh}
+}
+.view-page{padding:var(--sp-margin-mobile);max-width:1280px;margin:0 auto;width:100%}
+@media (min-width:1024px){
+  .view-page{padding:var(--sp-margin-desktop);overflow-y:auto;height:100vh}
+}
+/* Zelfde reden als .panel-route>*{flex:0 0 auto} hierboven: zonder dit krimpen
+   de directe kinderen van een scrollende flex-kolom in plaats van dat de kolom
+   zelf scrollt. Trof hier de landenchips-rij (die zelf ook overflow-x:auto
+   heeft, dus zonder flex-shrink:0 een automatisch minimum van 0px krijgt) en
+   de land-detailkaart (waaronder Maximumsnelheden), die daardoor afgesneden
+   raakten in plaats van gewoon hun eigen hoogte te pakken. */
+.view-page>*{flex:0 0 auto}
+.hint{font-size:.85rem;color:var(--on-surface-var)}
+
+/* ---------------- routepaneel ---------------- */
+.panel-route{width:100%;background:var(--surface);padding:var(--sp-md);
+  display:flex;flex-direction:column;gap:var(--sp-md)}
+@media (min-width:1024px){
+  .panel-route{width:var(--route-panel-w);flex:0 0 auto;height:100%;overflow-y:auto;
+    border-right:1px solid var(--surface-highest);box-shadow:var(--shadow-1)}
+}
+
+/* Kinderen van het routepaneel mogen nooit krimpen: zonder flex-shrink:0 probeert
+   de flex-kolom ze te persen zodra de inhoud niet past, in plaats van de kolom
+   zelf te laten scrollen (dat doet .panel-route al met overflow-y:auto).
+   Een kind met overflow:hidden — zoals .milieukaart — mag dan tot bijna 0px
+   krimpen, wat precies de afgesneden kaart veroorzaakte. */
+.panel-route>*{flex:0 0 auto}
+
+.fields{position:relative;display:flex;flex-direction:column;gap:var(--sp-sm)}
+.field{position:relative}
+.field label{display:flex;align-items:center;gap:6px;font:600 .72rem/1 var(--f-display);
+  letter-spacing:.04em;text-transform:uppercase;color:var(--on-surface-var);margin-bottom:6px}
+input[type=search],input[type=text],input[type=date],select{
+  width:100%;padding:11px var(--sp-sm);border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  background:var(--surface-low);color:var(--on-surface);font:500 15px/1.4 var(--f-body)}
+input:focus,select:focus{outline:0;border-color:var(--secondary);box-shadow:0 0 0 1px var(--secondary)}
+.results{list-style:none;margin:6px 0 0;padding:0;max-height:260px;overflow:auto;position:absolute;
+  left:0;right:0;top:100%;z-index:15;background:var(--surface-lowest);
+  border:1px solid var(--outline-var);border-radius:var(--r-lg);box-shadow:var(--shadow-2)}
+.results:empty{display:none}
+.results li{display:flex;align-items:center;gap:var(--sp-sm);padding:10px var(--sp-sm);cursor:pointer;
+  border-bottom:1px solid var(--surface-highest);font-size:.88rem}
+.results li:last-child{border-bottom:0}
+.results li:hover{background:var(--surface-low)}
+.results .cnt{font:600 .72rem/1 var(--f-mono);color:var(--outline)}
+.results .onlinehit{color:var(--secondary);font-weight:700}
+.swapbtn{align-self:flex-end;width:32px;height:32px;margin:-4px 0;border-radius:var(--r-full);
+  border:1px solid var(--outline-var);background:var(--surface-highest);color:var(--on-surface);
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.swapbtn:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;
+  border-radius:var(--r-lg);border:1px solid var(--outline-var);background:none;color:var(--on-surface);
+  font:600 .82rem/1 var(--f-display);cursor:pointer}
+.btn.primary{background:var(--secondary);color:var(--on-secondary);border-color:transparent}
+.btn.primary:hover{background:var(--secondary-container)}
+.btn.wide{width:100%}
+.btn:disabled{opacity:.45;cursor:default}
+
+.rstat{font:600 .82rem/1.5 var(--f-body);color:var(--on-surface-var);margin:0}
+.rstat.err{color:var(--error)}
+
+/* ---------------- statkaarten ---------------- */
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-sm)}
+.statcard{background:var(--surface-low);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-sm);display:flex;flex-direction:column;justify-content:center;gap:6px}
+.statcard.wide{grid-column:1 / -1}
+.statcard .slbl{display:flex;align-items:center;gap:6px;font:600 .72rem/1 var(--f-display);
+  letter-spacing:.03em;text-transform:uppercase;color:var(--on-surface-var)}
+.statcard .slbl .icon{color:var(--on-surface-var)}
+.statcard .sval{font:600 1.3rem/1 var(--f-mono);letter-spacing:-.01em;color:var(--primary)}
+.statcard .sval small{font:600 .55em/1 var(--f-display);color:var(--on-surface-var)}
+
+/* ---------------- landen op de route ---------------- */
+.landrow{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm);border-radius:var(--r-lg);
+  border:1px solid transparent;cursor:pointer}
+.landrow:hover{background:var(--surface-low);border-color:var(--outline-var)}
+.landrow .landnaam{flex:1 1 auto;font:500 .92rem/1.3 var(--f-body);color:var(--on-surface)}
+.landrow .icon{color:var(--on-surface-var)}
+.flag{display:inline-block;width:26px;height:19px;border-radius:var(--r-2xs);
+  border:1px solid rgba(0,0,0,.12);flex:0 0 auto;overflow:hidden;background:#999}
+.flag>span{display:block;width:100%;height:100%}
+.flag.sq{width:19px}
+
+/* ---------------- milieuzonekaart ---------------- */
+.milieukaart{background:var(--amber-container);border:1px solid var(--amber-line);border-radius:var(--r-xl);
+  padding:var(--sp-sm);position:relative;overflow:hidden}
+.milieukaart::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--amber)}
+.milieuhead{display:flex;gap:var(--sp-sm);align-items:flex-start}
+.milieuhead .icon{color:var(--amber);margin-top:2px}
+.milieuhead h3{margin:0 0 4px;text-transform:none;letter-spacing:0;font:700 .88rem/1.3 var(--f-display);color:var(--on-surface)}
+.milieuhead p{font-size:.82rem;color:var(--on-surface-var);line-height:1.5}
+.milieuchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--sp-sm)}
+.mchip{font:600 .72rem/1 var(--f-mono);padding:5px 9px;border-radius:var(--r-md);
+  background:var(--surface-lowest);border:1px solid var(--outline-var);color:var(--on-surface)}
+
+/* ---------------- voertuigprofiel / disclaimer ---------------- */
+details.profile,details.disclaimer{border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  background:var(--surface-low);overflow:hidden}
+details.profile>summary,details.disclaimer>summary{cursor:pointer;list-style:none;padding:var(--sp-sm);
+  font-size:.85rem;display:flex;gap:var(--sp-sm);align-items:center}
+details.profile>summary::-webkit-details-marker,details.disclaimer>summary::-webkit-details-marker{display:none}
+details.profile>summary .lbl{font:600 .68rem/1 var(--f-display);letter-spacing:.04em;
+  text-transform:uppercase;color:var(--on-surface-var);flex:0 0 auto}
+details.profile>summary .val{font-weight:600;min-width:0;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;color:var(--on-surface)}
+details.profile>summary::after,details.disclaimer>summary::after{content:"wijzig";margin-left:auto;
+  font:600 .68rem/1 var(--f-display);letter-spacing:.04em;text-transform:uppercase;color:var(--secondary);flex:0 0 auto}
+details.profile[open]>summary::after,details.disclaimer[open]>summary::after{content:"sluit"}
+details.profile .pbody,details.disclaimer .body,details.disclaimer ul{padding:0 var(--sp-sm) var(--sp-sm)}
+details.disclaimer .body{margin:0;font-size:.8rem;color:var(--on-surface-var);line-height:1.6}
+details.disclaimer ul{margin:0;font-size:.78rem;color:var(--on-surface-var);list-style:none}
+details.disclaimer ul li{margin-bottom:4px}
+details.disclaimer .colofon{padding:0 var(--sp-sm) var(--sp-sm);margin:0;font-size:.72rem;
+  line-height:1.6;color:var(--outline)}
+details.disclaimer summary .tekst{font-size:.85rem;color:var(--on-surface-var)}
+details.disclaimer summary b{color:var(--on-surface)}
+.row2{display:flex;gap:var(--sp-sm);flex-wrap:wrap;margin-top:var(--sp-sm)}
+.row2 .field{flex:1 1 140px;min-width:0}
+
+/* ---------------- kaartpaneel ---------------- */
+.panel-map{position:relative;flex:1 1 auto;min-height:320px;background:var(--surface-highest);
+  background-image:radial-gradient(var(--outline-var) 1px,transparent 1px);
+  background-size:28px 28px}
+.panel-map.alt{background-color:var(--map-alt)}
+@media (min-width:1024px){ .panel-map{min-height:0} }
+.mapwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.mapwrap svg{width:100%;height:100%;transition:transform .18s ease}
+.mapempty{display:flex;flex-direction:column;align-items:center;gap:var(--sp-sm);
+  color:var(--outline);text-align:center;padding:var(--sp-md)}
+.mapempty p{font-size:.85rem;max-width:26ch}
+.routeline-glow{fill:none;stroke:var(--secondary);stroke-width:9;stroke-linecap:round;
+  stroke-linejoin:round;opacity:.18}
+.routeline{fill:none;stroke:var(--secondary);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.pt-start{fill:#ffffff;stroke:var(--primary);stroke-width:3}
+.pt-end{fill:var(--error);stroke:#ffffff;stroke-width:3}
+.mapctrl{position:absolute;display:flex;flex-direction:column;gap:6px;z-index:10}
+.mapctrl.top{top:var(--sp-md);right:var(--sp-md)}
+.mapctrl.bottom{bottom:var(--sp-md);right:var(--sp-md);background:var(--surface-lowest);
+  border:1px solid var(--outline-var);border-radius:var(--r-lg);box-shadow:var(--shadow-2);overflow:hidden;gap:0}
+.mapctrl button{width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-2);color:var(--on-surface);cursor:pointer}
+.mapctrl.bottom button{border-radius:0;border:0;border-bottom:1px solid var(--outline-var);box-shadow:none}
+.mapctrl.bottom button:last-child{border-bottom:0}
+.mapctrl button:hover{color:var(--secondary)}
+
+/* ---------------- fout bij laden ---------------- */
+.loaderr{border:1px solid var(--amber-line);background:var(--amber-container);color:var(--amber-ink);
+  padding:var(--sp-md);margin:var(--sp-md);border-radius:var(--r-lg)}
+.loaderr code{background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;font-family:var(--f-mono);font-size:.85em}

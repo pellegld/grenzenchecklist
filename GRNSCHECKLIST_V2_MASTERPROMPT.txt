@@ -1,0 +1,1284 @@
+# GRNSCHECKLIST V2 — MASTERPROMPT VOOR CLAUDE CODE
+
+Je werkt aan een bestaande webapp genaamd **GRNSCHECKLIST**.
+
+Het doel van deze opdracht is om de bestaande app gecontroleerd door te ontwikkelen naar **GRNSCHECKLIST V2**: een professionele, mobile-first en commercieel bruikbare Europese auto-reisassistent.
+
+## BELANGRIJK — EERST ANALYSEREN, DAN BOUWEN
+
+Voordat je ook maar één bestand wijzigt:
+
+1. Analyseer de volledige bestaande codebase.
+2. Lees README.md volledig.
+3. Bekijk alle HTML-, CSS-, JS- en JSON-bestanden.
+4. Breng de huidige architectuur, functies en afhankelijkheden in kaart.
+5. Zoek bestaande functionaliteit die hergebruikt kan worden.
+6. Zoek mogelijke bugs, technische risico's en inconsistenties.
+7. Controleer welke functies uit dit plan al bestaan.
+8. Maak daarna een kort implementatieplan.
+9. Wacht NIET op mijn bevestiging: voer het plan vervolgens gefaseerd uit.
+
+## HOOFDDOEL
+
+Maak van de huidige app:
+
+> "Een checklist met Europese verkeersregels"
+
+naar:
+
+> **"Je persoonlijke auto-reisassistent voor Europa."**
+
+De gebruiker moet:
+
+**route + auto + vertrekdatum**
+
+kunnen invoeren en vervolgens automatisch zien:
+
+* welke landen relevant zijn;
+* welke regels op hem van toepassing zijn;
+* welke vignetten nodig zijn;
+* welke tol relevant is;
+* welke milieuzones relevant zijn;
+* wat hij vóór vertrek moet regelen;
+* wat hij onderweg moet weten;
+* wat de geschatte kosten zijn;
+* welke informatie onzeker is;
+* welke officiële bronnen hij moet controleren;
+* en een persoonlijk reisdocument kunnen maken.
+
+---
+
+# 1. BELANGRIJKSTE UX-PRINCIPE
+
+De app moet niet primair zeggen:
+
+> "Hier zijn alle regels."
+
+De app moet zeggen:
+
+> **"Dit zijn de dingen die JIJ voor deze reis moet doen."**
+
+De gebruiker moet binnen ongeveer 1–2 minuten een persoonlijke checklist kunnen krijgen.
+
+---
+
+# 2. BEHOUD DE BESTAANDE BASIS
+
+Breek bestaande werkende functionaliteit niet zomaar af.
+
+De huidige app bevat onder andere:
+
+* routeplanning;
+* handmatige landenkeuze;
+* voertuigprofiel;
+* landenregels;
+* milieuzones;
+* tolpunten;
+* vignetten;
+* checklist;
+* kalender/datumlogica;
+* bronnen;
+* `lastVerified`;
+* onzekerheidsstatus;
+* offline werking;
+* print/PDF;
+* route-/geocode API-laag;
+* lokale opslag.
+
+HERGEBRUIK deze functionaliteit zoveel mogelijk.
+
+Schrijf bestaande logica alleen opnieuw wanneer dit aantoonbaar nodig is.
+
+---
+
+# 3. NIEUWE INFORMATIEARCHITECTUUR
+
+Maak de primaire navigatie:
+
+* **Reis**
+* **Acties**
+* **Kaart**
+* **Kosten**
+* **Regels**
+* **Document**
+
+Op mobiel:
+
+* Reis
+* Acties
+* Kaart
+* Kosten
+* Meer
+
+De app moet mobile-first zijn.
+
+---
+
+# 4. NIEUWE HOMEPAGE
+
+Maak een duidelijke commerciële landingpage.
+
+Hero:
+
+## GA VOORBEREID DE GRENS OVER.
+
+Subtekst:
+
+> Controleer in één minuut wat jij moet regelen voor je autorit door Europa.
+
+Primaire CTA:
+
+> **Plan mijn reis →**
+
+Daaronder duidelijk:
+
+> Gratis · Geen account nodig · Privacyvriendelijk · Offline beschikbaar
+
+Gebruik daarna een visueel voorbeeld:
+
+### Brussel → Salzburg
+
+🇧🇪 → 🇩🇪 → 🇦🇹
+
+742 km · 8u12 · 3 landen
+
+72% klaar
+
+7 geregeld · 2 acties · 1 probleem
+
+€155–€180 geschatte kosten
+
+De homepage moet onmiddellijk duidelijk maken wat het product doet.
+
+---
+
+# 5. REISWIZARD
+
+Maak een duidelijke wizard.
+
+## Stap 1
+
+### Waar ga je heen?
+
+Vertrek:
+
+* invoerveld
+* autocomplete
+
+Bestemming:
+
+* invoerveld
+* autocomplete
+
+Gebruik bestaande steden-/geocode-functionaliteit waar mogelijk.
+
+## Stap 2
+
+### Wanneer vertrek je?
+
+* vertrekdatum
+* optioneel retourdatum
+
+## Stap 3
+
+### Jouw auto
+
+* kentekenland
+* brandstof
+* Euroklasse
+* voertuigtype
+* optioneel gewicht
+* optioneel hoogte
+
+Voertuigtypen:
+
+* personenauto
+* auto + caravan
+* auto + aanhanger
+* camper
+
+Brandstof:
+
+* benzine
+* diesel
+* hybride
+* elektrisch
+
+## Stap 4
+
+### Analyseer mijn reis
+
+Voer bestaande route-, land-, zone-, tol- en voertuiglogica uit.
+
+Gebruik een duidelijke laadstatus.
+
+Bijvoorbeeld:
+
+ROUTE ANALYSEREN ✓
+LANDEN CONTROLEREN ✓
+MILIEUZONES CONTROLEREN ✓
+TOL BEREKENEN ✓
+VOERTUIG CONTROLEREN ✓
+
+Daarna:
+
+> **Jouw reis is klaar.**
+
+---
+
+# 6. REISDASHBOARD
+
+Dit wordt het belangrijkste scherm.
+
+Toon:
+
+## 🇧🇪 Brussel → 🇦🇹 Salzburg
+
+12–19 juli 2027
+
+Diesel · Euro 6 · Belgische plaat
+
+Daaronder:
+
+# Je bent 72% klaar
+
+Progress bar.
+
+Toon:
+
+* aantal afgeronde acties;
+* aantal openstaande acties;
+* aantal blokkades;
+* aantal waarschuwingen.
+
+Bijvoorbeeld:
+
+🟢 7 geregeld
+🟠 2 acties
+🔴 1 probleem
+
+De gebruiker moet vanaf dit scherm direct begrijpen wat hij moet doen.
+
+---
+
+# 7. ACTIES / CHECKLIST
+
+Transformeer de bestaande checklist naar een persoonlijke task manager.
+
+Structuur:
+
+## 🔴 Eerst oplossen
+
+## 🟠 Voor vertrek
+
+## 🚗 In de auto
+
+## 💡 Aanbevolen
+
+## 🟢 Klaar
+
+Iedere actie moet waar mogelijk bevatten:
+
+* unieke ID;
+* land;
+* status;
+* prioriteit;
+* uitleg;
+* deadline;
+* bron;
+* officiële URL;
+* eventuele prijs;
+* reden waarom deze actie op deze route relevant is.
+
+Voorbeelden:
+
+> 🇦🇹 Oostenrijk — Vignet nodig
+
+> 🇫🇷 Frankrijk — Crit'Air controleren
+
+> 🇩🇪 Duitsland — Milieuzone controleren
+
+Gebruik duidelijke statussen:
+
+* BLOKKADE
+* ACTIE
+* WAARSCHUWING
+* OK
+* ONBEKEND
+
+Gebruik niet uitsluitend kleur om status te communiceren.
+
+---
+
+# 8. DEADLINE ENGINE
+
+Voeg een systeem toe waarmee acties een deadline kunnen hebben.
+
+Voorbeeld:
+
+```js
+{
+  id: "at-vignette",
+  action: "purchase",
+  deadlineDaysBefore: 1,
+  priority: "required"
+}
+```
+
+De interface moet bijvoorbeeld kunnen tonen:
+
+> 🔴 Vandaag regelen
+
+of:
+
+> 🟠 Regel dit uiterlijk 7 juli
+
+Bereken deadlines op basis van vertrekdatum.
+
+---
+
+# 9. INTERACTIEVE KAART
+
+Voeg een interactieve kaart toe.
+
+Gebruik bij voorkeur de bestaande routegeometrie.
+
+De kaart moet minimaal ondersteunen:
+
+* route;
+* landen;
+* grenzen;
+* tolpunten;
+* milieuzones;
+* waarschuwingen.
+
+Gebruik markers.
+
+Bij klikken op een marker:
+
+* naam;
+* type;
+* relevante informatie;
+* kosten indien bekend;
+* waarschuwing;
+* bron.
+
+Gebruik bestaande `tollPoints` en `zones` waar mogelijk.
+
+Voeg geen nieuwe externe kaartprovider toe zonder eerst de bestaande architectuur te controleren.
+
+---
+
+# 10. KOSTENPAGINA
+
+Maak een kostenoverzicht.
+
+Categorieën:
+
+* tol;
+* vignetten;
+* milieuzones;
+* brandstof.
+
+Optioneel voertuigverbruik:
+
+```text
+Verbruik: 6.2 L / 100 km
+Brandstofprijs: €1.78
+```
+
+Toon:
+
+### Geschatte kosten
+
+# €298–€320
+
+Gebruik bandbreedtes wanneer data onzeker is.
+
+Maak duidelijk onderscheid tussen:
+
+* bevestigd;
+* indicatief;
+* onbekend;
+* niet meegerekend.
+
+Nooit schijnprecisie creëren.
+
+---
+
+# 11. REISDOCUMENT
+
+Maak een persoonlijke print-/PDF-weergave.
+
+Document moet bevatten:
+
+* reis;
+* vertrek- en retourdatum;
+* voertuigprofiel;
+* landen;
+* acties;
+* waarschuwingen;
+* tol;
+* vignetten;
+* milieuzones;
+* geschatte kosten;
+* belangrijke bronnen.
+
+Het document moet geschikt zijn om offline te bewaren.
+
+Behoud en verbeter bestaande print/PDF-functionaliteit.
+
+---
+
+# 12. DEELBARE REIS
+
+Voeg een functie toe:
+
+> **Deel mijn reis**
+
+Gebruik een URL waarin de relevante trip-state wordt opgeslagen.
+
+Denk aan:
+
+* vertrek;
+* bestemming;
+* datum;
+* voertuig;
+* brandstof;
+* Euroklasse;
+* voertuigtype.
+
+Gebruik op mobiel waar mogelijk:
+
+```js
+navigator.share()
+```
+
+Fallback:
+
+> Link kopiëren
+
+Maak geen account verplicht voor delen.
+
+---
+
+# 13. DATA QUALITY
+
+Data betrouwbaarheid is belangrijker dan extra features.
+
+Breid bestaande data uit met waar mogelijk:
+
+```js
+{
+  id: "...",
+  lastVerified: "...",
+  confidence: "high",
+  sourceUrl: "...",
+  ...
+}
+```
+
+Gebruik duidelijke statussen:
+
+🟢 Officieel bevestigd
+🔵 Gecontroleerd
+🟠 Onzeker
+⚪ Niet beschikbaar
+
+Toon altijd een controledatum waar relevant.
+
+Geen schijnzekerheid.
+
+Als informatie niet zeker is:
+
+> ⚠️ Controleer de officiële bron
+
+---
+
+# 14. "WAT IS ER VERANDERD?"
+
+Bouw de architectuur alvast zo dat later wijzigingen kunnen worden weergegeven.
+
+Voorbeeld:
+
+> 3 regels gewijzigd sinds je vorige controle.
+
+Per wijziging:
+
+* land;
+* onderwerp;
+* oude status indien beschikbaar;
+* nieuwe status;
+* datum;
+* bron.
+
+Dit hoeft niet volledig automatisch te zijn als de bestaande data daar nog niet geschikt voor is.
+
+Bouw eerst de datastructuur.
+
+---
+
+# 14A. GEBRUIKERSCORRECTIES (CROWDSOURCED DATA QUALITY)
+
+§13 en §14 gaan uit van eenrichtingsverkeer: jij onderhoudt `lastVerified` en `confidence`, de
+gebruiker leest alleen. Bij een app die leunt op honderden losse feiten (vignetprijzen,
+euronorm-drempels, tolpunten) is dat op termijn niet vol te houden als enige bron van
+actualiteit.
+
+Bouw voor V2 nog geen volledige correctie-flow met stemmen — dat hoort bij P2/P3 — maar zorg wel
+dat de datastructuur uit §13 er klaar voor is:
+
+* elk feit met `confidence`/`sourceUrl`/`lastVerified` krijgt een stabiel `id`, zodat een
+  toekomstige correctie er ondubbelzinnig naar kan verwijzen;
+* de bestaande correctielink (uit de huidige app, per land) blijft behouden en wordt in V2
+  zichtbaarder — bijvoorbeeld direct bij elke actie in §7, niet alleen op de landkaart;
+* documenteer in `V2_AUDIT.md` (§31, FASE 0) hoe een latere correctie-flow zou aanhaken op deze
+  structuur, zonder hem nu al te bouwen.
+
+---
+
+# 15. REGELS-PAGINA
+
+Detailinformatie mag uitgebreid zijn, maar de primaire UX moet simpel blijven.
+
+Bijvoorbeeld:
+
+## 🇩🇪 Duitsland
+
+### Mag ik rijden?
+
+🟢 JA
+
+### Moet ik iets regelen?
+
+🟢 NEE
+
+### Snelheid
+
+...
+
+### Uitrusting
+
+...
+
+### Milieuzones
+
+...
+
+### Bronnen
+
+...
+
+Gebruik progressive disclosure.
+
+De juridische/detailinformatie moet ondergeschikt zijn aan de praktische conclusie.
+
+---
+
+# 16. OFFICIËLE BRONNEN
+
+Bij iedere belangrijke regel:
+
+* duidelijke bron;
+* laatste verificatie;
+* officiële website indien beschikbaar.
+
+Gebruik geen verzonnen URL's.
+
+Als een officiële bron al in de bestaande data staat, hergebruik deze.
+
+Maak links visueel herkenbaar:
+
+> **Officiële website →**
+
+---
+
+# 17. PRIVACY
+
+Behoud privacyvriendelijkheid.
+
+De basisapp moet zonder account werken.
+
+Sla geen onnodige persoonsgegevens op.
+
+Kentekens mogen niet naar analytics-events worden gestuurd.
+
+Gebruik localStorage voor lokale voorkeuren wanneer passend.
+
+---
+
+# 17A. MEERTALIGHEID (I18N)
+
+Dit document mikt op een **Europese** auto-reisassistent, maar noemt nergens een andere taal dan
+Nederlands. Dat is een gat: reizigers uit andere landen zijn een groot deel van de potentiële
+gebruikers, en i18n is veel goedkoper om vanaf het begin mee te bouwen dan er later in te
+knippen.
+
+Voor V2 hoeft dit niet volledig afgerond te zijn, maar bouw wel de scaffolding:
+
+* alle zichtbare tekst via een centrale vertaalsleutel-structuur (bijvoorbeeld
+  `js/i18n.js` met `{ nl: {...}, en: {...} }`), niet hardgecodeerd Nederlands door de
+  componenten heen;
+* een taalkeuze in de UI (ook al is Engels de enige extra taal die je in deze fase daadwerkelijk
+  volledig vertaalt);
+* landdata-teksten (`note`, `rule`, microcopy uit §24) blijven voorlopig Nederlandstalig waar
+  vertalen te veel tijd kost — toon dat expliciet in de UI in plaats van een halfvertaalde pagina
+  te suggereren.
+
+Verwerk dit in de architectuur van FASE 1 (§31), niet als losse toevoeging achteraf.
+
+---
+
+# 18. TECHNISCHE ARCHITECTUUR
+
+Behoud voorlopig de bestaande Vanilla HTML/CSS/JS architectuur tenzij analyse aantoont dat een wijziging noodzakelijk is.
+
+Splits grote bestanden op.
+
+Bijvoorbeeld:
+
+```text
+index.html
+
+css/
+  base.css
+  components.css
+  responsive.css
+  print.css
+
+js/
+  app.js
+  route.js
+  vehicle.js
+  checklist.js
+  costs.js
+  map.js
+  data.js
+  storage.js
+  share.js
+  pdf.js
+
+data/
+  countries.json
+  cities.json
+  borders.json
+  zones.json
+  tollpoints.json
+  documents.json
+
+meta/
+  version.json
+  changelog.json
+```
+
+Pas dit aan de daadwerkelijke bestaande structuur aan.
+
+Niet blind bovenstaande structuur forceren.
+
+---
+
+# 18A. ROUTEPROVIDER-RISICO (BELANGRIJK — LEES DIT VOOR JE §5/§9 BOUWT)
+
+De bestaande routeplanner gebruikt de **OSRM demo-server** en **Nominatim**. Beide zijn expliciet
+niet-commercieel, zonder uptime-garantie en gelimiteerd tot ongeveer 1 request/seconde.
+
+Dit botst rechtstreeks met het hoofddoel van dit document: een **commercieel bruikbare** app
+waarin de routewizard (§5) en de kaart (§9) de kern vormen. Zodra dit meer dan een handjevol
+gebruikers per dag trekt, is dit een blocker, geen randgeval.
+
+Bouw daarom, ook al blijft de huidige provider voorlopig in gebruik:
+
+* een **routeprovider-interface/abstractielaag** (bijvoorbeeld `js/routeProvider.js`) die de
+  OSRM/Nominatim-aanroepen kapselt achter een neutrale functie-signatuur
+  (`getRoute(from, to)`, `geocode(query)`);
+* zodat een latere overstap naar een betaalde of eigen provider (bijvoorbeeld GraphHopper,
+  Mapbox, of een zelf gehoste OSRM-instantie) geen rewrite van de wizard, kaart of state-laag
+  vereist — alleen een nieuwe implementatie van dezelfde interface;
+* geen verzonnen of gecachete route-data als permanente vervanging als de provider faalt; de
+  bestaande foutafhandeling (§20) geldt onverkort ook hier.
+
+Dit is geen taak om nu al op te lossen (nieuwe provider kiezen, kosten vergelijken) — dat hoort
+bij een latere fase zodra er echt verkeer is. Het gaat er nu om dat de architectuur er niet
+blind van uitgaat dat OSRM/Nominatim de permanente oplossing zijn.
+
+---
+
+# 19. STATE MANAGEMENT
+
+Maak één duidelijk trip-object.
+
+Bijvoorbeeld conceptueel:
+
+```js
+{
+  origin: {},
+  destination: {},
+  departureDate: "",
+  returnDate: "",
+  vehicle: {},
+  route: {},
+  countries: [],
+  actions: [],
+  warnings: [],
+  costs: {},
+  metadata: {}
+}
+```
+
+Gebruik één bron van waarheid.
+
+Vermijd verspreide globale variabelen.
+
+---
+
+# 20. FOUTAFHANDELING
+
+Maak fouten menselijk.
+
+NOOIT alleen:
+
+> Error 500
+
+Wel:
+
+> Route kon niet worden berekend.
+
+> Je kunt handmatig doorgaan met het selecteren van landen.
+
+[ Handmatig doorgaan ]
+
+De routeplanner is een hulpmiddel, niet de enige manier om de checklist te gebruiken.
+
+Offline functionaliteit moet blijven werken waar dat mogelijk is.
+
+---
+
+# 21. ACCESSIBILITY
+
+Zorg minimaal voor:
+
+* keyboard navigation;
+* zichtbare focus;
+* semantische HTML;
+* aria-labels waar nodig;
+* goede contrasten;
+* voldoende grote knoppen;
+* touch targets;
+* screenreader-ondersteuning;
+* reduced motion.
+
+Gebruik niet alleen kleur voor betekenis.
+
+---
+
+# 22. RESPONSIVE DESIGN
+
+Ontwerp mobile-first.
+
+De belangrijkste informatie moet op een smartphone onmiddellijk zichtbaar zijn.
+
+Gebruik grote CTA's.
+
+Vermijd horizontaal scrollen.
+
+De gebruiker moet de app onderweg makkelijk kunnen gebruiken.
+
+---
+
+# 23. DESIGN
+
+Behoud de bestaande visuele identiteit als die goed werkt, maar maak deze professioneler.
+
+Designrichting:
+
+* donkerblauw;
+* teal;
+* amber/oranje;
+* groen voor OK;
+* rood voor blokkades;
+* rustige achtergronden;
+* duidelijke kaarten;
+* veel witruimte;
+* duidelijke typografische hiërarchie.
+
+De interface moet voelen als:
+
+**premium roadbook + moderne travel app**
+
+Niet als een administratieve overheidswebsite.
+
+---
+
+# 24. MICROCOPY
+
+Gebruik eenvoudige taal.
+
+Niet:
+
+> Emission threshold violation
+
+Wel:
+
+> **Je voertuig voldoet niet aan deze toegangsregel.**
+
+Niet:
+
+> Required action
+
+Wel:
+
+> **Dit moet je regelen.**
+
+Niet:
+
+> Unknown
+
+Wel:
+
+> **Niet zeker — controleer de officiële bron.**
+
+---
+
+# 25. PERFORMANCE
+
+Houd de app licht.
+
+* lazy load kaart;
+* geen onnodige dependencies;
+* minimaliseer JS;
+* cache statische data;
+* gebruik bestaande offline strategie;
+* voorkom onnodige API requests.
+
+---
+
+# 26. ANALYTICS
+
+Als analytics al aanwezig is of wordt toegevoegd, gebruik alleen geaggregeerde events.
+
+Bijvoorbeeld:
+
+```text
+trip_started
+trip_completed
+checklist_completed
+pdf_created
+share_clicked
+official_link_clicked
+```
+
+Geen kentekens of onnodige persoonlijke gegevens in analytics.
+
+---
+
+# 27. SEO
+
+Maak de publieke site geschikt voor zoekmachines.
+
+Denk aan inhoudelijke pagina's zoals:
+
+```text
+/autorijden-frankrijk
+/autorijden-oostenrijk
+/autorijden-duitsland
+/vignet-oostenrijk
+/vignet-zwitserland
+/milieuzones-frankrijk
+/milieuzones-duitsland
+```
+
+Maak geen lege SEO-pagina's.
+
+Alle SEO-content moet daadwerkelijk nuttig en actueel zijn.
+
+---
+
+# 28. COMMERCIËLE BASIS
+
+Bouw V2 zo dat later mogelijk zijn:
+
+## Gratis
+
+* route;
+* voertuig;
+* checklist;
+* regels;
+* basiskaart;
+* PDF.
+
+## Premium
+
+* meerdere reizen;
+* meerdere voertuigen;
+* opgeslagen reizen;
+* wijzigingen;
+* herinneringen;
+* uitgebreide kosten;
+* routealternatieven;
+* uitgebreide offline functionaliteit.
+
+## B2B later
+
+* widget;
+* API;
+* white-label.
+
+Bouw deze betaalfunctionaliteit nog NIET volledig tenzij de bestaande code al ondersteuning heeft.
+
+Zorg wel dat de architectuur later uitbreidbaar is.
+
+---
+
+# 29. WAT NIET BOUWEN
+
+Niet toevoegen in deze fase:
+
+* eigen navigatiesysteem;
+* live verkeersplatform;
+* hotels;
+* restaurants;
+* social network;
+* chat;
+* complete juridische database;
+* eigen betalingsplatform voor vignetten;
+* verplichte gebruikersaccounts.
+
+Focus op de kern.
+
+---
+
+# 30. PRIORITEITEN
+
+Gebruik deze volgorde.
+
+## PRIORITEIT P0 — absoluut noodzakelijk
+
+1. Nieuwe homepage
+2. Reiswizard
+3. Voertuigwizard
+4. Reisdashboard
+5. Persoonlijke acties
+6. Status/progressie
+7. Data confidence
+8. Mobiele UX
+9. Officiële bronnen
+10. Foutafhandeling
+
+## PRIORITEIT P1
+
+11. Interactieve kaart
+12. Kostenberekening
+13. PDF/reisdocument
+14. Deadline engine
+15. Deelbare reis
+16. Routeprovider-abstractielaag (zie §18A) — geen nieuwe provider kiezen, wel de interface bouwen
+17. I18n-scaffolding + Engelse vertaling (zie §17A)
+
+## PRIORITEIT P2
+
+18. Wijzigingsmeldingen
+19. Routealternatieven
+20. Opgeslagen reizen
+21. Meerdere voertuigen
+22. Offline reispack
+23. Gebruikerscorrecties op regeldata (zie §14A)
+
+## PRIORITEIT P3
+
+24. Accounts
+25. Premium
+26. Affiliate tracking
+27. B2B widget
+28. API
+29. Overstap naar betaalde/eigen routeprovider (nu de interface uit P1-16 er staat)
+
+---
+
+# 31. IMPLEMENTATIESTRATEGIE
+
+Werk gefaseerd.
+
+## FASE 0 — AUDIT
+
+Voer eerst uit:
+
+* volledige codebase analyse;
+* bestaande functies inventariseren;
+* technische afhankelijkheden;
+* data-structuren;
+* API's;
+* bestaande UI;
+* opslag;
+* offline;
+* PDF;
+* mogelijke bugs.
+
+Maak een korte audit in:
+
+`V2_AUDIT.md`
+
+Daarin:
+
+* wat bestaat al;
+* wat ontbreekt;
+* wat hergebruikt wordt;
+* wat aangepast wordt;
+* risico's — inclusief expliciet het routeprovider-risico uit §18A;
+* i18n-gereedheid van de bestaande codebase (hardgecodeerde teksten vs. herbruikbare structuur),
+  zie §17A;
+* voorgestelde architectuur.
+
+---
+
+## FASE 1 — FUNDAMENT
+
+Maak eerst:
+
+* centrale trip-state;
+* componentstructuur;
+* data helpers;
+* action engine;
+* status engine;
+* responsive layout.
+
+Test daarna.
+
+---
+
+## FASE 2 — NIEUWE UX
+
+Bouw:
+
+* homepage;
+* routewizard;
+* voertuigwizard;
+* datum;
+* analyseflow;
+* dashboard.
+
+Test desktop én mobiel.
+
+---
+
+## FASE 3 — ACTIES
+
+Bouw:
+
+* persoonlijke checklist;
+* prioriteiten;
+* statussen;
+* deadlines;
+* voortgang;
+* blokkades;
+* bronnen.
+
+---
+
+## FASE 4 — KAART
+
+Bouw:
+
+* route;
+* landen;
+* zones;
+* tolpunten;
+* markers;
+* popups.
+
+---
+
+## FASE 5 — KOSTEN
+
+Bouw:
+
+* tol;
+* vignetten;
+* milieuzones;
+* brandstof;
+* totaal;
+* onzekerheidsmarges.
+
+---
+
+## FASE 6 — DOCUMENT
+
+Bouw:
+
+* print view;
+* PDF;
+* reisdocument;
+* offline pack.
+
+---
+
+## FASE 7 — DELEN
+
+Bouw:
+
+* serialisatie van trip-state;
+* URL sharing;
+* navigator.share;
+* clipboard fallback.
+
+---
+
+## FASE 8 — QUALITY
+
+Test:
+
+* Chrome;
+* Firefox;
+* Safari;
+* Edge;
+* iPhone-formaat;
+* Android-formaat;
+* desktop;
+* offline;
+* slechte internetverbinding;
+* route API failure;
+* ontbrekende data;
+* lege invoer;
+* ongeldige invoer.
+
+---
+
+# 32. ACCEPTATIECRITERIA
+
+De V2 is pas klaar wanneer een nieuwe gebruiker:
+
+1. de homepage begrijpt zonder uitleg;
+2. binnen 2 minuten een reis kan invoeren;
+3. een persoonlijke checklist krijgt;
+4. direct ziet wat eerst moet gebeuren;
+5. kan zien waarom een actie relevant is;
+6. officiële bronnen kan openen;
+7. kosten kan bekijken;
+8. de route op een kaart kan bekijken;
+9. een reisdocument kan maken;
+10. de reis kan delen;
+11. de app goed op mobiel kan gebruiken;
+12. de app niet kapotgaat wanneer een externe API faalt.
+
+---
+
+# 33. BELANGRIJKE REGEL VOOR DE IMPLEMENTATIE
+
+Maak geen enorme rewrite.
+
+Werk incrementeel.
+
+Na iedere belangrijke fase:
+
+1. code formatteren;
+2. console errors controleren;
+3. bestaande functionaliteit testen;
+4. nieuwe functionaliteit testen;
+5. responsive controleren;
+6. regressies oplossen.
+
+Maak kleine, begrijpelijke commits/wijzigingen.
+
+---
+
+# 34. ALS JE EEN PROBLEEM TEGENKOMT
+
+Als bestaande code onduidelijk is:
+
+* inspecteer eerst;
+* zoek waar de functionaliteit gebruikt wordt;
+* begrijp de bestaande bedoeling;
+* wijzig daarna.
+
+Niet zomaar verwijderen.
+
+Als een externe API ontbreekt:
+
+* maak een nette fallback;
+* gebruik geen verzonnen API-response;
+* documenteer wat ontbreekt.
+
+Als data ontbreekt:
+
+* toon "onbekend";
+* verzin geen regel;
+* verwijs naar officiële bron waar mogelijk.
+
+---
+
+# 35. EINDELIJK DOEL
+
+De eindervaring moet ongeveer zo voelen:
+
+---
+
+GRNSCHECKLIST
+
+**Je persoonlijke auto-reisassistent**
+
+🇧🇪 Brussel → 🇦🇹 Salzburg
+
+Diesel · Euro 6 · Belgische plaat
+12 juli 2027
+
+### 72% KLAAR
+
+██████████████░░░░
+
+🟢 7 geregeld
+🟠 2 acties
+🔴 1 probleem
+
+### 🔴 EERST REGELEN
+
+🇦🇹 Oostenrijk
+
+**Vignet nodig**
+
+[ Officiële website → ]
+
+### 🟠 LET OP
+
+🇩🇪 Duitsland
+
+**Milieuzone op je route**
+
+[ Bekijk → ]
+
+### 💶 KOSTEN
+
+**€298–€320**
+
+[ Bekijk kosten → ]
+
+### 🗺️ ROUTE
+
+742 km · 8u12
+
+[ Bekijk kaart → ]
+
+### 📄 REISDOCUMENT
+
+[ Maak mijn reisdocument ]
+
+---
+
+# START NU
+
+Begin met FASE 0.
+
+Lees de volledige repository voordat je code wijzigt.
+
+Maak `V2_AUDIT.md`.
+
+Geef daarna in je antwoord kort:
+
+1. wat de huidige architectuur is;
+2. welke V2-functionaliteit al bestaat;
+3. welke onderdelen nieuw zijn;
+4. welke bestanden je gaat aanpassen;
+5. eventuele technische risico's — benoem hierbij expliciet het routeprovider-risico (§18A) en
+   de i18n-gereedheid van de bestaande code (§17A).
+
+Voer daarna FASE 1 uit.
+
+**Belangrijk: behoud bestaande functionaliteit en data waar mogelijk.**

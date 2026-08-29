@@ -1,0 +1,94 @@
+/* Print / PDF.
+
+   De vorige versie van de app had een printstylesheet; bij de Kinetic
+   Route-redesign is die verdwenen terwijl de HTML er nog wel op rekent (de
+   verborgen .printnamen in de checklist bestaan alleen voor dit bestand). Dit
+   herstelt dat, nog zonder het volledige reisdocument uit §11 van de
+   masterprompt — dat is fase 6.
+
+   Uitgangspunt: zwart op wit, bediening weg, inhoud van de zichtbare pagina
+   volledig uitgeklapt, en bron-URL's voluit achter de linktekst zodat een
+   uitdraai ook zonder scherm bruikbaar is. */
+
+@media print {
+  /* Alles wat je op papier niet kunt aanraken, gaat eruit. */
+  .topbar, .bottomnav, .sidebar, .panel-map, .mapctrl,
+  .swapbtn, .landswitch, .tripactions, .tripgo, .infobtn,
+  #btn-route, #btn-reset, #btn-bekijk-reis, #btn-nieuwe-reis, #btn-tripnew,
+  #btn-reis-checklist, #btn-reis-naar-planner,
+  .journeyroad-wrap > .journeyroad, .journeymarker,
+  .results, .langswitch { display: none !important; }
+
+  /* Kleurtokens terug naar papier. De donkere merkpanelen (navy, asfalt) zijn
+     op papier alleen maar inkt: die gaan ook naar wit. */
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    --surface:#fff; --surface-dim:#fff; --surface-bright:#fff;
+    --surface-lowest:#fff; --surface-low:#fff; --surface-c:#fff;
+    --surface-high:#fff; --surface-highest:#ddd;
+    --on-surface:#000; --on-surface-var:#333;
+    --outline:#666; --outline-var:#bbb;
+    --primary:#000; --on-primary:#fff; --primary-container:#fff; --on-primary-container:#000;
+    --secondary:#000; --on-secondary:#fff; --secondary-container:#fff; --on-secondary-container:#000;
+    --error:#000; --error-container:#fff; --on-error-container:#000;
+    --amber:#000; --amber-container:#fff; --amber-line:#999; --amber-ink:#000;
+    --eco:#000;
+    --background:#fff; --topbar-bg:#fff; --map-alt:#fff;
+    --navy:#fff; --navy-rgb:255,255,255; --asphalt:#fff; --asphalt-border:#bbb;
+    --shadow-1:none; --shadow-2:none;
+  }
+
+  html, body { background:#fff; color:#000; font-size:10.5pt; }
+
+  /* De layout is op het scherm een vast raster met een zijbalk en een eigen
+     scrollcontainer per view. Op papier moet alles gewoon doorlopen. */
+  #app, .main, .view, .view-page, .panel-route {
+    display:block !important; position:static !important;
+    height:auto !important; max-height:none !important; overflow:visible !important;
+    margin:0 !important; padding:0 !important; width:auto !important;
+  }
+
+  /* Verborgen views blijven verborgen: je print wat je op het scherm ziet.
+     Anders krijg je vijf pagina's waarvan je er één wilde. */
+  .view[hidden] { display:none !important; }
+
+  /* Details-elementen (voertuigprofiel, disclaimer) klappen open. */
+  details { display:block; }
+  details > summary { list-style:none; font-weight:700; }
+  details > summary::-webkit-details-marker { display:none; }
+  details > *:not(summary) { display:revert !important; }
+
+  /* Bron-URL's voluit. Op papier is "Officiële website" zonder adres niets
+     waard, en juist de bronnen zijn de reden dat je dit meeneemt. */
+  a[href^="http"]::after {
+    content:" \00a0<" attr(href) ">";
+    font-size:.82em; font-family:var(--f-mono); word-break:break-all; color:#333;
+  }
+  a { color:#000; text-decoration:underline; }
+
+  /* Vlaggen zijn CSS-achtergronden en drukken standaard niet af; de checklist
+     houdt daarom een verborgen .printnamen met de landnamen voluit. */
+  .vlaggen { display:none !important; }
+  .printnamen { display:block !important; }
+
+  /* Kaders in plaats van vlakken, zodat de structuur zonder kleur leesbaar blijft. */
+  .bentocard, .landcard, .tripcard, .progresscard, .statcard, .milieukaart,
+  .blockerbar, .eqcard, .jcard {
+    border:1px solid #999 !important; box-shadow:none !important;
+    background:#fff !important; color:#000 !important;
+    break-inside:avoid; page-break-inside:avoid;
+  }
+  .progressbar { border:1px solid #666; }
+  .progressbar > i { background:#666 !important; }
+
+  /* Aangevinkt versus niet aangevinkt moet ook zonder kleur te zien zijn. */
+  .chkrow.done .ttl { text-decoration:line-through; }
+  input[type="checkbox"] { -webkit-appearance:none; appearance:none;
+    width:11pt; height:11pt; border:1pt solid #000; border-radius:2px; }
+  input[type="checkbox"]:checked::after { content:"\2713"; display:block;
+    text-align:center; line-height:11pt; font-size:9pt; }
+
+  h1, h2, h3 { break-after:avoid; page-break-after:avoid; color:#000; }
+  .bento, .landgrid, .tripgrid, .eqgrid, .milieucols { display:block !important; }
+
+  @page { margin:16mm 14mm; }
+}

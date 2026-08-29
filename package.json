@@ -1,0 +1,20 @@
+{
+  "name": "grenschecklist",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Europese auto-reisassistent. De app zelf is vanilla HTML/CSS/JS zonder build step; deze package.json is er alleen voor de tooling eromheen.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node build/build.mjs --alles",
+    "build:pages": "node build/build.mjs",
+    "build:sw": "node build/build.mjs --sw",
+    "verify:data": "node tools/verify-data.mjs",
+    "verify:data:offline": "node tools/verify-data.mjs --geen-netwerk",
+    "dev": "py -m http.server 8731"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

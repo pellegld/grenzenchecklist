@@ -1,0 +1,314 @@
+/* Paginaspecifieke stijlen: Checklist, Landeninformatie, Mijn Reizen, Reiservaring. */
+
+/* ================= Checklist-pagina ================= */
+.progresscard{background:var(--surface-c);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  padding:var(--sp-md);margin-bottom:var(--sp-md)}
+.progresscard .prow{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.progresscard .plbl{font:600 .78rem/1 var(--f-display);color:var(--on-surface-var)}
+.progresscard .pval{font:700 .95rem/1 var(--f-mono);color:var(--secondary)}
+.progressbar{width:100%;height:10px;border-radius:99px;background:var(--surface-highest);overflow:hidden}
+.progressbar>i{display:block;height:100%;background:var(--secondary);border-radius:99px;transition:width .4s}
+
+.bento{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter)}
+@media (min-width:760px){ .bento{grid-template-columns:1fr 1fr} }
+.bentocard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-md);display:flex;flex-direction:column}
+.bentocard.wide{grid-column:1/-1}
+.bentohead{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:var(--sp-sm);
+  padding-bottom:var(--sp-sm);border-bottom:1px solid var(--surface-highest)}
+.bentobubble{width:38px;height:38px;border-radius:99px;display:flex;align-items:center;justify-content:center;
+  background:var(--surface-c);color:var(--on-surface-var);flex:0 0 auto}
+.bentohead h2{font:700 1.05rem/1.3 var(--f-display);color:var(--primary);text-transform:none;letter-spacing:0;margin:0}
+
+.chkrow{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-sm);
+  padding:var(--sp-sm);border-radius:var(--r-lg);min-height:52px;border:1px solid transparent}
+.chkrow:hover{background:var(--surface-low);border-color:var(--outline-var)}
+.chkrow.zone{border-left:4px solid var(--eco)}
+.chklabel{display:flex;align-items:center;gap:var(--sp-sm);flex:1 1 auto;cursor:pointer;min-width:0}
+.chklabel input[type=checkbox]{width:20px;height:20px;flex:0 0 auto;accent-color:var(--secondary)}
+.chktext{display:flex;flex-direction:column;min-width:0}
+.chktext .ttl{font:500 .92rem/1.3 var(--f-body);color:var(--on-surface)}
+.chkrow.done .ttl{text-decoration:line-through;opacity:.6}
+.chktext .sub{font:400 .74rem/1.3 var(--f-body);color:var(--on-surface-var)}
+.vlaggen{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.vlaggen .flag{width:20px;height:14px;border-radius:2px;display:block}
+.vlaggen .dim{opacity:.35}
+.pill{font:700 .62rem/1 var(--f-display);letter-spacing:.02em;color:var(--amber);
+  background:var(--amber-container);border:1px solid var(--amber-line);padding:2px 7px;border-radius:var(--r-md);
+  margin-left:6px;white-space:nowrap;vertical-align:middle}
+.infobtn{width:28px;height:28px;flex:0 0 auto;border:0;background:none;color:var(--on-surface-var);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:99px}
+.infobtn:hover{color:var(--secondary);background:var(--surface-highest)}
+.blockerbar{display:flex;gap:var(--sp-sm);align-items:flex-start;background:var(--error-container);
+  border:1px solid var(--error);color:var(--on-error-container);border-radius:var(--r-lg);
+  padding:var(--sp-sm);margin-bottom:var(--sp-md)}
+.blockerbar .icon{color:var(--error);flex:0 0 auto;margin-top:2px}
+.blockerbar p{font-size:.84rem;line-height:1.5;margin:0 0 4px}
+.blockerbar p:last-child{margin-bottom:0}
+
+/* ================= Landeninformatie-pagina ================= */
+/* Hero breekt uit de padding van .view-page en loopt tot de rand van het
+   scherm, zoals in het voorbeeld — vandaar de negatieve marge i.p.v. gewoon
+   margin-bottom, en geen afgeronde hoeken meer (die horen bij een los kaartje,
+   niet bij iets dat tot de rand loopt). */
+.landherowrap{position:relative;margin:calc(-1 * var(--sp-margin-mobile)) calc(-1 * var(--sp-margin-mobile)) var(--sp-md)}
+@media (min-width:1024px){
+  .landherowrap{margin:calc(-1 * var(--sp-margin-desktop)) calc(-1 * var(--sp-margin-desktop)) var(--sp-md)}
+}
+.landhero{position:relative;overflow:hidden;height:256px;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 var(--sp-lg) var(--sp-lg);
+  background-image:linear-gradient(to top,var(--navy) 0%,rgba(var(--navy-rgb),.75) 55%,rgba(var(--navy-rgb),.15) 100%),
+    radial-gradient(var(--outline-var) 1px,transparent 1px);
+  background-size:auto,24px 24px;background-color:var(--surface-highest);color:#fff}
+@media (min-width:1024px){ .landhero{height:320px} }
+.landhero .regio{display:flex;align-items:center;gap:var(--sp-sm);opacity:.85;font:600 .72rem/1 var(--f-display);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.landhero .regio .flag{width:34px;height:24px}
+.landhero h2{font:700 2.75rem/1.1 var(--f-display);color:#fff;margin:0 0 10px}
+.landhero p{font-size:.95rem;opacity:.9;max-width:60ch;margin:0}
+
+/* Landkiezer: pillknop rechtsboven in de hero, dropdownpaneel eronder. Als
+   sibling van .landhero (niet erin) zodat het paneel niet wordt afgesneden
+   door de overflow:hidden van de hero. */
+.landswitch{position:absolute;top:var(--sp-lg);right:var(--sp-lg);z-index:2}
+.landswitch-toggle{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r-full);
+  border:1px solid rgba(255,255,255,.25);background:rgba(9,20,38,.45);backdrop-filter:blur(6px);
+  color:#fff;font:600 .82rem/1 var(--f-display);cursor:pointer}
+.landswitch-toggle:hover{background:rgba(9,20,38,.65)}
+.landswitch-toggle .flag{width:20px;height:14px;border-radius:2px}
+.landswitch-toggle .icon{width:14px;height:14px;transform:rotate(90deg);opacity:.8}
+.landswitch-panel{position:absolute;top:calc(100% + 8px);right:0;width:290px;max-height:380px;
+  display:flex;flex-direction:column;background:var(--surface-lowest);color:var(--on-surface);
+  border:1px solid var(--outline-var);border-radius:var(--r-lg);box-shadow:var(--shadow-2);overflow:hidden}
+.landswitch-panel[hidden]{display:none}
+.landswitch-search{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--outline-var);
+  color:var(--on-surface-var);flex:0 0 auto}
+.landswitch-search .icon{width:16px;height:16px;flex:0 0 auto}
+.landswitch-search input{border:0;background:none;outline:0;font:500 .88rem/1.2 var(--f-body);
+  color:var(--on-surface);width:100%}
+.landswitch-list{overflow-y:auto;padding:6px}
+.landswitch-label{padding:8px 10px 4px;font:600 .68rem/1 var(--f-display);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--on-surface-var)}
+.landswitch-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border-radius:var(--r-md);
+  border:0;background:none;font:500 .88rem/1.2 var(--f-body);color:var(--on-surface);cursor:pointer;text-align:left}
+.landswitch-row:hover{background:var(--surface-high)}
+.landswitch-row.active{background:var(--secondary-container);color:var(--on-secondary-container);font-weight:700}
+.landswitch-row .flag{width:24px;height:17px;flex:0 0 auto}
+.landswitch-row span{flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.landswitch-row .icon{width:16px;height:16px;flex:0 0 auto;color:var(--secondary)}
+
+.landgrid{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter)}
+@media (min-width:1000px){ .landgrid{grid-template-columns:2fr 1fr} }
+.landmain,.landside{display:flex;flex-direction:column;gap:var(--sp-gutter);min-width:0}
+.landcard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-md)}
+.landcardhead{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:var(--sp-md)}
+.landcardhead .icon{color:var(--amber)}
+.landcardhead h3{margin:0;text-transform:none;letter-spacing:0;font:700 1.05rem/1.3 var(--f-display);color:var(--primary)}
+.eqgrid{display:grid;grid-template-columns:1fr;gap:var(--sp-sm)}
+@media (min-width:560px){ .eqgrid{grid-template-columns:1fr 1fr} }
+.eqcard{display:flex;gap:var(--sp-sm);padding:var(--sp-sm);border-radius:var(--r-lg);background:var(--surface-low);
+  border:1px solid var(--outline-var)}
+.eqcard .eqicon{width:36px;height:36px;border-radius:99px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;background:var(--surface-highest);color:var(--on-surface-var)}
+.eqcard.must .eqicon{background:var(--amber-container);color:var(--amber)}
+.eqcard h4{margin:0 0 3px;font:600 .85rem/1.3 var(--f-display);color:var(--primary)}
+.eqcard p{font-size:.78rem;color:var(--on-surface-var);line-height:1.4;margin:0}
+
+.milieupanel{background:var(--navy);color:#fff;border-radius:var(--r-xl)}
+.milieupanel .landcardhead h3{color:#fff}
+.milieupanel .landcardhead .icon{color:var(--eco)}
+.milieucols{display:grid;grid-template-columns:1fr;gap:var(--sp-sm)}
+@media (min-width:560px){ .milieucols{grid-template-columns:1fr 1fr} }
+.milieucol{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:var(--sp-sm)}
+.milieucol h4{margin:0 0 8px;font:600 .82rem/1 var(--f-display);color:#fff;text-transform:none;letter-spacing:0;
+  padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:8px}
+.milieucol p{font-size:.82rem;color:rgba(255,255,255,.75);line-height:1.5;margin:0}
+
+/* De brondata is niet altijd een kaal getal — soms een hele zin met
+   uitzonderingen per regio of tijdstip (zie DE/BE). Het bord toont het eerste
+   getal uit de tekst als representatief verkeersbord; de volle tekst staat er
+   altijd naast, dus een uitzondering raakt nooit verborgen achter het bord. */
+.speedrow{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm) 0;
+  border-bottom:1px solid var(--surface-highest)}
+.speedrow:last-child{border-bottom:0}
+.speedsign{width:46px;height:46px;border-radius:50%;background:#fff;border:4px solid var(--error);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.05)}
+.speedsign span{font:800 1.02rem/1 var(--f-mono);color:#141414;letter-spacing:-.02em}
+.speedsign.leeg{color:var(--outline)}
+.speedsign.leeg .icon{width:20px;height:20px}
+.speedtext{display:flex;flex-direction:column;gap:2px;min-width:0}
+.speedrow .slabel{font:600 .72rem/1 var(--f-display);letter-spacing:.03em;
+  text-transform:uppercase;color:var(--on-surface-var)}
+.speedrow .sval{font:500 .82rem/1.4 var(--f-body);color:var(--on-surface)}
+.speednote{margin-top:var(--sp-sm);padding:var(--sp-sm);background:var(--surface-low);
+  border-left:3px solid var(--secondary);border-radius:0 var(--r-md) var(--r-md) 0;font-size:.8rem;color:var(--on-surface-var)}
+
+.verbodenpanel{background:var(--error-container);border:1px solid var(--error);border-radius:var(--r-xl)}
+.verbodenpanel .landcardhead h3{color:var(--error)}
+.verbodenpanel .landcardhead .icon{color:var(--error)}
+.verbodlist{display:flex;flex-direction:column;gap:var(--sp-sm);list-style:none;margin:0;padding:0}
+.verbodlist li{display:flex;gap:var(--sp-sm);padding-top:var(--sp-sm);border-top:1px solid rgba(186,26,26,.18)}
+.verbodlist li:first-child{padding-top:0;border-top:0}
+.verbodlist .icon{color:var(--error);flex:0 0 auto;margin-top:2px}
+.verbodlist h4{margin:0 0 2px;font:600 .85rem/1.3 var(--f-display);color:var(--on-surface)}
+.verbodlist p{font-size:.78rem;color:var(--on-surface-var);line-height:1.4;margin:0}
+
+/* ================= Mijn Reizen-pagina ================= */
+.reizenhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:var(--sp-md);
+  margin-bottom:var(--sp-lg);padding-bottom:var(--sp-md);border-bottom:1px solid var(--surface-highest)}
+.reizenhead h2{font:700 1.6rem/1.2 var(--f-display);letter-spacing:-.01em;margin:0}
+.reizenhead p{color:var(--on-surface-var);margin-top:6px;max-width:60ch}
+
+.tripgrid{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter)}
+@media (min-width:760px){ .tripgrid{grid-template-columns:1fr 1fr} }
+@media (min-width:1200px){ .tripgrid{grid-template-columns:repeat(3,1fr)} }
+.tripcard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+.tripcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+.tripbanner{height:110px;position:relative;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--navy),var(--secondary-container));color:rgba(255,255,255,.4)}
+.tripbanner .icon{width:44px;height:44px}
+.tripbadge{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.92);color:var(--navy);
+  font:600 .68rem/1 var(--f-mono);padding:5px 9px;border-radius:var(--r-md);display:flex;align-items:center;gap:5px}
+.tripbody{padding:var(--sp-md);display:flex;flex-direction:column;gap:var(--sp-sm);flex:1 1 auto}
+.triptop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.triptop h3{margin:0;font:700 1.05rem/1.3 var(--f-display);color:var(--primary)}
+.tripactions{display:flex;gap:2px;flex:0 0 auto}
+.tripactions button{width:30px;height:30px;border:0;background:none;color:var(--on-surface-var);
+  border-radius:99px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tripactions button:hover{background:var(--surface-highest);color:var(--on-surface)}
+.tripactions button.danger:hover{background:var(--error-container);color:var(--error)}
+.tripvan{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--on-surface-var)}
+.tripvan .icon{flex:0 0 auto}
+.tripvan .arrow{color:var(--outline)}
+.tripchips{display:flex;flex-wrap:wrap;gap:6px}
+.tripchip{display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:var(--r-md);
+  background:var(--surface-low);border:1px solid var(--outline-var);font:600 .74rem/1 var(--f-mono);color:var(--on-surface-var)}
+.tripprogress{border-top:1px solid var(--surface-highest);padding-top:var(--sp-sm);margin-top:auto;
+  display:flex;align-items:center;gap:var(--sp-sm)}
+.progresswrap{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
+.tripprogress .prow{display:flex;align-items:center;gap:6px;justify-content:space-between;
+  font:600 .72rem/1 var(--f-display);color:var(--on-surface-var)}
+.tripprogress .prow b{font-family:var(--f-mono);color:var(--primary);font-weight:600}
+.tripgo{width:34px;height:34px;border-radius:99px;border:0;flex:0 0 auto;
+  background:var(--secondary-container);color:var(--on-secondary-container);display:flex;align-items:center;
+  justify-content:center;cursor:pointer}
+.tripgo:hover{background:var(--secondary);color:var(--on-secondary)}
+.tripwarn{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--error-container);
+  border:1px solid var(--error);border-radius:var(--r-lg);padding:8px 10px;font-size:.76rem;color:var(--on-error-container)}
+.tripwarn .l{display:flex;align-items:center;gap:6px;font-weight:600}
+.tripwarn .icon{color:var(--error)}
+
+.tripnew{grid-column:span 1;border:2px dashed var(--outline-var);border-radius:var(--r-xl);background:var(--surface-low);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:var(--sp-xl) var(--sp-md);cursor:pointer;min-height:220px;color:var(--on-surface-var)}
+.tripnew:hover{border-color:var(--secondary);background:var(--surface-c)}
+.tripnew .bubble{width:52px;height:52px;border-radius:99px;background:var(--surface-c);display:flex;
+  align-items:center;justify-content:center;color:var(--secondary);margin-bottom:var(--sp-sm)}
+.tripnew h3{margin:0 0 4px;color:var(--primary);text-transform:none;letter-spacing:0}
+.tripnew p{font-size:.82rem;max-width:26ch;margin:0 0 8px}
+.tripnew .go{color:var(--secondary);font:600 .82rem/1 var(--f-display);display:flex;align-items:center;gap:4px}
+
+/* ================= Reiservaring-pagina =================
+   Scrollytelling: een weg loopt door de kaarten heen, met een markering die
+   met het scrollen meebeweegt en haltes op "voltooid" zet zodra hij ze
+   passeert. #view-reis is hier bewust op elke breedte zélf de scrollcontainer
+   (i.p.v. pas vanaf 1024px zoals de andere .view-page's), anders werkt de
+   IntersectionObserver/scroll-koppeling niet consistent op mobiel. */
+#view-reis{overflow-y:auto;height:calc(100vh - var(--topbar-h) - 64px)}
+@media (min-width:1024px){ #view-reis{height:100vh} }
+
+.journeyhead{text-align:center;max-width:640px;margin:0 auto var(--sp-xl)}
+.journeyhead p{color:var(--on-surface-var);margin-top:8px}
+
+.journeyroad-wrap{position:relative}
+/* Zoals het voorbeeld: breed donker asfalt met een dikke halfdoorzichtige
+   rand en een animerende witte streep in het midden — geen dun lijntje. */
+.journeyroad{position:absolute;left:24px;top:0;bottom:0;width:48px;transform:translateX(-50%);
+  background:var(--asphalt);border-radius:var(--r-md);overflow:hidden;
+  border-left:4px solid var(--asphalt-border);border-right:4px solid var(--asphalt-border);
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
+@media (min-width:768px){ .journeyroad{left:50%;width:64px} }
+.journeyroad::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(to bottom,#fff 50%,transparent 50%);
+  background-size:4px 40px;background-repeat:repeat-y;background-position:center 0;
+  animation:jdash 1.5s linear infinite}
+@keyframes jdash{ to{ background-position:center 40px; } }
+.journeyroad-progress{position:absolute;top:0;left:0;width:100%;height:4%;background:transparent}
+/* Zusterelement van .journeyroad, niet erin genest: .journeyroad heeft zelf
+   overflow:hidden (voor de nette afgeronde randen van het wegdek), en zou de
+   markering anders afsnijden. De positie komt daarom niet uit nesting in
+   #journey-progress, maar wordt in de scroll-tick() rechtstreeks als top:%
+   gezet, in lockstep met de hoogte van #journey-progress. De pijl (uit
+   pijl/code.html) wijst standaard omhoog; 180° gedraaid wijst hij mee met de
+   reisrichting, naar beneden de pagina in. */
+.journeymarker{position:absolute;left:24px;top:0;transform:translate(-50%,-50%) rotate(180deg);
+  z-index:6;width:34px;height:34px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
+.journeymarker svg{display:block;width:100%;height:100%}
+@media (min-width:768px){ .journeymarker{left:50%} }
+
+.journeynodes{position:relative;display:flex;flex-direction:column}
+.journeynode{position:relative;display:flex;flex-direction:column;width:100%;margin-bottom:var(--sp-xl);
+  opacity:0;transform:translateY(28px);
+  transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+.journeynode.is-visible{opacity:1;transform:translateY(0)}
+@media (min-width:768px){
+  .journeynode{flex-direction:row;align-items:flex-start}
+  .journeynode.alt{flex-direction:row-reverse}
+}
+.jnode-spacer{display:none}
+@media (min-width:768px){ .jnode-spacer{display:block;width:50%;flex:0 0 auto} }
+.jnode-icon{position:absolute;left:24px;top:0;transform:translateX(-50%);z-index:5;
+  width:44px;height:44px;border-radius:50%;background:var(--surface-lowest);
+  border:2px solid var(--outline-var);display:flex;align-items:center;justify-content:center;
+  overflow:hidden;transition:all .35s cubic-bezier(.34,1.56,.64,1)}
+@media (min-width:768px){ .jnode-icon{left:50%} }
+.journeynode.is-visible .jnode-icon{border-color:var(--secondary);
+  box-shadow:0 0 0 4px rgba(0,88,190,.15)}
+.journeynode.is-passed .jnode-icon{background:#10b981;border-color:#10b981;
+  box-shadow:0 0 0 4px rgba(16,185,129,.18)}
+.jnode-icon .flag{width:26px;height:19px}
+.jnode-icon .jcheck{display:none;color:#fff}
+.journeynode.is-passed .jnode-icon .flag{display:none}
+.journeynode.is-passed .jnode-icon .jcheck{display:block}
+.jnode-icon.dest{width:56px;height:56px;background:var(--navy);border-color:var(--surface-lowest);
+  border-width:3px;color:#fff}
+.jnode-icon.dest .icon{width:26px;height:26px}
+
+.jcard-wrap{width:100%;padding-left:76px}
+@media (min-width:768px){
+  .jcard-wrap{width:50%;flex:0 0 auto;padding-left:var(--sp-lg);padding-right:0}
+  .journeynode.alt .jcard-wrap{padding-left:0;padding-right:var(--sp-lg)}
+  .journeynode.alt .jcard{text-align:right}
+  .journeynode.alt .jcardtop,.journeynode.alt .jchips,.journeynode.alt .jtol{justify-content:flex-end}
+}
+.jcard{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1);padding:var(--sp-md);transition:transform .25s,box-shadow .25s}
+.jcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-2)}
+.jcard.dest{background:var(--secondary-container);color:var(--on-secondary-container);border-color:transparent}
+.jcardtop{display:flex;align-items:center;gap:var(--sp-sm);margin-bottom:4px}
+.jcardtop h2{margin:0;font:700 1.1rem/1.3 var(--f-display);color:var(--primary)}
+.jcard.dest .jcardtop h2{color:inherit}
+.jbadge{font:700 .64rem/1 var(--f-display);letter-spacing:.03em;text-transform:uppercase;
+  background:var(--surface-c);color:var(--on-surface-var);padding:3px 8px;border-radius:var(--r-md)}
+.jbadge.dest{background:rgba(255,255,255,.25);color:inherit}
+.jcard p{color:var(--on-surface-var);font-size:.88rem;line-height:1.5;margin:0}
+.jcard.dest p{color:inherit;opacity:.9}
+.jsubkop{font:600 .68rem/1 var(--f-display);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--on-surface-var);margin:var(--sp-sm) 0 6px}
+.jcard.dest .jsubkop{color:inherit;opacity:.85}
+.jchips{display:flex;flex-wrap:wrap;gap:6px}
+.jchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--r-lg);
+  font:600 .78rem/1 var(--f-mono);background:var(--surface-c);color:var(--on-surface)}
+.jchip.must{background:var(--amber-container);color:var(--amber-ink);border:1px solid var(--amber-line)}
+.jtol{display:flex;align-items:center;gap:6px;margin-top:var(--sp-sm);font:600 .82rem/1 var(--f-mono);
+  color:var(--primary)}
+.jcard.dest .jtol{color:inherit}
+.jcard .btn{margin-top:var(--sp-md)}
+
+.journeyempty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--sp-sm);
+  padding:var(--sp-xl) var(--sp-md);color:var(--on-surface-var);max-width:36ch;margin:var(--sp-xl) auto}
+.journeyempty .icon{color:var(--outline)}
+.journeyempty h1{margin:0}

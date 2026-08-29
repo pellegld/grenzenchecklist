@@ -1,21 +1,71 @@
 # Grenschecklist
 
-Single-file webapp die per grensoverschrijdende autorit laat zien welke uitrusting, vignetten
-en regels je nodig hebt. Vanilla HTML/CSS/JS, geen build step, geen dependencies.
+Webapp die per grensoverschrijdende autorit laat zien welke uitrusting, vignetten en regels
+je nodig hebt. Vanilla HTML/CSS/JS, geen framework en geen bundler: `index.html` laadt losse
+stylesheets en classic scripts, dus de app draait ook zonder dat er ooit iets gebouwd is.
 
 ```
-index.html               UI + logica
-fonts.css                @font-face voor de drie zelf gehoste fonts
-fonts/                   8 woff2-subsets, samen 152 KB
+index.html               shell: <head>, de app-markup en de scripttags
+css/base.css             kleurtokens, thema's, reset, typografie
+css/components.css       navigatie, layout, routepaneel, kaarten, knoppen
+css/pages.css            de vier pagina's
+css/print.css            print / PDF
+js/config.js             sleutels, drempels, werkgeheugen van de actieve rit
+js/storage.js            localStorage die nooit gooit, donkere modus
+js/util.js               escapen, formatteren, vlaggen, iconen
+js/data.js               regeldata laden, met terugval
+js/routeProvider.js      route- en geocodediensten achter één interface
+js/geo.js                landen, zones en tolpunten uit de routegeometrie
+js/vehicle.js            voertuigprofiel en milieuzone-oordeel
+js/trips.js              opgeslagen ritten
+js/checklist.js          uitrustingsgroepen en taken
+js/costs.js              tol
+js/calendar.js           drukte per dag
+js/countries.js          landkaart-onderdelen en correctielink
+js/planner.js            de van/naar-velden en het routepaneel
+js/pages.js              de vier paginarenderers
+js/map.js                routeschets als SVG
+js/app.js                orkestratie, events en start
+fonts.css                @font-face voor de zelf gehoste fonts
+fonts/                   woff2-subsets
 countries.json           alle landendata (los bij te werken)
 cities.json              689 Europese plaatsen voor de routeplanner
 borders.json             landsgrenzen voor de landdetectie
 zones.json               47 milieuzones en toegangsverboden op stadsniveau
+drukte.json              drukteprognoses per dag en per periode
 sw.js                    service worker voor offline gebruik
+build/build.mjs          genereert statische pagina's en de ASSETS-lijst van sw.js
+functions/api/           proxy voor route en geocode (Cloudflare Pages Functions)
 tools/build-geodata.ps1  genereert cities.json en borders.json opnieuw
 tools/build-fonts.ps1    haalt de fontsubsets opnieuw op
+V2_AUDIT.md              audit van de codebase en de architectuurkeuzes eronder
 README.md                dit bestand
 ```
+
+### Waarom classic scripts en geen modules
+
+`<script type="module">` laadt niet via `file://`, en de app moet blijven werken als je
+`index.html` gewoon dubbelklikt — dat is het scenario waar de handmatige bestandskiezer in
+`js/data.js` voor bestaat. Losse classic scripts kosten op HTTP/2 vrijwel niets extra en
+houden die eigenschap intact. De volgorde in `index.html` telt daarom maar op één plek:
+`js/app.js` staat onderaan, want dat bestand start de app; alles daarboven is
+functiedeclaraties.
+
+### De build step
+
+Er is er één, en de app heeft hem niet nodig:
+
+```bash
+npm run build:sw     # ververst de ASSETS-lijst in sw.js en bumpt de cachenaam
+npm run build:pages  # genereert statische pagina's uit countries.json
+```
+
+`build:sw` bestaat omdat de offline-cachelijst met de hand bijhouden een keer misgaat: een
+nieuw bestand staat dan wel op de server maar niet in de cache, en dat merk je pas zonder
+bereik. `build:pages` genereert nu nog niets — `PAGINAS` in `build/build.mjs` is leeg. De
+pipeline staat er alvast zodat de SEO-pagina's uit §27 van de masterprompt straks uit
+dezelfde `countries.json` komen als de app, in plaats van met de hand geschreven te worden
+en binnen een jaar uit de pas te lopen.
 
 ## Vormgeving
 

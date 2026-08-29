@@ -1,0 +1,233 @@
+# V2_AUDIT.md — audit van de bestaande codebase
+
+Opgesteld op 29 augustus 2026, vóór de fundament-fase (fase A uit
+`GRENSCHECKLIST_ROADMAP_COMMERCIEEL.md`, FASE 0/1 uit
+`GRNSCHECKLIST_V2_MASTERPROMPT.txt`).
+
+Dit document beschrijft de app **zoals hij was** aan het begin van die fase, plus de
+architectuurkeuzes die daaruit volgen. Het is geen ontwerp van V2; het is de nulmeting
+waartegen V2 zich moet verantwoorden.
+
+---
+
+## 1. Wat er stond
+
+```
+index.html      3179 regels — <style> (646), <body> (229), <script> (2287) in één bestand
+fonts.css       @font-face voor Geist en Inter, self-hosted
+countries.json  16 landen, 87 KB — de enige bron van waarheid voor regeldata
+cities.json     689 Europese plaatsen voor de autocomplete
+borders.json    349 KB landsgrenzen, lazy geladen bij de eerste routeberekening
+zones.json      47 milieuzones op stadsniveau
+drukte.json     drukteprognoses: 19 harde dagen + 7 periode/weekdag-regels
+sw.js           service worker, stale-while-revalidate over een vaste ASSETS-lijst
+functions/api/  Cloudflare Pages Functions: route.js en geocode.js (proxy)
+tools/*.ps1     PowerShell: fonts en geodata opnieuw genereren
+netlify.toml    statische publish, geen build step
+```
+
+Geen build step, geen dependencies, geen `package.json`. Vanilla HTML/CSS/JS in strict mode,
+ES5-stijl (`var`, `function`), classic script — bewust, want de app moet ook via `file://`
+werken.
+
+### Architectuur in één alinea
+
+`index.html` bevat één script met ongeveer 130 globale functies en 25 globale variabelen.
+`DATA`/`BY_CODE` zijn de geladen regeldata; `ROUTE`, `HOME`, `VEH`, `DEPART`, `TICKED`,
+`FROM_CITY`, `TO_CITY`, `ROUTE_COORDS`, `ROUTE_RES`, `ROUTE_ZONES`, `ROUTE_TOLLS` zijn het
+werkgeheugen van de actieve rit. `TRIPS` is de lijst opgeslagen ritten in `localStorage`;
+`saveRoute()` schrijft het werkgeheugen terug naar de actieve trip, `hydrateerVanuitTrip()`
+doet het omgekeerde. `render()` bouwt alleen de zichtbare view opnieuw op, `switchView()`
+wisselt tussen vijf views (route / landen / checklist / reizen / reis).
+
+Dat is geen state management in de zin van §19 van de masterprompt, maar het is wel
+consistent: er is één plek waar de waarheid staat (de actieve trip) en één functie die hem
+wegschrijft. De verspreide globals zijn een leesbaarheidsprobleem, geen correctheidsprobleem.
+
+### Wat er al werkt
+
+| functie | waar | status |
+|---|---|---|
+| Routeplanner (van/naar → landen) | `doRoute`, `analyseRoute` | werkt |
+| Landdetectie point-in-polygon | `classifyPoint`, `inCountry` | werkt, lokaal, providerloos |
+| Milieuzones op stadsniveau | `zonesLangsRoute` | werkt |
+| Tolpunten langs de route | `tolPuntenLangsRoute` | werkt |
+| Tolschatting per km | `tolSchatting`, `tolTotaalRetour` | werkt |
+| Voertuigprofiel + euronorm-oordeel | `zoneVerdict`, `zoneAction` | werkt |
+| Checklist met groepen | `buildGroups`, `buildTasks` | werkt |
+| Meerdere opgeslagen ritten | `TRIPS`, `activeerTrip` | werkt |
+| Landeninformatie per land | `landDetailHTML` | werkt |
+| Reiservaring (scrollytelling) | `renderReisErvaring` | werkt |
+| Routeschets als SVG | `renderRouteSchets` | werkt, geen kaarttegels |
+| Offline via service worker | `sw.js` | werkt |
+| `file://`-fallback met bestandskiezer | `showLoadError` | werkt |
+| Donkere modus | `toepassenThema` | werkt |
+| Proxy-detectie met terugval | `proxyBeschikbaar` | werkt |
+
+### Wat er ontbrak
+
+* **Kalender / "wanneer rijden"** — `drukte.json` bestaat, `drukteVoor()` en
+  `renderKalender()` bestaan, maar er is geen pagina die ze toont. Dode code met levende data.
+* **Print/PDF** — de README beschrijft een `@media print`-stylesheet. Die is bij de
+  Kinetic-Route-redesign verdwenen; er staat nu geen enkele printregel in de CSS. De
+  `.printnamen`-elementen in de checklist-HTML staan er nog wel. Dit is een regressie.
+* **Kostenpagina** — `tolRegels()` en `renderTol()` bestaan, maar `#tol` bestaat niet in de
+  DOM. Zelfde patroon: logica zonder pagina.
+* **Deelbare reis, deadline engine, "wat is er veranderd"** — bestaan niet.
+* **Dode renderfuncties** — `renderChecklist()`, `renderSteden()`, `renderCountries()`,
+  `countryCard()` (geeft `""` terug), `renderKalender()`, `renderTol()`: allemaal zoeken ze
+  een element-id dat niet meer in de DOM staat. Ze crashen niet (ze returnen vroeg), maar ze
+  vertroebelen wel het beeld van wat er echt draait.
+
+---
+
+## 2. Risico's
+
+### 2.1 Routeprovider (§18A) — het zwaarste risico
+
+De planner belt rechtstreeks `https://router.project-osrm.org` (OSRM-demoserver) en
+`https://nominatim.openstreetmap.org`. Beide zijn expliciet niet-commercieel, zonder
+uptime-garantie, en begrensd op ongeveer één aanvraag per seconde.
+
+Er is al een proxy (`functions/api/route.js`, `geocode.js`) die dit kan verbergen achter een
+eigen domein met een sleutel serverside, en de client kiest daar zelf tussen
+(`proxyBeschikbaar()`). Dat is meer dan de masterprompt aannam. Maar:
+
+* de keuze zit **in de aanroepende functies**, niet achter een interface. `doRoute()` roept
+  `fetchRoute()` aan, die `routeViaProxy` of `routeViaOsrm` kiest; `searchOnline()` doet
+  hetzelfde met `geocodeViaProxy`/`geocodeViaNominatim`. Een derde provider betekent dus een
+  `if` erbij op twee plekken, plus een derde plek voor de naamgeving (`DIENST_NAAM`);
+* er is **geen reverse geocoding**, terwijl §5 (autocomplete op eigen locatie) die vraagt;
+* de proxy heeft **geen rate limit en geen cache op route-hash**. Hij bundelt juist al je
+  bezoekers achter één IP richting Nominatim, wat het misbruikrisico groter maakt in plaats
+  van kleiner;
+* faalt de route, dan toont `plannerStatus()` netjes een menselijke fout — maar er is geen
+  expliciete route terug naar handmatige landenkeuze, want de handmatige routebouwer staat
+  op deze pagina niet in beeld (`addCountry`/`removeAt`/`moveItem` zijn dormant).
+
+**Conclusie:** de abstractielaag uit §18A moet er komen, en de proxy moet cache en rate limit
+krijgen vóór er verkeer op zit.
+
+### 2.2 i18n-gereedheid (§17A) — nul
+
+Er is geen enkele vertaalstructuur. Nederlandse tekst zit op vier plekken:
+
+1. **statische HTML** — navigatielabels, veldlabels, `<option>`-teksten, placeholders,
+   `aria-label`s, de disclaimer. Ongeveer 40 strings;
+2. **JS-stringliteralen in HTML-templates** — koppen, knopteksten, lege-staat-teksten,
+   statusmeldingen. Ruim 150 strings, verspreid over alle renderfuncties;
+3. **JS-lookuptabellen** — `ACTION_TEXT`, `ZONE_VERB`, `DIENST_NAAM`, `MAANDEN`,
+   `DOC_ITEMS`, de brandstof- en voertuiglabels in `renderProfile()`/`voertuigLabel()`;
+4. **samengestelde zinnen** — `zoneVerdict()` en `zoneStadVerdict()` plakken zinnen aan
+   elkaar uit losse fragmenten ("Euro 5 voldoet NIET: hier is minimaal Euro 6 vereist
+   (Brussel)"). Dit is het lastigste geval: woordvolgorde verschilt per taal, dus dit moet
+   naar parameterized keys, niet naar concatenatie.
+
+Daarnaast staat er Nederlandstalige **data** in `countries.json`, `zones.json` en
+`drukte.json` (`note`, `rule`, `howToGet`, `tekst`). Die vertalen is een apart, veel groter
+project. §17A staat toe die voorlopig Nederlands te laten, mits de UI dat eerlijk zegt.
+
+Ook: `toLocaleString("nl-NL")` staat hard in vier functies, en `fmtDate()` heeft een
+hardgecodeerde Nederlandse maandnamenlijst.
+
+### 2.3 Data-onderhoud
+
+Elk land heeft `lastVerified` en losse `needsVerification`-vlaggen op subobjecten. Maar:
+
+* **geen stabiele id's per feit.** Een correctie of een changelog-regel kan nergens
+  ondubbelzinnig naar verwijzen. Dit blokkeert §14 én §14A;
+* **geen `confidence`.** `needsVerification: true/false` is binair; §13 vraagt vier
+  niveaus (`official` / `verified` / `uncertain` / `unavailable`);
+* **data zit in de bundle.** Een vignetprijs wijzigen vereist een deploy. Dat schaalt niet
+  bij honderden losse feiten;
+* de app markeert data ouder dan `STALE_DAYS = 240` als verouderd; de roadmap vraagt om
+  **180 dagen** als drempel voor de verificatietool. Die twee getallen mogen verschillen
+  (de tool waarschuwt eerder dan de app), maar dat moet dan wel expliciet zijn.
+
+### 2.4 Kleinere observaties
+
+* `sw.js` cachet een handmatige `ASSETS`-lijst. Elk nieuw bestand (en die komen er nu veel)
+  moet daar met de hand bij, en `CACHE` moet gebumpt worden. Foutgevoelig.
+* `functions/api/*.js` zijn Pages Functions; `netlify.toml` zegt zelf dat ze op Netlify niet
+  draaien. Er zijn dus twee hostingdoelen waarvan er één de proxy niet heeft.
+* De herkomstcontrole (`herkomstToegestaan`) is geen authenticatie en zegt dat ook eerlijk in
+  het commentaar. Zonder rate limit is het endpoint met curl triviaal leeg te trekken.
+* `esc()` wordt consequent gebruikt in de HTML-templates. Steekproef: geen plek gevonden waar
+  data ongeëscaped in `innerHTML` belandt, behalve bewust opgebouwde stukken (`flagHTML`,
+  `iconUse`) die zelf al escapen.
+
+---
+
+## 3. Wat deze fase doet
+
+Geen nieuwe gebruikersfuncties. Alleen fundament:
+
+| onderdeel | resultaat |
+|---|---|
+| Bestandssplitsing | `css/{base,components,pages,print}.css`, `js/*.js`, `index.html` als shell |
+| Build-pipeline | `build/build.mjs` — leest `countries.json`, kan statische pagina's genereren; genereert er nog geen |
+| Routeprovider | `js/routeProvider.js` met `getRoute`/`geocode`/`reverseGeocode`, implementaties `osrm-demo` en (leeg) `graphhopper`, providerketen met terugval |
+| Proxy | Cloudflare Worker met cache op route-hash en rate limit per IP; sleutel in env |
+| Data-endpoint | `/api/v1/data/*.json` met ETag; app haalt op bij opstarten, valt terug op de bundled kopie |
+| Data-annotatie | stabiele `id` en `confidence` per feit |
+| Verificatietool | `tools/verify-data.mjs` |
+| Changelog | `meta/changelog.json` + `meta/version.json` |
+| i18n | `js/i18n.js` met `{ nl, en }`, taalkeuze in de UI |
+
+### Wat bewust níét gebeurt
+
+* Geen nieuwe routeprovider kiezen of afsluiten (§18A zegt: pas als er verkeer is).
+* Geen kaartbibliotheek toevoegen; de SVG-schets blijft.
+* Geen framework, geen bundler. De app blijft classic scripts, zodat `file://` blijft werken.
+* De dode renderfuncties blijven staan waar ze horen (`checklist.js`, `costs.js`,
+  `calendar.js`) in plaats van weggegooid te worden — ze zijn de basis voor de kosten- en
+  kalenderpagina uit fase 5 van de masterprompt.
+
+---
+
+## 4. Hoe een latere correctie-flow hierop aanhaakt (§14A)
+
+Deze fase bouwt geen correctie-flow. Wel de structuur eronder. Zo zou hij later aanhaken,
+zonder dat er dan nog iets aan de datalaag hoeft te veranderen:
+
+**1. Het id is het aangrijpingspunt.** Elk feit krijgt een stabiel, afgeleid id van de vorm
+`<landcode>.<onderwerp>[.<sleutel>]`, bijvoorbeeld:
+
+```
+at.tollVignette                     het Oostenrijkse vignet als geheel
+at.tollPoint.a13-brennerautobahn    één tolpunt
+fr.equipment.alcoholtester          één uitrustingsitem
+zone.fr-paris                       één milieuzone uit zones.json
+```
+
+Die id's zijn afgeleid van inhoud die niet verandert (landcode + veldnaam + geslugde naam),
+niet van een array-index. Hernoemt een land een vignet, dan blijft het id gelijk; komt er een
+tolpunt bij, dan schuift er niets op.
+
+**2. Een correctie is een verwijzing naar een id plus een voorgestelde waarde.** De vorm die
+`meta/changelog.json` nu al heeft, is precies de vorm die een correctie aanneemt zodra hij
+geaccepteerd is:
+
+```jsonc
+{ "id": "at.tollVignette", "land": "AT", "onderwerp": "prijs 10-dagenvignet",
+  "oud": "12,40 euro", "nieuw": "13,10 euro", "datum": "2026-09-01",
+  "bron": "https://www.asfinag.at/..." }
+```
+
+Een ingediende correctie is dus hetzelfde object zonder de `datum`/`bron` van de redactie,
+met een status ervoor. De changelog is de geaccepteerde correctie; er is geen tweede
+datamodel nodig.
+
+**3. De bestaande correctielink is het instappunt.** `correctionLinks()` maakt nu per land
+een kopieerbare melding of een link naar `meta.correctionFormUrl`. Die functie krijgt er
+later een `id`-parameter bij, zodat de link ook vanaf één actie of één feit gelegd kan
+worden in plaats van alleen vanaf de landkaart. `correctionTekst()` zet dat id dan in de
+kop van de melding, zodat een binnenkomende melding automatisch aan een feit te koppelen is.
+
+**4. `confidence` is de plek waar een correctie effect heeft.** Een feit dat door meerdere
+gebruikers betwist wordt, zakt naar `uncertain` — precies het niveau dat de app toont als
+"Controleer de officiële bron". Er is dus geen nieuwe UI-status nodig; het bestaande
+onzekerheidsniveau draagt het.
+
+Wat er dán nog gebouwd moet worden — een indienformulier, moderatie, stemmen, een publieke
+wijzigingspagina — staat in fase D/E van de roadmap en hoort daar.
