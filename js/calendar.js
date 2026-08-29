@@ -35,11 +35,11 @@ function renderKalender(){
 
 function kalRichting(){
   if(!ROUTE_RES || ROUTE_RES.zuidwaarts === null || ROUTE_RES.zuidwaarts === undefined){
-    return "vertrekrichting";
+    return i18n("kalender.vertrek");
   }
-  return ROUTE_RES.zuidwaarts ? "richting zuid" : "richting noord";
+  return i18n(ROUTE_RES.zuidwaarts ? "kalender.zuid" : "kalender.noord");
 }
 
-var MAANDEN = ["januari","februari","maart","april","mei","juni",
-               "juli","augustus","september","oktober","november","december"];
+/* Was een vaste array; als functie volgt hij de taalkeuze. */
+function maanden(){ return i18n("alg.maanden").split(","); }
 function pad2(n){ return (n < 10 ? "0" : "") + n; }

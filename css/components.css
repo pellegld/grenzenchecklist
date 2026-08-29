@@ -252,3 +252,22 @@ details.disclaimer summary b{color:var(--on-surface)}
 .hmchip button{appearance:none;border:0;background:none;cursor:pointer;color:var(--on-surface-var);
   font:700 1rem/1 var(--f-body);width:24px;height:24px;border-radius:var(--r-sm)}
 .hmchip button:hover{background:var(--surface-high);color:var(--error)}
+
+/* ---------------- taalkeuze ----------------
+   Staat onder Instellingen naast de donkere-modusschakelaar: allebei
+   voorkeuren die je één keer instelt. De notitie eronder verschijnt alleen in
+   het Engels, want dan klopt het dat de regelteksten Nederlands blijven. */
+.taalrij{align-items:center}
+.taalkeuze{min-height:32px;padding:0 6px;border-radius:var(--r-md);
+  border:1px solid var(--outline-var);background:var(--surface-lowest);
+  color:var(--on-surface);font:600 .78rem/1 var(--f-display);cursor:pointer}
+.taalnotitie{margin:0 0 var(--sp-sm);font-size:.72rem;line-height:1.4}
+
+/* De zijbalk met de taalkeuze is onder 1024 px verborgen, dus krijgt de mobiele
+   topbar een eigen knop. Hij wisselt tussen de twee talen in plaats van een
+   lijst te openen: bij twee talen is een dropdown meer werk dan winst. */
+.topbar-acties{display:flex;align-items:center;gap:4px}
+.taalknop{appearance:none;min-width:40px;min-height:40px;padding:0 8px;border:0;
+  background:none;color:var(--on-surface-var);cursor:pointer;
+  font:700 .78rem/1 var(--f-display);letter-spacing:.04em;border-radius:var(--r-md)}
+.taalknop:hover{background:var(--surface-high);color:var(--secondary)}

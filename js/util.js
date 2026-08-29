@@ -16,9 +16,8 @@ function fmtDate(iso){
   if(!iso) return "";
   var p = String(iso).split("-");
   if(p.length !== 3) return iso;
-  var m = ["januari","februari","maart","april","mei","juni","juli",
-           "augustus","september","oktober","november","december"];
-  return Number(p[2]) + " " + m[Number(p[1])-1] + " " + p[0];
+  var m = i18n("alg.maanden").split(",");
+  return i18n("alg.datum", { dag:Number(p[2]), maand:m[Number(p[1])-1], jaar:p[0] });
 }
 function daysSince(iso){
   var t = Date.parse(iso);
@@ -63,8 +62,15 @@ function flagHTML(c){
     }
     inner = '<span style="background:linear-gradient(' + dir + "," + stops.join(",") + ')"></span>';
   }
-  return '<span class="' + cls + '" role="img" aria-label="Vlag ' + esc(c.name) + '">' + inner + '</span>';
+  return '<span class="' + cls + '" role="img" aria-label="' +
+    esc(i18n("alg.vlag", { land:c.name })) + '">' + inner + '</span>';
 }
+/* Getallen in de taal van de gebruiker. Stond eerder als toLocaleString("nl-NL")
+   op vier plekken; een Engelse pagina met Nederlandse duizendtallen leest raar. */
+function getal(n, opties){
+  return Number(n).toLocaleString(i18n("alg.locale"), opties);
+}
+
 function countryChip(c){
   return '<span class="chip">' + flagHTML(c) + esc(c.name) + '</span>';
 }
@@ -104,7 +110,7 @@ function fmtDuur(sec){
   if(!sec) return null;
   var uur = Math.floor(sec / 3600), min = Math.round((sec % 3600) / 60);
   if(min === 60){ uur++; min = 0; }
-  return uur + "u " + (min < 10 ? "0" : "") + min + "m";
+  return i18n("planner.duur", { uur:uur, min:(min < 10 ? "0" : "") + min });
 }
 
 /* ---------------- data: kleine leesbrug ----------------

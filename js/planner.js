@@ -21,10 +21,26 @@ function searchCities(q){
 
 /* ================= routeplanner: UI ================= */
 
-function plannerStatus(msg, isErr){
+/* De statusregel onthoudt zijn sleutel in plaats van alleen zijn tekst, zodat
+   hij meeverandert als je halverwege van taal wisselt. Een melding die in de
+   oude taal blijft staan naast een vertaalde pagina ziet er kapot uit. */
+var STATUS_LAATST = null;
+
+function plannerStatus(sleutel, isErr, params, metDienst){
+  STATUS_LAATST = sleutel ? { sleutel:sleutel, isErr:isErr, params:params,
+                              metDienst:metDienst } : null;
+  toonPlannerStatus();
+}
+
+function toonPlannerStatus(){
   var el = document.getElementById("route-status");
-  el.textContent = msg || "";
-  el.className = "rstat" + (isErr ? " err" : "");
+  if(!el) return;
+  if(!STATUS_LAATST){ el.textContent = ""; el.className = "rstat"; return; }
+  /* De dienstnotitie pas hier ophalen, niet bij het zetten: ook die is
+     vertaald, en anders blijft hij in de oude taal staan. */
+  el.textContent = i18n(STATUS_LAATST.sleutel, STATUS_LAATST.params) +
+    (STATUS_LAATST.metDienst ? RouteProvider.notitie() : "");
+  el.className = "rstat" + (STATUS_LAATST.isErr ? " err" : "");
 }
 
 /* Van de neutrale Plaats van js/routeProvider.js naar de rij waarop deze pagina
@@ -66,7 +82,7 @@ function wireCityField(inputId, listId, onPick){
     var q = input.value.trim();
     if(q.length < 2){ close(); return; }
     var rows = searchCities(q);
-    show(rows, rows.length ? null : "Niet gevonden — online zoeken naar “" + q + "”");
+    show(rows, rows.length ? null : i18n("planner.nietGevonden", { q:q }));
   });
 
   input.addEventListener("keydown", function(e){
@@ -86,13 +102,13 @@ function wireCityField(inputId, listId, onPick){
 
     if(li.hasAttribute("data-online")){
       var q = input.value.trim();
-      li.innerHTML = '<span class="cnt">Zoeken…</span>';
+      li.innerHTML = '<span class="cnt">' + esc(i18n("planner.zoeken")) + '</span>';
       RouteProvider.geocode(q).then(function(plaatsen){
         var rows = plaatsen.map(plaatsNaarRij);
-        if(!rows.length){ show([], "Niets gevonden voor “" + q + "”"); return; }
+        if(!rows.length){ show([], i18n("planner.nietsGevonden", { q:q })); return; }
         show(rows, null);
       }).catch(function(){
-        show([], "Online zoeken lukte niet — controleer je verbinding");
+        show([], i18n("planner.zoekenMislukt"));
       });
       return;
     }
@@ -111,12 +127,12 @@ function wireCityField(inputId, listId, onPick){
 function doRoute(){
   if(ROUTING) return;
   if(!FROM_CITY || !TO_CITY){
-    plannerStatus("Kies eerst een vertrekplaats en een bestemming uit de lijst.", true);
+    plannerStatus("planner.kiesEerst", true);
     return;
   }
   ROUTING = true;
   document.getElementById("btn-route").disabled = true;
-  plannerStatus("Route berekenen…");
+  plannerStatus("planner.bezig");
 
   var need = Promise.all([
     BORDERS ? Promise.resolve(BORDERS) : loadJSON("borders.json").then(function(b){ BORDERS = b; return b; }),
@@ -133,7 +149,7 @@ function doRoute(){
     var coords = route.coordinates;
     var res = analyseRoute(coords);
     var toAdd = res.order.filter(function(c){ return BY_CODE[c]; });
-    if(!toAdd.length) throw new Error("geen bekende landen op deze route");
+    if(!toAdd.length) throw new Error(i18n("planner.geenLanden"));
 
     ROUTE = toAdd;
     ROUTE_RES = res;
@@ -144,7 +160,7 @@ function doRoute(){
     HANDMATIG_ZICHTBAAR = false;
     saveRoute();
     render();
-    plannerStatus("Klaar — de landen hieronder zijn ingevuld." + RouteProvider.notitie());
+    plannerStatus("planner.klaar", false, null, true);
   }).catch(function(err){
     /* §20: een fout is geen doodlopende weg. Kon geen enkele dienst een route
        leveren (err.handmatig), dan is de planner uitgevallen, niet de app — de
@@ -153,11 +169,11 @@ function doRoute(){
        dan blijft het bij de melding. */
     var m = String(err && err.message || err);
     if(err && err.handmatig){
-      plannerStatus("Route berekenen lukt nu niet. Geen van de routediensten reageerde.", true);
+      plannerStatus("planner.geenDienst", true);
       HANDMATIG_ZICHTBAAR = true;
       renderHandmatigeKeuze();
     } else {
-      plannerStatus("Route bepalen lukte niet (" + m + "). Controleer de plaatsnamen en probeer het opnieuw.", true);
+      plannerStatus("planner.fout", true, { reden:m });
     }
   }).then(function(){
     ROUTING = false;
@@ -189,20 +205,19 @@ function renderHandmatigeKeuze(){
     if(!c) return "";
     return '<span class="hmchip">' + flagHTML(c) + esc(c.name) +
       '<button type="button" data-hm-weg="' + i + '" aria-label="' +
-      esc(c.name) + ' van de route halen">&times;</button></span>';
+      esc(i18n("handmatig.verwijderen", { land:c.name })) + '">&times;</button></span>';
   }).join("");
 
   el.innerHTML =
-    '<h3>Kies de landen zelf</h3>' +
-    "<p>De checklist, de vignetten en de milieuzones werken hier net zo goed op. " +
-    "Wat je zonder berekende route mist: de afstand, de reistijd, de kilometertol " +
-    "en de kaartschets.</p>" +
+    "<h3>" + esc(i18n("handmatig.kop")) + "</h3>" +
+    "<p>" + esc(i18n("handmatig.uitleg")) + "</p>" +
     '<div class="hmrij">' +
-      '<select id="hm-land" aria-label="Land toevoegen">' + opties + "</select>" +
-      '<button type="button" class="btn" id="hm-toevoegen">' + iconUse("add") + " Toevoegen</button>" +
+      '<select id="hm-land" aria-label="' + esc(i18n("handmatig.landToevoegen")) + '">' + opties + "</select>" +
+      '<button type="button" class="btn" id="hm-toevoegen">' + iconUse("add") + " " +
+        esc(i18n("handmatig.toevoegen")) + "</button>" +
     "</div>" +
     (chips ? '<div class="hmchips">' + chips + "</div>"
-           : '<p class="hint">Nog geen landen gekozen.</p>');
+           : '<p class="hint">' + esc(i18n("handmatig.geenLanden")) + "</p>");
 }
 
 function renderDashboardStats(){
@@ -212,19 +227,20 @@ function renderDashboardStats(){
   el.hidden = false;
   reisBtn.hidden = false;
 
-  var afstand = Math.round(ROUTE_RES.total).toLocaleString("nl-NL");
+  var afstand = getal(Math.round(ROUTE_RES.total));
   var duur = fmtDuur(ROUTE_DURATION);
   var tol = tolTotaalRetour();
   var tolWaarde = tol
-    ? '&euro;' + euroTekst(tol.bedrag) + (tol.zeker ? "" : ' <small>of meer</small>')
+    ? '&euro;' + euroTekst(tol.bedrag) +
+      (tol.zeker ? "" : ' <small>' + esc(i18n("planner.ofMeer")) + '</small>')
     : "—";
 
   el.innerHTML =
-    '<div class="statcard"><span class="slbl">' + iconUse("ruler") + 'Afstand</span>' +
-      '<span class="sval">' + afstand + ' <small>km</small></span></div>' +
-    '<div class="statcard"><span class="slbl">' + iconUse("clock") + 'Reistijd</span>' +
+    '<div class="statcard"><span class="slbl">' + iconUse("ruler") + esc(i18n("planner.afstand")) + '</span>' +
+      '<span class="sval">' + afstand + ' <small>' + esc(i18n("planner.km")) + '</small></span></div>' +
+    '<div class="statcard"><span class="slbl">' + iconUse("clock") + esc(i18n("planner.reistijd")) + '</span>' +
       '<span class="sval">' + (duur || "—") + '</span></div>' +
-    '<div class="statcard wide"><span class="slbl">' + iconUse("payments") + 'Verwachte tol</span>' +
+    '<div class="statcard wide"><span class="slbl">' + iconUse("payments") + esc(i18n("planner.verwachteTol")) + '</span>' +
       '<span class="sval">' + tolWaarde + '</span></div>';
 }
 
@@ -249,7 +265,7 @@ function renderMilieuzones(){
   var namen = ROUTE_ZONES.slice(0, 8).map(function(o){ return esc(o.zone.city); });
   el.innerHTML =
     '<div class="milieuhead">' + iconUse("eco") +
-      '<div><h3>Milieuzones gedetecteerd</h3>' +
-      '<p>Let op: voor deze steden heb je mogelijk een vignet of milieusticker nodig.</p></div></div>' +
+      "<div><h3>" + esc(i18n("planner.milieuzones")) + "</h3>" +
+      "<p>" + esc(i18n("planner.milieuzonesUitleg")) + "</p></div></div>" +
     '<div class="milieuchips">' + namen.map(function(n){ return '<span class="mchip">' + n + "</span>"; }).join("") + "</div>";
 }

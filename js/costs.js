@@ -20,43 +20,43 @@ function tolRegels(){
 
     var v = c.tollVignette || {};
     if(v.required){
-      var naam = String(v.name || "Vignet").split(/\s+[—-]\s+|,/)[0];
-      rijen.push({ c:c, naam:c.name, detail:naam + " verplicht op de snelweg", zacht:"vignet" });
+      var naam = String(v.name || i18n("tol.vignetNaam")).split(/\s+[—-]\s+|,/)[0];
+      rijen.push({ c:c, naam:c.name, detail:i18n("tol.vignetSnelweg", { naam:naam }),
+                   zacht:i18n("tol.vignet") });
       had = true;
     }
 
     var t = sch[code];
     if(t){
       rijen.push({ c:c, naam:c.name,
-        detail:Math.round(t.km) + " km · circa € " +
-               t.c.tollRoads.perKm.toFixed(2).replace(".", ",") + " per km tolweg",
+        detail:i18n("tol.perKm", { km:Math.round(t.km), tarief:getal(t.c.tollRoads.perKm, { minimumFractionDigits:2, maximumFractionDigits:2 }) }),
         laag:t.laag, hoog:t.hoog, onzeker:t.onzeker });
       had = true;
     }
 
     (punten[code] || []).forEach(function(o){
       rijen.push({ c:c, naam:o.p.name,
-        detail:o.p.note ? eersteZin(o.p.note) : "apart betalen, ook met vignet",
+        detail:o.p.note ? eersteZin(o.p.note) : i18n("tol.apartBetalen"),
         vast:(typeof o.p.priceEur === "number" ? o.p.priceEur : null),
-        zacht:(typeof o.p.priceEur === "number" ? "" : "tarief onbekend"),
+        zacht:(typeof o.p.priceEur === "number" ? "" : i18n("tol.tariefOnbekend")),
         onzeker:!!o.p.needsVerification });
       had = true;
     });
 
     if(!had){
-      if(ROUTE_RES) rijen.push({ c:c, naam:c.name, detail:"geen tol gezien op deze route", vast:0 });
-      else rijen.push({ c:c, naam:c.name, detail:"vul een route in voor de kilometerkosten",
-        zacht:"nog geen route" });
+      if(ROUTE_RES) rijen.push({ c:c, naam:c.name, detail:i18n("tol.geenTol"), vast:0 });
+      else rijen.push({ c:c, naam:c.name, detail:i18n("tol.vulRouteIn"),
+        zacht:i18n("tol.nogGeenRoute") });
     }
   });
   return rijen;
 }
 
-/* Nederlandse notatie: komma, en centen alleen als ze er zijn. */
+/* Notatie van de gekozen taal, en centen alleen als ze er zijn. */
 function euroTekst(n){
   return n % 1 === 0
-    ? n.toLocaleString("nl-NL")
-    : n.toLocaleString("nl-NL", { minimumFractionDigits:2, maximumFractionDigits:2 });
+    ? getal(n)
+    : getal(n, { minimumFractionDigits:2, maximumFractionDigits:2 });
 }
 
 function tolBedragHTML(r){

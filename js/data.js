@@ -91,13 +91,10 @@ function showLoadError(){
   el.hidden = false;
   document.getElementById("app").hidden = true;
   el.innerHTML =
-    '<strong>countries.json kon niet geladen worden.</strong>' +
-    '<p style="margin:6px 0 0;font-size:.9rem">Je browser blokkeert het lezen van een databestand naast een pagina die je met ' +
-    '<code>file://</code> hebt geopend. Kies het bestand hieronder één keer handmatig — daarna onthoudt deze browser het ' +
-    'en werkt de app ook offline zonder server.</p>' +
+    "<strong>" + esc(i18n("data.laadFoutKop")) + "</strong>" +
+    '<p style="margin:6px 0 0;font-size:.9rem">' + i18n("data.laadFoutUitleg") + "</p>" +
     '<p style="margin:10px 0 0"><input type="file" id="pick" accept=".json,application/json"></p>' +
-    '<p class="hint">Liever structureel? Zet de map online (GitHub Pages) of start een lokale server in deze map, ' +
-    'bijvoorbeeld <code>npx serve</code>, en open de app via <code>http://localhost</code>.</p>';
+    '<p class="hint">' + i18n("data.laadFoutHint") + "</p>";
   document.getElementById("pick").addEventListener("change", function(ev){
     var f = ev.target.files && ev.target.files[0];
     if(!f) return;
@@ -111,7 +108,7 @@ function showLoadError(){
         el.hidden = true;
         document.getElementById("app").hidden = false;
         boot(d);
-      }catch(e){ alert("Dit bestand kon niet gelezen worden als countries.json: " + e.message); }
+      }catch(e){ alert(i18n("data.leesFout", { reden:e.message })); }
     };
     rd.readAsText(f);
   });
@@ -127,9 +124,7 @@ function meldCachekopie(){
   var w = document.createElement("p");
   w.className = "body cachewarn";
   w.style.color = "var(--amber)";
-  w.textContent = "Let op: de regeldata kon niet opgehaald worden, dus je ziet een eerder " +
-    "opgeslagen kopie. Die kan verouderd zijn. Onderzoeksdatum van deze kopie: " +
-    fmtDate(DATA.meta.researchDate) + ".";
+  w.textContent = i18n("data.cacheWaarschuwing", { datum:fmtDate(DATA.meta.researchDate) });
   var eerste = d.querySelector(".body");
   d.insertBefore(w, eerste ? eerste.nextSibling : null);
 }

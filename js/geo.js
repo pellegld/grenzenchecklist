@@ -148,19 +148,20 @@ function zonesLangsRoute(coords){
 /* Zelfde oordeelslogica als op landniveau, maar tegen de drempel van deze zone.
    Dormant: er is nog geen steden-pagina om dit te tonen. */
 function zoneStadVerdict(z){
-  if(!z.threshold) return { level:"unknown", text:"Geen euronorm-drempel: dit is een toegangsverbod, geen emissiezone." };
-  if(VEH.fuel === "ev") return { level:"ok", text:"Elektrisch — je voldoet." };
+  if(!z.threshold) return { level:"unknown", text:i18n("zoneStad.geenDrempel") };
+  if(VEH.fuel === "ev") return { level:"ok", text:i18n("zoneStad.ev") };
   var need = VEH.fuel === "diesel" ? z.threshold.diesel : z.threshold.petrol;
+  var brandstof = i18n("profiel.brandstofKort." + (VEH.fuel === "diesel" ? "diesel" : "petrol"));
   if(need === null || need === undefined){
-    return { level:"ok", text:"Voor " + (VEH.fuel === "diesel" ? "diesel" : "benzine") + " geldt hier geen drempel." };
+    return { level:"ok", text:i18n("zoneStad.geenDrempelBrandstof", { brandstof:brandstof }) };
   }
   if(VEH.euro === null){
-    return { level:"unknown", text:"Vul je euronorm in. Nodig: minimaal Euro " + need + "." };
+    return { level:"unknown", text:i18n("zoneStad.vulEuronorm", { need:need }) };
   }
   if(VEH.euro >= need){
-    return { level:"ok", text:"Euro " + VEH.euro + " voldoet aan de eis van minimaal Euro " + need + "." };
+    return { level:"ok", text:i18n("zoneStad.voldoet", { euro:VEH.euro, need:need }) };
   }
-  return { level:"bad", text:"Euro " + VEH.euro + " voldoet NIET: hier is minimaal Euro " + need + " vereist." };
+  return { level:"bad", text:i18n("zoneStad.voldoetNiet", { euro:VEH.euro, need:need }) };
 }
 
 /* ================= tol ================= */

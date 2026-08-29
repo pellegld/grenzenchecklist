@@ -65,7 +65,7 @@ function dienstError(bericht, extra){
 }
 
 function dienstFout(r){
-  if(r.status === 429) throw dienstError("te veel aanvragen — probeer het zo nog eens", { tijdelijk:true });
+  if(r.status === 429) throw dienstError(i18n("dienst.teVeel"), { tijdelijk:true });
   throw dienstError("HTTP " + r.status);
 }
 
@@ -88,7 +88,6 @@ function proxyBeschikbaar(){
 
 var PROVIDER_PROXY = {
   naam: "proxy",
-  omschrijving: "Berekend via je eigen proxy.",
 
   beschikbaar: proxyBeschikbaar,
 
@@ -100,7 +99,7 @@ var PROVIDER_PROXY = {
       return r.json();
     }).then(function(j){
       if(!j.coordinates || !j.coordinates.length){
-        throw dienstError(j.error || "geen route gevonden");
+        throw dienstError(j.error || i18n("dienst.geenRoute"));
       }
       return {
         coordinates: j.coordinates,
@@ -142,7 +141,6 @@ var PROVIDER_PROXY = {
    de eerlijkste samenvatting van wat je krijgt. */
 var PROVIDER_OSRM_DEMO = {
   naam: "osrm-demo",
-  omschrijving: "Berekend via de OSRM-demoserver — die is niet voor productie bedoeld.",
 
   beschikbaar: function(){ return Promise.resolve(DIENSTEN.mode !== "proxy"); },
 
@@ -154,7 +152,7 @@ var PROVIDER_OSRM_DEMO = {
       return r.json();
     }).then(function(j){
       if(j.code !== "Ok" || !j.routes || !j.routes.length){
-        throw dienstError(j.message || "geen route gevonden");
+        throw dienstError(j.message || i18n("dienst.geenRoute"));
       }
       var route = j.routes[0];
       return {
@@ -168,7 +166,8 @@ var PROVIDER_OSRM_DEMO = {
 
   geocode: function(zoekterm){
     var url = DIENSTEN.nominatim + "/search" +
-      "?format=jsonv2&limit=5&addressdetails=1&accept-language=nl&q=" + encodeURIComponent(zoekterm);
+      "?format=jsonv2&limit=5&addressdetails=1&accept-language=" + TAAL +
+      "&q=" + encodeURIComponent(zoekterm);
     return fetch(url).then(function(r){
       if(!r.ok) dienstFout(r);
       return r.json();
@@ -177,7 +176,8 @@ var PROVIDER_OSRM_DEMO = {
 
   reverseGeocode: function(lat, lon){
     var url = DIENSTEN.nominatim + "/reverse" +
-      "?format=jsonv2&addressdetails=1&accept-language=nl&lat=" + lat + "&lon=" + lon;
+      "?format=jsonv2&addressdetails=1&accept-language=" + TAAL +
+      "&lat=" + lat + "&lon=" + lon;
     return fetch(url).then(function(r){
       if(!r.ok) dienstFout(r);
       return r.json();
@@ -206,28 +206,26 @@ var PROVIDER_OSRM_DEMO = {
    "graphhopper" in DIENSTEN.keten. Er hoeft verder niets te veranderen. */
 var PROVIDER_GRAPHHOPPER = {
   naam: "graphhopper",
-  omschrijving: "Berekend via Graphhopper.",
 
   beschikbaar: function(){ return Promise.resolve(false); },
 
   getRoute: function(van, naar, opties){
-    return Promise.reject(dienstError(
-      "graphhopper is niet ingesteld — zet hem achter de proxy (ROUTE_PROVIDER=graphhopper)",
-      { nietIngesteld:true }));
+    return Promise.reject(nietIngesteld("ROUTE_PROVIDER=graphhopper"));
   },
 
   geocode: function(zoekterm, opties){
-    return Promise.reject(dienstError(
-      "graphhopper is niet ingesteld — zet hem achter de proxy (GEO_PROVIDER=graphhopper)",
-      { nietIngesteld:true }));
+    return Promise.reject(nietIngesteld("GEO_PROVIDER=graphhopper"));
   },
 
   reverseGeocode: function(lat, lon, opties){
-    return Promise.reject(dienstError(
-      "graphhopper is niet ingesteld — zet hem achter de proxy (GEO_PROVIDER=graphhopper)",
-      { nietIngesteld:true }));
+    return Promise.reject(nietIngesteld("GEO_PROVIDER=graphhopper"));
   }
 };
+
+function nietIngesteld(env){
+  return dienstError(i18n("dienst.nietIngesteld", { naam:"graphhopper", env:env }),
+                     { nietIngesteld:true });
+}
 
 var IMPLEMENTATIES = {
   "proxy":       PROVIDER_PROXY,
@@ -285,7 +283,7 @@ function probeerKeten(bewerking, uitvoeren){
 
   function volgende(i){
     if(i >= keten.length){
-      var reden = fouten.length ? fouten.join("; ") : "geen dienst beschikbaar";
+      var reden = fouten.length ? fouten.join("; ") : i18n("dienst.geenDienst");
       return Promise.reject(dienstError(reden, { handmatig:true, bewerking:bewerking }));
     }
     var impl = keten[i];
@@ -331,10 +329,12 @@ var RouteProvider = {
 
   notitie: function(){
     if(!DIENST_IN_GEBRUIK) return "";
-    var impl = IMPLEMENTATIES[DIENST_IN_GEBRUIK];
     /* De proxy meldt zelf welke dienst hij gebruikte; die naam kennen we hier
-       niet altijd als implementatie. */
-    var tekst = impl ? impl.omschrijving : "Berekend via " + DIENST_IN_GEBRUIK + ".";
+       niet altijd als implementatie, vandaar de algemene terugval. */
+    var sleutel = "dienst." + DIENST_IN_GEBRUIK;
+    var tekst = VERTALINGEN.nl[sleutel]
+      ? i18n(sleutel)
+      : i18n("dienst.anders", { naam:DIENST_IN_GEBRUIK });
     return " " + tekst;
   },
 

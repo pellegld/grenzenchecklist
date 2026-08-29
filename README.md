@@ -10,6 +10,7 @@ css/base.css             kleurtokens, thema's, reset, typografie
 css/components.css       navigatie, layout, routepaneel, kaarten, knoppen
 css/pages.css            de vier pagina's
 css/print.css            print / PDF
+js/i18n.js               vertalingen (nl, en) en de taalkeuze
 js/config.js             sleutels, drempels, werkgeheugen van de actieve rit
 js/storage.js            localStorage die nooit gooit, donkere modus
 js/util.js               escapen, formatteren, vlaggen, iconen
@@ -135,6 +136,64 @@ heel doorgegeven worden aan de `@font-face`, anders werkt maar één gewicht.
 
 **Onderzoeksdatum data: 19 augustus 2026.** Elk land draagt een eigen `lastVerified`-datum die
 in de app zichtbaar is; is die ouder dan 240 dagen, dan markeert de app hem als verouderd.
+
+---
+
+## Talen
+
+De app is Nederlands en Engels. Kiezen kan onder *Instellingen* in de zijbalk, en op
+mobiel met de NL/EN-knop in de topbalk — de zijbalk is daar verborgen, dus zonder die
+knop zou de taalkeuze op een telefoon onbereikbaar zijn. De keuze staat in
+`localStorage`; is er nog geen keuze, dan volgt de app `navigator.languages` en valt
+terug op Nederlands.
+
+```js
+i18n("taak.vignet", { land: "Oostenrijk" })   // "Vignet kopen voor Oostenrijk"
+i18nAantal("reizen.landen", 3)                // "3 landen" / "1 land"
+```
+
+Statische markup gebruikt attributen, zodat er geen JS aan te pas komt om een label te
+vullen:
+
+```html
+<h1 data-i18n="planner.titel">Route Plan</h1>
+<input data-i18n-placeholder="planner.vertrekplaats">
+<button data-i18n-aria="planner.omdraaien">
+```
+
+Ook `data-i18n-html` (voor tekst met links erin) en `data-i18n-title`. `pasTaalToe()`
+loopt ze bij elke taalwissel opnieuw af.
+
+**Waarom `i18n()` en niet `t()`.** `t` is in deze codebase al de gangbare naam voor een
+taak, een tolpost en een drempelobject. Een globale functie die daardoor in de helft van
+de renderfuncties overschaduwd wordt, is een bug die pas opvalt als iemand van taal
+wisselt.
+
+**Samengestelde zinnen staan heel in de tabel**, met plaatshouders:
+
+```js
+"zone.voldoetNiet": "Euro {euro} voldoet NIET: hier is minimaal Euro {need} vereist{scope}."
+```
+
+Niet als fragmenten die de code aan elkaar plakt. Dat laatste valt niet te vertalen —
+woordvolgorde verschilt per taal, en juist de milieuzone-oordelen zijn de zinnen waar
+het op aankomt.
+
+**De landdata blijft Nederlands.** `note`, `rule`, `howToGet` en de quirks in
+`countries.json` en `zones.json` zijn honderden zorgvuldig geformuleerde alinea's; die
+vertalen is een apart project. Een halfvertaalde regelpagina is gevaarlijker dan een
+Nederlandse, dus zegt de app het gewoon zodra je Engels kiest:
+
+> The per-country rule texts are only available in Dutch.
+
+Wat wél meebeweegt: datums (`fmtDate` haalt de maandnamen uit de tabel), getallen
+(`getal()` gebruikt de locale van de gekozen taal) en de `accept-language` waarmee de
+geocoder wordt bevraagd.
+
+**Een taal toevoegen** is: een derde blok in `VERTALINGEN`, de code in `TALEN`, en een
+`<option>` in `index.html`. Ontbreekt er een sleutel, dan valt hij terug op het
+Nederlands in plaats van op de sleutelnaam — een half vertaalde taal moet leesbaar
+blijven.
 
 ---
 

@@ -80,7 +80,7 @@ function wire(){
     var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
     var pval = document.querySelector(".progresscard .pval");
     var bar = document.querySelector(".progresscard .progressbar>i");
-    if(pval) pval.textContent = pct + "% gereed";
+    if(pval) pval.textContent = i18n("checklist.gereed", { pct:pct });
     if(bar) bar.style.width = pct + "%";
   });
 
@@ -165,6 +165,15 @@ function wire(){
   wireCityField("to",   "to-res",   function(c){ TO_CITY   = c; });
   document.getElementById("btn-route").addEventListener("click", doRoute);
 
+  /* Taalkeuze. zetTaal() vult de statische markup opnieuw en roept render()
+     aan, zodat ook alles wat door JS is opgebouwd meteen omschakelt. */
+  document.getElementById("taal-keuze").addEventListener("change", function(e){
+    zetTaal(e.target.value);
+  });
+  document.getElementById("taal-toggle-mobiel").addEventListener("click", function(){
+    zetTaal(TALEN[(TALEN.indexOf(TAAL) + 1) % TALEN.length]);
+  });
+
   /* Handmatige landenkeuze: verschijnt alleen als de providerketen niets
      opleverde, en gebruikt de bestaande routebouwer. */
   document.getElementById("handmatig").addEventListener("click", function(e){
@@ -209,6 +218,8 @@ function wire(){
    fase 1), dan verhuist die eenmalig naar de eerste trip — niets gaat verloren. */
 function migreerOudeStaat(){
   var route = [], ticked = {}, veh = { fuel:"petrol", euro:null, type:"auto" };
+  /* De naam is hier nog de standaardnaam; tripUitGlobals() leidt er later een
+     echte naam uit af zodra er een van/naar staat. */
   try{ route = JSON.parse(lsGet(STORE_ROUTE) || "[]"); }catch(e){}
   try{ ticked = JSON.parse(lsGet(STORE_TICK) || "{}"); }catch(e){}
   try{
@@ -221,7 +232,7 @@ function migreerOudeStaat(){
   }catch(e){}
   var home = lsGet(STORE_HOME) || "NL";
   var nu = new Date().toISOString();
-  return { id: nieuwTripId(), naam: "Nieuwe rit", createdAt: nu, updatedAt: nu,
+  return { id: nieuwTripId(), naam: i18n("trip.nieuweRit"), createdAt: nu, updatedAt: nu,
     route: route.filter(function(c){ return BY_CODE[c]; }), home: (BY_CODE[home] ? home : "NL"), veh: veh,
     depart: null, ticked: ticked, fromCity: null, toCity: null,
     routeCoords: null, routeRes: null, routeDuration: null };
@@ -272,13 +283,18 @@ function boot(d){
     return '<li><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.label) + "</a></li>";
   }).join("");
 
-  document.getElementById("colofon").innerHTML =
-    "Data onderzocht op " + esc(fmtDate(DATA.meta.researchDate)) + ". " +
-    'Landsgrenzen en plaatsen: <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a> (publiek domein). ' +
-    'Routeberekening: <a href="https://project-osrm.org/" target="_blank" rel="noopener">OSRM</a> op kaartdata &copy; ' +
-    '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>-bijdragers. ' +
-    'Zoeken naar plaatsen buiten de meegeleverde lijst gaat via ' +
-    '<a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">Nominatim</a>.';
+  /* De links zitten als plaatshouders in de vertaling, zodat een vertaler de
+     zin kan herschikken zonder de HTML aan te raken. */
+  function bron(url, naam){
+    return '<a href="' + url + '" target="_blank" rel="noopener">' + naam + "</a>";
+  }
+  document.getElementById("colofon").innerHTML = i18n("disclaimer.colofon", {
+    datum: esc(fmtDate(DATA.meta.researchDate)),
+    naturalEarth: bron("https://www.naturalearthdata.com/", "Natural Earth"),
+    osrm: bron("https://project-osrm.org/", "OSRM"),
+    osm: bron("https://www.openstreetmap.org/copyright", "OpenStreetMap"),
+    nominatim: bron("https://nominatim.openstreetmap.org/", "Nominatim")
+  });
 
   wire();
   switchView(VIEW, true);
@@ -308,6 +324,11 @@ function boot(d){
   }
 }
 
+/* Taal vóór het laden: showLoadError() draait als boot() nooit toekomt, en die
+   moet ook al in de gekozen taal staan. */
+TAAL = taalUitOpslag();
+pasTaalToe();
+
 loadData().then(function(d){
   if(d) boot(d); else showLoadError();
 });
@@ -324,11 +345,11 @@ if("serviceWorker" in navigator && location.protocol !== "file:"){
     navigator.serviceWorker.register("sw.js").then(function(){
       return navigator.serviceWorker.ready;
     }).then(function(){
-      offlineState("Offline klaar — deze app werkt nu ook zonder bereik.");
+      offlineState(i18n("offline.klaar"));
     }).catch(function(){
-      offlineState("Offline-cache niet beschikbaar in deze browser. De app werkt gewoon, maar heeft bereik nodig om te laden.");
+      offlineState(i18n("offline.nietBeschikbaar"));
     });
   });
 } else if(location.protocol === "file:"){
-  offlineState("Geopend via file:// — werkt offline zodra countries.json één keer is ingelezen.");
+  offlineState(i18n("offline.file"));
 }

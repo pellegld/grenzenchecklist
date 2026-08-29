@@ -26,7 +26,7 @@ function renderRouteSchets(coords){
   var host = document.getElementById("mapwrap");
   if(!coords || !coords.length){
     host.innerHTML = '<div class="mapempty">' + iconUse("map").replace('class="icon sm"','class="icon lg"') +
-      '<p>Vul een van en naar in om de route te zien.</p></div>';
+      "<p>" + esc(i18n("kaart.leeg")) + "</p></div>";
     return;
   }
   var proj = projecteerRoute(coords);

@@ -10,7 +10,7 @@ function nieuwTripId(){ return "t" + Date.now().toString(36) + Math.random().toS
 
 function legeTrip(){
   var nu = new Date().toISOString();
-  return { id: nieuwTripId(), naam: "Nieuwe rit", createdAt: nu, updatedAt: nu,
+  return { id: nieuwTripId(), naam: i18n("trip.nieuweRit"), createdAt: nu, updatedAt: nu,
     route: [], home: (BY_CODE[HOME] ? HOME : "NL"), veh: { fuel:"petrol", euro:null, type:"auto" },
     depart: null, ticked: {}, fromCity: null, toCity: null,
     routeCoords: null, routeRes: null, routeDuration: null };
@@ -36,13 +36,25 @@ function tripById(id){ var i = tripIndex(id); return i === -1 ? null : TRIPS[i];
 
 /* Bouwt een tripobject uit het huidige werkgeheugen; behoudt id/createdAt en
    een handmatig gezette naam, leidt anders de naam af uit Van/Naar. */
+/* De naam van een rit is gebruikersinvoer en wordt daarom niet vertaald; alleen
+   de standaardnaam is dat wél. Vandaar deze toets tegen álle talen: een rit die
+   in het Nederlands is aangemaakt en in het Engels wordt geopend, moet nog
+   steeds "Brussel → Salzburg" krijgen zodra er een route staat. */
+function isStandaardNaam(naam){
+  if(!naam) return true;
+  for(var i = 0; i < TALEN.length; i++){
+    if(naam === VERTALINGEN[TALEN[i]]["trip.nieuweRit"]) return true;
+  }
+  return false;
+}
+
 function tripUitGlobals(basis){
   var naam = basis.naam;
-  if((!naam || naam === "Nieuwe rit") && FROM_CITY && TO_CITY){
+  if(isStandaardNaam(naam) && FROM_CITY && TO_CITY){
     naam = FROM_CITY[0] + " → " + TO_CITY[0];
   }
   return {
-    id: basis.id, naam: naam || "Nieuwe rit",
+    id: basis.id, naam: naam || i18n("trip.nieuweRit"),
     createdAt: basis.createdAt, updatedAt: new Date().toISOString(),
     route: ROUTE.slice(), home: HOME, veh: { fuel:VEH.fuel, euro:VEH.euro, type:VEH.type }, depart: DEPART,
     ticked: TICKED, fromCity: FROM_CITY, toCity: TO_CITY,
@@ -111,7 +123,7 @@ function nieuweTrip(){
 function verwijderTrip(id){
   var t = tripById(id);
   if(!t) return;
-  if(!confirm('"' + t.naam + '" verwijderen? Dit kan niet ongedaan gemaakt worden.')) return;
+  if(!confirm(i18n("trip.verwijderBevestig", { naam:t.naam }))) return;
   TRIPS = TRIPS.filter(function(x){ return x.id !== id; });
   lsSet(STORE_TRIPS, JSON.stringify(TRIPS));
   if(id === ACTIVE_TRIP_ID){
@@ -124,7 +136,7 @@ function verwijderTrip(id){
 function hernoemTrip(id){
   var t = tripById(id);
   if(!t) return;
-  var naam = prompt("Naam voor deze rit:", t.naam);
+  var naam = prompt(i18n("trip.naamPrompt"), t.naam);
   if(naam === null) return;
   naam = naam.trim();
   if(!naam) return;

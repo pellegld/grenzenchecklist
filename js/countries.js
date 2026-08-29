@@ -8,17 +8,18 @@
 /* ---------------- render: country cards (dormant tot Landeninformatie-pagina) ---------------- */
 function eqBadge(it, c){
   var eff = effectiveStatus(it, c);
-  if(eff === "must")   return '<span class="badge b-must">verplicht — boete mogelijk</span>';
-  if(eff === "advice") return '<span class="badge b-advice">aanbevolen</span>';
-  return '<span class="badge b-na">alleen voor ' + esc(c.name) + 's kenteken</span>';
+  if(eff === "must")   return '<span class="badge b-must">' + esc(i18n("badge.verplichtBoete")) + '</span>';
+  if(eff === "advice") return '<span class="badge b-advice">' + esc(i18n("badge.aanbevolen")) + '</span>';
+  return '<span class="badge b-na">' + esc(i18n("badge.alleenVoor", { land:c.name })) + '</span>';
 }
 
 function correctionTekst(c){
-  return "Grenschecklist — correctie " + c.name + " (" + c.code + ")\n" +
-    "Laatst geverifieerd in de app: " + (c.lastVerified || "onbekend") + "\n" +
-    "Bron in de app: " + (c.sourceUrl || "—") + "\n\n" +
-    "Wat klopt er niet:\n\n\n" +
-    "Bron waaruit dat blijkt:\n";
+  return i18n("correctie.tekst", {
+    land: c.name,
+    code: c.code,
+    datum: c.lastVerified || i18n("correctie.onbekend"),
+    bron: c.sourceUrl || "—"
+  });
 }
 
 function correctionLinks(c){
@@ -27,9 +28,10 @@ function correctionLinks(c){
     var u = m.correctionFormUrl
       .replace(/\{CODE\}/g, encodeURIComponent(c.code))
       .replace(/\{NAME\}/g, encodeURIComponent(c.name));
-    return '<a href="' + esc(u) + '" target="_blank" rel="noopener">Klopt dit niet? Meld het</a>';
+    return '<a href="' + esc(u) + '" target="_blank" rel="noopener">' +
+      esc(i18n("correctie.meldHet")) + '</a>';
   }
-  return '<a href="#" data-melden="' + esc(c.code) + '">Klopt dit niet? Kopieer een melding</a>';
+  return '<a href="#" data-melden="' + esc(c.code) + '">' + esc(i18n("correctie.kopieer")) + '</a>';
 }
 
 function kopieerMelding(code, link){
@@ -40,7 +42,7 @@ function kopieerMelding(code, link){
   function gelukt(){
     var oud = link.getAttribute("data-oud") || link.textContent;
     link.setAttribute("data-oud", oud);
-    link.textContent = "Gekopieerd — plak het in een mail of bericht";
+    link.textContent = i18n("correctie.gekopieerd");
     setTimeout(function(){ link.textContent = oud; }, 4000);
   }
 
