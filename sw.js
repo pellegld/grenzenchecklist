@@ -9,7 +9,7 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v19";
+var CACHE = "grenschecklist-v20";
 /* ASSETS wordt gegenereerd door build/build.mjs (npm run build:sw). Voeg je met
    de hand een bestand toe, draai die dan; anders staat het nieuwe bestand wel op
    de server maar niet in de offline cache, en dat merk je pas zonder bereik.
@@ -44,10 +44,19 @@ var ASSETS = [
 ];
 /* EIND-ASSETS */
 
+/* Let op de cache:"reload" hieronder. Zonder die vlag haalt addAll() de
+   bestanden gewoon uit de HTTP-cache van de browser, en dan kan er een
+   verouderde index.html of een oud js-bestand de offline cache in gebakken
+   worden — precies het bestand dat je daarna zonder bereik krijgt, en dat blijft
+   zitten tot je CACHE weer bumpt. Met "reload" gaat elk bestand vers van de
+   server. Dit is een keer echt gebeurd tijdens het testen: de app laadde offline
+   een index.html van vóór een nieuwe scripttag, en dus zonder die module. */
 self.addEventListener("install", function(e){
   e.waitUntil(
     caches.open(CACHE)
-      .then(function(c){ return c.addAll(ASSETS); })
+      .then(function(c){
+        return c.addAll(ASSETS.map(function(u){ return new Request(u, { cache:"reload" }); }));
+      })
       .then(function(){ return self.skipWaiting(); })
   );
 });

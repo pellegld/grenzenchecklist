@@ -231,7 +231,14 @@ worker vereist https of localhost; via `file://` bestaat de API niet en valt de 
 `localStorage`-kopie. Sommige ingebouwde of afgeschermde browsers blokkeren registratie — de app
 zegt dat dan, en werkt gewoon door zonder offline-garantie.
 
-Bump `CACHE` in `sw.js` als je een release uitbrengt waarin oude bestanden echt weg moeten.
+Bump `CACHE` in `sw.js` als je een release uitbrengt waarin oude bestanden echt weg moeten;
+`npm run build:sw` doet dat vanzelf zodra de assetlijst wijzigt.
+
+De install haalt elk bestand op met `cache: "reload"`. Zonder die vlag leest `addAll()` uit de
+HTTP-cache van de browser, en dan kan er een verouderde `index.html` de offline cache in
+gebakken worden — precies het bestand dat je daarna zonder bereik krijgt, en dat blijft zitten
+tot je `CACHE` weer bumpt. Dat is tijdens het testen een keer echt gebeurd: de app laadde
+offline een `index.html` van vóór een nieuwe scripttag, en dus zonder die module.
 
 Lukt het ophalen van `countries.json` niet en valt de app terug op de `localStorage`-kopie, dan
 zegt hij dat met zoveel woorden, inclusief de onderzoeksdatum van die kopie. Stilzwijgend
