@@ -1,0 +1,36 @@
+# Cloudflare Worker voor de route-, geocode- en dataproxy.
+#
+# Hier staan alleen namen en niet-geheime standaardwaarden. Sleutels zet je met
+#   npx wrangler secret put ROUTE_KEY
+#   npx wrangler secret put GEO_KEY
+# of bij Cloudflare onder Settings > Variables and Secrets, als Secret en niet
+# als plain text. Lokaal komen ze uit ../.dev.vars, en die staat in .gitignore.
+
+name = "grenschecklist-proxy"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# Zet de Worker alleen op /api/*; de statische bestanden blijven bij je host.
+# Vul je eigen domein in en haal het commentaar weg.
+# routes = [
+#   { pattern = "jouwdomein.nl/api/*", zone_name = "jouwdomein.nl" }
+# ]
+
+[vars]
+ROUTE_PROVIDER = "osrm"
+GEO_PROVIDER = "nominatim"
+# Contactadres dat Nominatim in de User-Agent wil zien. Vul je eigen adres in.
+GEO_UA = "Grenschecklist (stel GEO_UA in met je contactadres)"
+# Leeg laten zet de proxy open voor elke site; vul je eigen domein in om je
+# quotum te beschermen.
+# TOEGESTANE_HERKOMST = "https://jouwdomein.nl"
+# Aanvragen per minuut per IP. 0 zet de begrenzer uit.
+LIMIET_ROUTE = "30"
+LIMIET_GEOCODE = "60"
+
+# Optioneel: een KV-namespace maakt de begrenzer geldig over isolates heen in
+# plaats van per isolate. Zonder deze binding werkt alles, alleen ruimer.
+#   npx wrangler kv namespace create RATELIMIT
+# [[kv_namespaces]]
+# binding = "RATELIMIT"
+# id = "vul-het-id-in-dat-het-commando-hierboven-teruggeeft"

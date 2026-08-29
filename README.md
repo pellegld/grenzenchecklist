@@ -35,7 +35,8 @@ zones.json               47 milieuzones en toegangsverboden op stadsniveau
 drukte.json              drukteprognoses per dag en per periode
 sw.js                    service worker voor offline gebruik
 build/build.mjs          genereert statische pagina's en de ASSETS-lijst van sw.js
-functions/api/           proxy voor route en geocode (Cloudflare Pages Functions)
+worker/                  Cloudflare Worker: de proxy, met cache en snelheidsbegrenzer
+functions/api/           dezelfde proxy als Pages Function (dunne wikkel om worker/src/)
 tools/build-geodata.ps1  genereert cities.json en borders.json opnieuw
 tools/build-fonts.ps1    haalt de fontsubsets opnieuw op
 V2_AUDIT.md              audit van de codebase en de architectuurkeuzes eronder
@@ -733,14 +734,34 @@ GET  {proxyBase}/geocode?lat=<lat>&lon=<lon>
 
 ### De meegeleverde proxy
 
-`functions/api/route.js` en `functions/api/geocode.js` zijn Cloudflare Pages Functions.
-Zet ze naast de statische bestanden, koppel de repo aan Cloudflare Pages en ze draaien;
-Netlify werkt hetzelfde met de map `netlify/functions` en een kleine wijziging in de
-handtekening van de handler.
+Eén implementatie, twee manieren om hem uit te rollen:
+
+```
+worker/src/index.js       Cloudflare Worker: routeert /api/route en /api/geocode
+worker/src/route.js       de route-afhandeling
+worker/src/geocode.js     zoeken en omgekeerd zoeken
+worker/src/lib/           herkomst, snelheidsbegrenzer, cache, antwoordvormen
+worker/wrangler.toml      namen en standaardwaarden, geen sleutels
+functions/api/route.js    Pages Function — importeert worker/src/route.js
+functions/api/geocode.js  Pages Function — importeert worker/src/geocode.js
+```
+
+De twee Pages Functions bevatten geen logica meer; ze roepen dezelfde modules
+aan als de Worker. Twee kopieën lopen na een half jaar uit de pas, en dan
+gedraagt je proxy zich anders afhankelijk van waar je hem uitrolt.
+
+```bash
+cd worker && npx wrangler dev      # Worker, met ../.dev.vars voor de sleutels
+npx wrangler pages dev .           # Pages Functions naast de statische bestanden
+```
+
+Zet de Worker op een route als `jouwdomein.nl/api/*` en laat de statische
+bestanden bij je host. Dan gaat er geen enkele pagina-aanvraag door de Worker
+heen en blijft de app buiten je Worker-quota.
 
 Ondersteund: OpenRouteService en Graphhopper (beide met sleutel) voor routes,
-OpenRouteService voor geocoderen, en OSRM/Nominatim zonder sleutel. Instellen gebeurt met
-omgevingsvariabelen, nooit met bestanden in de repo:
+OpenRouteService voor geocoderen, en OSRM/Nominatim zonder sleutel. Instellen
+gebeurt met omgevingsvariabelen, nooit met bestanden in de repo:
 
 | variabele | waarde |
 |---|---|
@@ -751,15 +772,61 @@ omgevingsvariabelen, nooit met bestanden in de repo:
 | `GEO_KEY` | de sleutel, als Secret |
 | `GEO_UA` | contactadres voor de User-Agent die Nominatim eist |
 | `TOEGESTANE_HERKOMST` | je eigen domein; leeg laten zet de proxy open |
+| `LIMIET_ROUTE` | aanvragen per minuut per IP, standaard 30; `0` zet uit |
+| `LIMIET_GEOCODE` | idem, standaard 60 |
 
-Die laatste is het verschil tussen jouw quotum en dat van iedereen die je endpoint vindt.
-Zonder `TOEGESTANE_HERKOMST` kan een vreemde site jouw proxy als gratis routeserver
-gebruiken en jouw sleutel opmaken.
+Die `TOEGESTANE_HERKOMST` is het verschil tussen jouw quotum en dat van iedereen
+die je endpoint vindt. Zonder die variabele kan een vreemde site jouw proxy als
+gratis routeserver gebruiken en jouw sleutel opmaken.
 
-Twee dingen die de proxy nog doet, en die je zelf moet blijven doen als je hem vervangt:
-coördinaten worden op vorm en bereik gecontroleerd voordat ze doorgaan, en foutmeldingen
-van de provider worden **niet** teruggegeven aan de client — die kunnen de sleutel bevatten.
-De echte fout gaat naar je hostlogs.
+Twee dingen die de proxy nog doet, en die je zelf moet blijven doen als je hem
+vervangt: coördinaten worden op vorm en bereik gecontroleerd voordat ze doorgaan,
+en foutmeldingen van de provider worden **niet** teruggegeven aan de client — die
+kunnen de sleutel bevatten. De echte fout gaat naar je hostlogs.
+
+#### Snelheidsbegrenzer per IP
+
+De proxy bundelt al je bezoekers achter één IP richting de provider. Zonder rem
+is dat geen bescherming maar een versterker: één script dat je endpoint vindt,
+trekt je quotum leeg en zet je hele site zonder routes.
+
+Twee lagen, allebei bewust bescheiden:
+
+1. **Een teller in het geheugen van de isolate.** Gratis en direct. Cloudflare
+   draait meerdere isolates naast elkaar, dus wie zich daarover verspreidt krijgt
+   per isolate opnieuw budget. Als rem tegen een doorgeslagen script werkt hij
+   prima.
+2. **Een teller in KV**, als je de binding `RATELIMIT` aanmaakt. Die geldt over
+   isolates heen. KV is uiteindelijk consistent en telt onder gelijktijdige
+   aanvragen eerder te laag dan te hoog.
+
+```bash
+npx wrangler kv namespace create RATELIMIT   # zet het id in wrangler.toml
+```
+
+Het blijft een rem, geen slot. Voor een hard slot heb je een Durable Object
+nodig, en dat is een andere prijsklasse dan waar deze app nu zit. Wat je hier
+tegenhoudt is misbruik van je quotum, niet een aanval op je gegevens — er staan
+geen gegevens achter deze endpoints. Het IP wordt alleen als tellersleutel
+gebruikt en nergens opgeslagen of gelogd.
+
+#### Cache op route-hash
+
+Dezelfde twee plaatsen leveren dezelfde route. De sleutel is een SHA-256 over de
+**genormaliseerde vraag** (provider plus afgeronde coördinaten), niet over de
+rauwe URL — dat maakt hem ongevoelig voor de volgorde van queryparameters.
+
+Coördinaten worden afgerond op vier decimalen, ongeveer elf meter. Voor de 689
+plaatsen uit `cities.json`, die al op drie decimalen vastliggen, verandert dat
+niets; voor een geocodeerd punt vangt het het verschil op tussen twee keer
+hetzelfde adres opzoeken. Belangrijk detail: de **afgeronde** waarde gaat ook
+naar de provider. Een sleutel maken van afgeronde coördinaten en dan de rauwe
+doorsturen levert een cache op die het antwoord van iemand anders teruggeeft.
+
+Een treffer gaat bewust *vóór* de snelheidsbegrenzer langs: hij kost de provider
+niets, dus hij hoeft niet van iemands budget af. Het antwoord draagt
+`x-cache: HIT` of `MISS`, zodat je in de netwerkinspecteur kunt zien of het werkt
+zonder in de logs te duiken.
 
 ### Sleutels buiten de repo houden
 
@@ -777,12 +844,13 @@ powershell -File tools\check-geheimen.ps1
 
 Exitcode 1 als er iets gevonden wordt, dus je kunt hem als pre-commit hook hangen.
 
-### Caching
+### Caching in de app
 
 De service worker laat `/api/` met rust. Een route is geen bestand — hij hangt af van de
 vraag — en de proxy zegt met zijn eigen `cache-control` hoe lang zijn antwoord houdbaar is:
 een uur voor routes, een dag voor plaatsnamen. Dat scheelt aanroepen op je quotum zonder dat
-de app daar iets van hoeft te weten.
+de app daar iets van hoeft te weten. De gedeelde cache op route-hash staat hierboven; die
+zit aan de proxykant en werkt over bezoekers heen, deze aan de browserkant en per bezoeker.
 
 ---
 

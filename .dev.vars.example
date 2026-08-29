@@ -1,8 +1,10 @@
-# Kopieer dit naar .dev.vars voor lokaal testen met `npx wrangler pages dev .`
+# Kopieer dit naar .dev.vars voor lokaal testen met
+#   npx wrangler dev            (in worker/)
+#   npx wrangler pages dev .    (voor de Pages Functions)
 # .dev.vars staat in .gitignore en hoort daar te blijven.
 #
-# Bij je host (Cloudflare Pages: Settings > Variables and Secrets) zet je
-# dezelfde namen, en dan als Secret, niet als plain text.
+# Bij je host (Cloudflare: Settings > Variables and Secrets) zet je dezelfde
+# namen, en dan als Secret, niet als plain text.
 
 # ors | graphhopper | osrm
 ROUTE_PROVIDER=osrm
@@ -16,3 +18,8 @@ GEO_UA=Grenschecklist (jouw@contactadres.nl)
 
 # Laat leeg om de proxy open te zetten; vul je domein in om je quotum te beschermen.
 # TOEGESTANE_HERKOMST=https://jouwdomein.nl
+
+# Snelheidsbegrenzer: aanvragen per minuut per IP. 0 zet hem uit.
+# Zonder KV-binding geldt de teller per isolate, dus in de praktijk ruimer.
+LIMIET_ROUTE=30
+LIMIET_GEOCODE=60
