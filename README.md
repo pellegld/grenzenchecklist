@@ -256,13 +256,13 @@ Elke zone krijgt hetzelfde oordeel als op landniveau, maar tegen zijn eigen drem
 
 ```jsonc
 {
-  "id": "fr-strasbourg", "city": "Straatsburg", "cc": "FR",
+  "id": "zone.fr-strasbourg", "city": "Straatsburg", "cc": "FR",
   "name": "ZFE-m Eurometropole de Strasbourg",
   "type": "milieuzone",              // "milieuzone" | "ztl" | "tolzone"
   "lat": 48.573, "lon": 7.752, "radiusKm": 10,
   "threshold": { "diesel": 4, "petrol": 2 },   // null = toegangsverbod, geen euronorm
   "rule": "...", "note": "...", "sourceUrl": "...",
-  "lastVerified": "2026-08-19", "needsVerification": false
+  "lastVerified": "2026-08-19", "needsVerification": false, "confidence": "official"
 }
 ```
 
@@ -517,8 +517,43 @@ Dit corrigeert twee hardnekkige misverstanden die in de meeste checklists blijve
 
 ## Data bijwerken
 
-Alles zit in `countries.json`; `index.html` hoeft er niet voor open. Zet bij elke wijziging de
-`lastVerified` van dat land op de datum waarop je de bron gecontroleerd hebt.
+Alles zit in `countries.json`; de app hoeft er niet voor open. Zet bij elke wijziging de
+`lastVerified` van dat land op de datum waarop je de bron gecontroleerd hebt, en werk de
+`confidence` van het feit bij als de bron veranderd is.
+
+### Elk feit heeft een id en een confidence
+
+Sinds `schemaVersion: 2` draagt elk feit twee extra velden. Ze zijn er niet voor de sier:
+zonder stabiel id kan een changelogregel of een gebruikerscorrectie nergens ondubbelzinnig
+naar wijzen, en `needsVerification: true/false` is te grof voor het verschil tussen "dit
+staat op de site van de ASFINAG" en "dit stond in een lokale krant".
+
+```
+at.tollVignette                     het Oostenrijkse vignet
+at.emissionThreshold                de euronorm-drempel van de strengste zone
+at.tollPoint.a13-brennerautobahn    één tolpunt
+at.equipment.gevarendriehoek        één uitrustingsitem
+at.quirk.dashcams-zijn-verboden-het één losse regel
+at.vehicleNote.met-aanhanger-of-caravan  één voertuignotitie
+zone.fr-paris                       één milieuzone uit zones.json
+drukte.dag.2026-07-04               één dag uit drukte.json
+drukte.regel.zomerzaterdag          één periode-regel
+```
+
+De id's zijn eenmalig afgeleid uit landcode plus veldnaam plus een slug van de inhoud, en
+zijn **vanaf dat moment vast**. Herformuleer je een regel, dan houdt hij zijn id — anders
+verliest de changelog het spoor. Alleen een écht nieuw feit krijgt een nieuw id. Ze zijn ook
+niet afgeleid van een array-index, dus er schuift niets op als er een tolpunt bij komt.
+
+| `confidence` | betekenis |
+|---|---|
+| `official` | de site van de instantie die de regel uitvaardigt of het traject exploiteert |
+| `verified` | gecontroleerd tegen een betrouwbare secundaire bron: ANWB, ADAC, RAC, VAB, Urban Access Regulations |
+| `uncertain` | `needsVerification: true`, of geen bron, of een bron die het gewicht niet draagt |
+| `unavailable` | vaststaand dat het niet te achterhalen is — dit is een menselijk oordeel en wordt nooit automatisch gezet |
+
+Nu in de data: 173 `official`, 56 `verified`, 76 `uncertain`, over 305 feiten.
+`tools/verify-data.mjs` controleert of elk feit ze heeft en of ze uniek zijn.
 
 ```jsonc
 {
@@ -558,9 +593,12 @@ Alles zit in `countries.json`; `index.html` hoeft er niet voor open. Zet bij elk
     "wet":    { "motorway": "...", "note": "..." },
     "notes": "..."
   },
-  "quirks": [ "..." ],                   // regels die 'verboden' bevatten komen ook in de samenvatting
+  "quirks": [                            // regels die 'verboden' bevatten komen ook in de samenvatting
+    { "id": "fr.quirk.<slug>", "text": "...", "confidence": "verified" }
+  ],
   "vehicleNotes": [                      // alleen getoond bij het gekozen voertuigtype
-    { "applies": ["aanhanger", "camper"], "text": "..." }
+    { "id": "fr.vehicleNote.<slug>", "applies": ["aanhanger", "camper"], "text": "...",
+      "confidence": "verified" }
   ],
   "winterEquipment": {
     "required": "seizoensgebonden",      // "nee" | "situatiegebonden" | "seizoensgebonden"
@@ -809,6 +847,49 @@ nodig, en dat is een andere prijsklasse dan waar deze app nu zit. Wat je hier
 tegenhoudt is misbruik van je quotum, niet een aanval op je gegevens — er staan
 geen gegevens achter deze endpoints. Het IP wordt alleen als tellersleutel
 gebruikt en nergens opgeslagen of gelogd.
+
+#### Het data-endpoint
+
+```
+GET  /api/v1/data/countries.json    ook zones.json en drukte.json
+200  het bestand, met ETag en x-data-versie
+304  als je dezelfde ETag meestuurt
+```
+
+De regeldata moet kunnen wijzigen zonder dat de app opnieuw uitgerold wordt: een vignetprijs
+of een euronorm-drempel verandert midden in het jaar, en als daar een deploy voor nodig is
+gebeurt het te laat of niet. Koppel een KV-namespace `DATA` en je uploadt een nieuw
+`countries.json` los; zonder die binding haalt het endpoint het bestand naast de app op en is
+het een doorgeefluik met ETag — nog steeds nuttig, alleen zonder de losse-upload-eigenschap.
+
+```bash
+npx wrangler kv namespace create DATA          # zet het id in wrangler.toml
+npx wrangler kv key put --binding=DATA countries.json --path=countries.json
+```
+
+De `v1` in het pad is het contract naar buiten, niet de versie van de data. Verandert de
+*vorm*, dan komt er `v2` naast; verandert de *inhoud*, dan verandert de ETag en
+`meta.schemaVersion` / `meta.researchDate` in het bestand zelf. Dit endpoint is meteen de
+B2B-API uit fase F van de roadmap — er hoeft later niets bij.
+
+**"Lange cache" is hier de conditionele cache, niet een lange max-age.** Een lange max-age zou
+betekenen dat een gecorrigeerde vignetprijs uren blijft hangen, en dat is precies wat dit
+endpoint moest oplossen. Dus `max-age=60` plus een ETag: de herhaalvraag is een 304 van een
+paar honderd bytes in plaats van 87 KB.
+
+De app haalt bij het opstarten op en valt in vier stappen terug:
+
+| | bron | wanneer |
+|---|---|---|
+| 1 | `./api/v1/data/<bestand>` | er draait een endpoint |
+| 2 | `./<bestand>` naast de app | geen endpoint; dit is ook wat de service worker offline heeft |
+| 3 | `localStorage` | alleen `countries.json`, en de app zegt er dan bij dat het een oude kopie is |
+| 4 | bestandskiezer | `file://`, waar de browser fetch van een buurbestand blokkeert |
+
+Eén mislukte poging is genoeg: `DATA_ENDPOINT_ER` onthoudt voor de rest van de sessie dat er
+geen endpoint draait, zodat `zones.json` niet opnieuw aanklopt bij een host die er geen heeft.
+`borders.json` en `cities.json` gaan hier niet doorheen: dat is geodata die alleen verandert
+als je `tools/build-geodata.ps1` draait, en dan hoort er sowieso een deploy bij.
 
 #### Cache op route-hash
 

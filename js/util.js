@@ -106,3 +106,22 @@ function fmtDuur(sec){
   if(min === 60){ uur++; min = 0; }
   return uur + "u " + (min < 10 ? "0" : "") + min + "m";
 }
+
+/* ---------------- data: kleine leesbrug ----------------
+   quirks waren losse strings en zijn sinds schemaVersion 2 objecten met een
+   eigen id en confidence — een los verbod is een feit waar een correctie of een
+   changelogregel naar moet kunnen wijzen, en dat kan niet in een string. Deze
+   functie leest allebei de vormen, zodat een localStorage-kopie van vóór de
+   omzetting de app niet omgooit. */
+function quirkTekst(q){
+  return typeof q === "string" ? q : (q && q.text) || "";
+}
+
+/* Vier niveaus uit §13 van de masterprompt. Onbekend of ontbrekend telt als
+   "unavailable": niets zeggen is eerlijker dan zekerheid suggereren. */
+var CONFIDENCE_NIVEAUS = ["official", "verified", "uncertain", "unavailable"];
+
+function confidenceVan(feit){
+  var c = feit && feit.confidence;
+  return CONFIDENCE_NIVEAUS.indexOf(c) === -1 ? "unavailable" : c;
+}

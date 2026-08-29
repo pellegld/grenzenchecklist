@@ -196,10 +196,14 @@ function buildTasks(){
       }
     }
 
+    /* quirks zijn sinds schemaVersion 2 objecten met een eigen id, zodat een
+       changelog of een correctie ernaar kan verwijzen. De heuristiek eronder is
+       onveranderd: hij leest alleen de tekst. */
     (c.quirks || []).forEach(function(q){
-      if(!/verboden/i.test(q)) return;
-      if(/flitsapp|radarverklikker/i.test(q) && flits.indexOf(c) === -1) flits.push(c);
-      if(/dashcam/i.test(q) && dash.indexOf(c) === -1) dash.push(c);
+      var tekst = quirkTekst(q);
+      if(!/verboden/i.test(tekst)) return;
+      if(/flitsapp|radarverklikker/i.test(tekst) && flits.indexOf(c) === -1) flits.push(c);
+      if(/dashcam/i.test(tekst) && dash.indexOf(c) === -1) dash.push(c);
     });
 
     vehicleNotesFor(c).forEach(function(n){

@@ -120,7 +120,7 @@ function doRoute(){
 
   var need = Promise.all([
     BORDERS ? Promise.resolve(BORDERS) : loadJSON("borders.json").then(function(b){ BORDERS = b; return b; }),
-    ZONES ? Promise.resolve(ZONES) : loadJSON("zones.json").then(function(z){ ZONES = z.zones || z; return ZONES; })
+    ZONES ? Promise.resolve(ZONES) : laadData("zones.json").then(function(z){ ZONES = z.zones || z; return ZONES; })
              .catch(function(){ ZONES = []; return ZONES; })
   ]);
 

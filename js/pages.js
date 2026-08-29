@@ -169,9 +169,9 @@ function landDetailHTML(c){
         .filter(Boolean).join(", ")
     : (wt.note || "");
 
-  var verboden = (c.quirks || []).filter(function(q){ return /verboden/i.test(q); });
+  var verboden = (c.quirks || []).filter(function(q){ return /verboden/i.test(quirkTekst(q)); });
   var verbodItems = verboden.length
-    ? verboden.map(function(q){ return "<li>" + iconUse("block") + "<div><h4>Let op</h4><p>" + esc(q) + "</p></div></li>"; }).join("")
+    ? verboden.map(function(q){ return "<li>" + iconUse("block") + "<div><h4>Let op</h4><p>" + esc(quirkTekst(q)) + "</p></div></li>"; }).join("")
     : "<li>" + iconUse("info") + "<div><h4>Niets geregistreerd</h4><p>Voor dit land staan geen specifieke verboden in de data.</p></div></li>";
 
   var foto = LAND_PHOTOS[c.code];

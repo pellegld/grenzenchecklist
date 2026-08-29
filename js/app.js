@@ -289,7 +289,7 @@ function boot(d){
   if(ROUTE_COORDS && !ZONES){
     Promise.all([
       BORDERS ? Promise.resolve() : loadJSON("borders.json").then(function(b){ BORDERS = b; }),
-      loadJSON("zones.json").then(function(z){ ZONES = z.zones || z; }).catch(function(){ ZONES = []; })
+      laadData("zones.json").then(function(z){ ZONES = z.zones || z; }).catch(function(){ ZONES = []; })
     ]).then(function(){
       ROUTE_ZONES = zonesLangsRoute(ROUTE_COORDS);
       render();

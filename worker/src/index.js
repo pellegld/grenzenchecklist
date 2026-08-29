@@ -16,6 +16,7 @@
 import { fout } from "./lib/antwoord.js";
 import { afhandelRoute } from "./route.js";
 import { afhandelGeocode } from "./geocode.js";
+import { afhandelData } from "./data.js";
 
 export default {
   async fetch(request, env, ctx) {
@@ -25,6 +26,7 @@ export default {
 
     if (pad.endsWith("/api/route")) return afhandelRoute(request, env, ctx);
     if (pad.endsWith("/api/geocode")) return afhandelGeocode(request, env, ctx);
+    if (pad.includes("/api/v1/data/")) return afhandelData(request, env, ctx);
 
     return fout("onbekend pad", 404);
   },
