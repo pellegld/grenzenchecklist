@@ -629,6 +629,42 @@ geformuleerde items op één regel belanden (bv. "Reservelampenset" en "Reservel
 allebei dezelfde `"key": "lampen"`. Zonder `key` valt de app terug op een aliastabel in `index.html`
 voor de bekende gevallen, en anders op de letterlijke tekst.
 
+### De datacontrole
+
+```bash
+npm run verify:data              # inclusief de linkcheck
+npm run verify:data:offline      # alleen wat lokaal te zien is
+node tools/verify-data.mjs --dagen=365 --json
+```
+
+Bedoeld om maandelijks te draaien. Het ergste wat deze app kan doen is verouderde
+verplichtingen tonen alsof ze kloppen; dit is het net eronder.
+
+| melding | wat het is |
+|---|---|
+| **FOUT** | ontbrekend of dubbel id, onbekende `confidence`, ontbrekende `lastVerified`, dode bron |
+| **OUD** | `lastVerified` ouder dan de drempel |
+| **ONZEKER** | `needsVerification` staat aan, of `confidence` is `uncertain` |
+| **LET OP** | `confidence` en bron spreken elkaar tegen |
+
+Alleen FOUT geeft exitcode 1. Oude data en gemarkeerde onzekerheid zijn werk, geen
+defect — laat je die een maandelijkse cron rood maken, dan kijkt er binnen een
+kwartaal niemand meer naar.
+
+De drempel staat op **180 dagen**, strenger dan de 240 dagen waarop de app zelf
+"verouderd" toont. Dat is met opzet: de tool moet eerder aan de bel trekken dan de
+gebruiker het ziet.
+
+Twee dingen die de linkcheck bewust anders doet dan naïef:
+
+* **403 en 429 zijn een waarschuwing, geen fout.** Veel overheidssites weren een
+  kale client terwijl de pagina in een browser gewoon bestaat. Een 404 is wél hard.
+* **Feiten zonder eigen datum erven die van hun land**, en in `drukte.json` van de
+  `meta` van het bestand. De OUD-lijst vouwt die samen tot één regel per land,
+  anders lees je driehonderd keer dezelfde datum.
+
+Stand nu: 305 feiten, 305 unieke id's, geen fouten, 76 als onzeker gemarkeerd.
+
 ### Correctielink instellen
 
 Er staat bewust **geen e-mailadres in de data**. Een `mailto:` op een publieke pagina is binnen
