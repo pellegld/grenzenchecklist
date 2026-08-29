@@ -27,19 +27,12 @@ function plannerStatus(msg, isErr){
   el.className = "rstat" + (isErr ? " err" : "");
 }
 
-/* Welke dienst de route berekende, in gewone taal. Stil terugvallen op een
-   demoserver is precies wat je in productie niet pas wil merken als het te laat
-   is, dus staat het er gewoon bij. */
-var DIENST_NAAM = {
-  "osrm-demo":        "Berekend via de OSRM-demoserver — die is niet voor productie bedoeld.",
-  "osrm-eigen":       "Berekend via je eigen OSRM-instantie.",
-  "openrouteservice": "Berekend via OpenRouteService.",
-  "graphhopper":      "Berekend via Graphhopper.",
-  "proxy":            "Berekend via je eigen proxy."
-};
-function dienstNotitie(){
-  if(!DIENST_IN_GEBRUIK) return "";
-  return " " + (DIENST_NAAM[DIENST_IN_GEBRUIK] || "Berekend via " + DIENST_IN_GEBRUIK + ".");
+/* Van de neutrale Plaats van js/routeProvider.js naar de rij waarop deze pagina
+   werkt: [naam, alias, landcode, lat, lon]. Diezelfde rij staat ook in
+   cities.json en wordt zo in een trip bewaard, dus die vorm blijft. */
+function plaatsNaarRij(p){
+  return [p.naam, p.omschrijving || p.naam, (p.land || "").toUpperCase(),
+          Number(p.lat), Number(p.lon)];
 }
 
 function cityRowHTML(c, idx){
@@ -94,7 +87,8 @@ function wireCityField(inputId, listId, onPick){
     if(li.hasAttribute("data-online")){
       var q = input.value.trim();
       li.innerHTML = '<span class="cnt">Zoeken…</span>';
-      searchOnline(q).then(function(rows){
+      RouteProvider.geocode(q).then(function(plaatsen){
+        var rows = plaatsen.map(plaatsNaarRij);
         if(!rows.length){ show([], "Niets gevonden voor “" + q + "”"); return; }
         show(rows, null);
       }).catch(function(){
@@ -131,28 +125,84 @@ function doRoute(){
   ]);
 
   need.then(function(){
-    return fetchRoute(FROM_CITY, TO_CITY);
+    return RouteProvider.getRoute(
+      { lat: FROM_CITY[3], lon: FROM_CITY[4] },
+      { lat: TO_CITY[3],   lon: TO_CITY[4]   }
+    );
   }).then(function(route){
-    var res = analyseRoute(route.geometry.coordinates);
+    var coords = route.coordinates;
+    var res = analyseRoute(coords);
     var toAdd = res.order.filter(function(c){ return BY_CODE[c]; });
     if(!toAdd.length) throw new Error("geen bekende landen op deze route");
 
     ROUTE = toAdd;
     ROUTE_RES = res;
-    ROUTE_ZONES = zonesLangsRoute(route.geometry.coordinates);
-    ROUTE_TOLLS = tolPuntenLangsRoute(route.geometry.coordinates);
-    ROUTE_COORDS = route.geometry.coordinates;
-    ROUTE_DURATION = route.duration || null;
+    ROUTE_ZONES = zonesLangsRoute(coords);
+    ROUTE_TOLLS = tolPuntenLangsRoute(coords);
+    ROUTE_COORDS = coords;
+    ROUTE_DURATION = route.seconds || null;
+    HANDMATIG_ZICHTBAAR = false;
     saveRoute();
     render();
-    plannerStatus("Klaar — de landen hieronder zijn ingevuld." + dienstNotitie());
+    plannerStatus("Klaar — de landen hieronder zijn ingevuld." + RouteProvider.notitie());
   }).catch(function(err){
+    /* §20: een fout is geen doodlopende weg. Kon geen enkele dienst een route
+       leveren (err.handmatig), dan is de planner uitgevallen, niet de app — de
+       checklist werkt net zo goed op een zelf gekozen landenlijst. Bij een
+       gewone fout (plaatsnaam, geen bekende landen) helpt zelf kiezen niet, dus
+       dan blijft het bij de melding. */
     var m = String(err && err.message || err);
-    plannerStatus("Route bepalen lukte niet (" + m + "). Controleer de plaatsnamen en probeer het opnieuw.", true);
+    if(err && err.handmatig){
+      plannerStatus("Route berekenen lukt nu niet. Geen van de routediensten reageerde.", true);
+      HANDMATIG_ZICHTBAAR = true;
+      renderHandmatigeKeuze();
+    } else {
+      plannerStatus("Route bepalen lukte niet (" + m + "). Controleer de plaatsnamen en probeer het opnieuw.", true);
+    }
   }).then(function(){
     ROUTING = false;
     document.getElementById("btn-route").disabled = false;
   });
+}
+
+/* ---------------- handmatige landenkeuze (terugval, §20) ----------------
+   Verschijnt pas als de providerketen helemaal leeg uitkomt. Hij gebruikt de
+   bestaande routebouwer (addCountry/removeAt) die al in js/trips.js staat; de
+   planner vult de landenlijst vóór, hij is er nooit de enige manier voor
+   geweest. Wat je zonder route mist is de afstand, de reistijd, de
+   kilometertol en de kaartschets — dat staat er met zoveel woorden bij, want
+   een getal verzinnen is erger dan het weglaten. */
+var HANDMATIG_ZICHTBAAR = false;
+
+function renderHandmatigeKeuze(){
+  var el = document.getElementById("handmatig");
+  if(!el) return;
+  if(!HANDMATIG_ZICHTBAAR || !DATA){ el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+
+  var opties = DATA.countries.map(function(c){
+    return '<option value="' + esc(c.code) + '">' + esc(c.name) + "</option>";
+  }).join("");
+
+  var chips = ROUTE.map(function(code, i){
+    var c = BY_CODE[code];
+    if(!c) return "";
+    return '<span class="hmchip">' + flagHTML(c) + esc(c.name) +
+      '<button type="button" data-hm-weg="' + i + '" aria-label="' +
+      esc(c.name) + ' van de route halen">&times;</button></span>';
+  }).join("");
+
+  el.innerHTML =
+    '<h3>Kies de landen zelf</h3>' +
+    "<p>De checklist, de vignetten en de milieuzones werken hier net zo goed op. " +
+    "Wat je zonder berekende route mist: de afstand, de reistijd, de kilometertol " +
+    "en de kaartschets.</p>" +
+    '<div class="hmrij">' +
+      '<select id="hm-land" aria-label="Land toevoegen">' + opties + "</select>" +
+      '<button type="button" class="btn" id="hm-toevoegen">' + iconUse("add") + " Toevoegen</button>" +
+    "</div>" +
+    (chips ? '<div class="hmchips">' + chips + "</div>"
+           : '<p class="hint">Nog geen landen gekozen.</p>');
 }
 
 function renderDashboardStats(){

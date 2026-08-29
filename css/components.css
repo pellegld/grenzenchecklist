@@ -231,3 +231,24 @@ details.disclaimer summary b{color:var(--on-surface)}
 .loaderr{border:1px solid var(--amber-line);background:var(--amber-container);color:var(--amber-ink);
   padding:var(--sp-md);margin:var(--sp-md);border-radius:var(--r-lg)}
 .loaderr code{background:rgba(0,0,0,.06);padding:2px 6px;border-radius:4px;font-family:var(--f-mono);font-size:.85em}
+
+/* ---------------- handmatige landenkeuze ----------------
+   Terugval als geen enkele routedienst reageert (§20). Staat er alleen als het
+   nodig is, en ziet er bewust uit als een gewoon formulier: dit is geen
+   foutmelding maar een tweede weg naar hetzelfde resultaat. */
+.handmatig{border:1px solid var(--amber-line);background:var(--amber-container);
+  border-radius:var(--r-xl);padding:var(--sp-sm) var(--sp-md) var(--sp-md)}
+.handmatig h3{color:var(--amber-ink);margin:var(--sp-sm) 0 6px}
+.handmatig p{font-size:.88rem;color:var(--on-surface-var);max-width:60ch}
+.hmrij{display:flex;gap:8px;margin-top:var(--sp-sm);flex-wrap:wrap}
+.hmrij select{flex:1 1 12rem;min-height:44px;padding:0 10px;border-radius:var(--r-lg);
+  border:1px solid var(--outline-var);background:var(--surface-lowest);color:var(--on-surface);
+  font:400 .92rem/1 var(--f-body)}
+.hmrij .btn{min-height:44px}
+.hmchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--sp-sm)}
+.hmchip{display:inline-flex;align-items:center;gap:6px;padding:5px 6px 5px 8px;
+  border-radius:var(--r-lg);background:var(--surface-lowest);border:1px solid var(--outline-var);
+  font:600 .82rem/1 var(--f-display);color:var(--on-surface)}
+.hmchip button{appearance:none;border:0;background:none;cursor:pointer;color:var(--on-surface-var);
+  font:700 1rem/1 var(--f-body);width:24px;height:24px;border-radius:var(--r-sm)}
+.hmchip button:hover{background:var(--surface-high);color:var(--error)}

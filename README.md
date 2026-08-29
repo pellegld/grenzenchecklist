@@ -620,6 +620,63 @@ in plaats van een adres, en de spam die dat oplevert filtert de dienst zelf.
 
 ## Router en geocoder verwisselen
 
+### De abstractielaag
+
+`js/routeProvider.js` is de enige plek in de app die weet welke dienst er belt. De rest
+werkt met drie functies en drie datavormen:
+
+```js
+RouteProvider.getRoute(van, naar, opties)   // -> { coordinates, meters, seconds, provider }
+RouteProvider.geocode(zoekterm, opties)     // -> [{ naam, omschrijving, land, lat, lon }]
+RouteProvider.reverseGeocode(lat, lon, o)   // -> { naam, ... } of null
+```
+
+`van` en `naar` zijn `{ lat, lon }`. Meer niet. Dat is geen toeval: de landdetectie in
+`js/geo.js` draait op de coördinaten en verder op niets, dus een andere router verandert
+daar niets aan.
+
+Waarom dit er nu al staat terwijl de app nog gewoon OSRM gebruikt: de OSRM-demoserver en
+Nominatim zijn expliciet niet-commercieel, zonder uptime-garantie en begrensd op ongeveer
+één aanvraag per seconde. Zodra hier verkeer op komt is dat een blocker. De keuze wélke
+provider daarvoor in de plaats komt hoort bij het moment dat er verkeer is en de tarieven
+te vergelijken zijn; de architectuur mag daar nu al niet blind van uitgaan dat OSRM het
+eindstation is.
+
+### De keten
+
+```js
+DIENSTEN.keten = ["proxy", "osrm-demo"];
+```
+
+De implementaties worden in deze volgorde geprobeerd. Elke implementatie zegt eerst zelf of
+hij beschikbaar is (`beschikbaar()`); zo niet, dan is de volgende aan de beurt. Faalt er
+één, dan schuift hij ook door. Overstappen op een betaalde provider is: hem vooraan in deze
+lijst zetten.
+
+| implementatie | wat het is |
+|---|---|
+| `proxy` | je eigen backend; welke dienst daarachter zit weet de client niet |
+| `osrm-demo` | de sleutelloze publieke diensten: OSRM voor routes, Nominatim voor zoeken |
+| `graphhopper` | leeg, met dezelfde signatuur — zie hieronder |
+
+`graphhopper` is met opzet niet ingevuld. Twee redenen dat hij er toch staat: een
+abstractielaag met precies één implementatie erachter is geen abstractielaag maar een
+omweg — pas met een tweede zie je of de vorm de provider echt niet doorlaat. En het is de
+plek waar de overstap straks landt. Hij wordt hier niet ingevuld omdat GraphHopper een
+sleutel wil, en een sleutel in de browser een publieke sleutel is: de echte aanroep hoort
+achter de proxy, die dat al kan (`ROUTE_PROVIDER=graphhopper`).
+
+### Als de hele keten leeg uitkomt
+
+Dan krijgt de planner een fout met `handmatig: true`, en toont hij de handmatige
+landenkeuze in plaats van een doodlopende melding (§20 van de masterprompt). Die keuze
+gebruikt de routebouwer die er altijd al was: je kiest landen uit een lijst, de checklist,
+de vignetten en de milieuzones werken daar net zo goed op. Wat je zonder berekende route
+mist — afstand, reistijd, kilometertol, kaartschets — staat er met zoveel woorden bij.
+
+Wat de keten nadrukkelijk **niet** doet: een oude of verzonnen route teruggeven als
+noodoplossing. Een route die er niet is, is geen route.
+
 ### Waarom er geen sleutelveld in de client zit
 
 Alles wat de browser meekrijgt is publiek. Een sleutel in `index.html`, in een los
@@ -634,10 +691,11 @@ sleutel wil gebruiken, zet die achter een proxy op het eigen domein.
 
 ```js
 var DIENSTEN = {
-  mode: "auto",        // "auto" | "proxy" | "open"
+  mode: "auto",                          // "auto" | "proxy" | "open"
+  keten: ["proxy", "osrm-demo"],
   proxyBase: "./api",
   osrm: "https://router.project-osrm.org/route/v1/driving/",
-  nominatim: "https://nominatim.openstreetmap.org/search"
+  nominatim: "https://nominatim.openstreetmap.org"
 };
 ```
 
@@ -660,12 +718,16 @@ dat gebeurt aan de serverkant, zodat je van provider kunt wisselen zonder de app
 
 ```
 GET  {proxyBase}/route?from=<lon>,<lat>&to=<lon>,<lat>
-200  { "coordinates": [[lon,lat], ...], "meters": 734000, "provider": "openrouteservice" }
+200  { "coordinates": [[lon,lat], ...], "meters": 734000, "seconds": 29500,
+       "provider": "openrouteservice" }
 
 GET  {proxyBase}/geocode?q=<tekst>
 200  { "results": [{ "naam", "omschrijving", "land", "lat", "lon" }], "provider": "..." }
 
-     Beide accepteren ?ping=1 en antwoorden dan 200 zonder de provider aan te roepen.
+GET  {proxyBase}/geocode?lat=<lat>&lon=<lon>
+200  hetzelfde antwoord, één resultaat — omgekeerd zoeken
+
+     Alle drie accepteren ?ping=1 en antwoorden dan 200 zonder de provider aan te roepen.
      Fouten komen terug als { "error": "<uitleg>" } met een 4xx- of 5xx-status.
 ```
 

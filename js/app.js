@@ -14,6 +14,7 @@ function render(){
     renderDashboardStats();
     renderLandenLijst();
     renderMilieuzones();
+    renderHandmatigeKeuze();
     renderRouteSchets(ROUTE_COORDS);
   } else if(VIEW === "landen"){
     renderLandenInfo();
@@ -163,6 +164,17 @@ function wire(){
   wireCityField("from", "from-res", function(c){ FROM_CITY = c; });
   wireCityField("to",   "to-res",   function(c){ TO_CITY   = c; });
   document.getElementById("btn-route").addEventListener("click", doRoute);
+
+  /* Handmatige landenkeuze: verschijnt alleen als de providerketen niets
+     opleverde, en gebruikt de bestaande routebouwer. */
+  document.getElementById("handmatig").addEventListener("click", function(e){
+    if(e.target.closest("#hm-toevoegen")){
+      addCountry(document.getElementById("hm-land").value);
+      return;
+    }
+    var weg = e.target.closest("[data-hm-weg]");
+    if(weg) removeAt(Number(weg.getAttribute("data-hm-weg")));
+  });
   document.getElementById("btn-swap").addEventListener("click", function(){
     var a = document.getElementById("from"), b = document.getElementById("to");
     var tv = a.value; a.value = b.value; b.value = tv;
