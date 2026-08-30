@@ -1,8 +1,9 @@
 "use strict";
-/* Routeplanner: de van/naar-velden, de berekening en het routepaneel.
+/* Routeplanner: de plaatsvelden, de berekening en het routepaneel.
 
    Deze laag kent de provider niet — hij vraagt js/routeProvider.js om een route
-   en rekent verder op coördinaten. */
+   en rekent verder op coördinaten. De wizard (§5) gebruikt dezelfde velden en
+   dezelfde berekening; er is één implementatie, twee ingangen. */
 
 /* Zoekt in de meegeleverde stedenlijst. Rij = [naam, alias, landcode, lat, lon].
    Nederlandse naam en lokale naam tellen allebei mee, accentongevoelig. */
@@ -19,7 +20,7 @@ function searchCities(q){
   return starts.concat(contains).slice(0, 7);
 }
 
-/* ================= routeplanner: UI ================= */
+/* ================= statusregel ================= */
 
 /* De statusregel onthoudt zijn sleutel in plaats van alleen zijn tekst, zodat
    hij meeverandert als je halverwege van taal wisselt. Een melding die in de
@@ -43,13 +44,7 @@ function toonPlannerStatus(){
   el.className = "rstat" + (STATUS_LAATST.isErr ? " err" : "");
 }
 
-/* Van de neutrale Plaats van js/routeProvider.js naar de rij waarop deze pagina
-   werkt: [naam, alias, landcode, lat, lon]. Diezelfde rij staat ook in
-   cities.json en wordt zo in een trip bewaard, dus die vorm blijft. */
-function plaatsNaarRij(p){
-  return [p.naam, p.omschrijving || p.naam, (p.land || "").toUpperCase(),
-          Number(p.lat), Number(p.lon)];
-}
+/* ================= plaatsvelden met autocomplete ================= */
 
 function cityRowHTML(c, idx){
   var geo = BORDERS && BORDERS[c[2]];
@@ -62,10 +57,13 @@ function cityRowHTML(c, idx){
 }
 
 /* Houdt de suggestielijst van één veld bij. `hits` blijft lokaal zodat de
-   online-resultaten niet met de offline lijst door elkaar lopen. */
+   online-resultaten niet met de offline lijst door elkaar lopen. onPick krijgt
+   een Plaats (of null zodra er weer getypt wordt), niet de rij: de trip bewaart
+   Plaatsen, en die conversie hoort op één plek te staan. */
 function wireCityField(inputId, listId, onPick){
   var input = document.getElementById(inputId);
   var list = document.getElementById(listId);
+  if(!input || !list) return null;
   var hits = [];
 
   function close(){ list.innerHTML = ""; hits = []; }
@@ -104,7 +102,7 @@ function wireCityField(inputId, listId, onPick){
       var q = input.value.trim();
       li.innerHTML = '<span class="cnt">' + esc(i18n("planner.zoeken")) + '</span>';
       RouteProvider.geocode(q).then(function(plaatsen){
-        var rows = plaatsen.map(plaatsNaarRij);
+        var rows = plaatsen.map(rijUitPlaats);
         if(!rows.length){ show([], i18n("planner.nietsGevonden", { q:q })); return; }
         show(rows, null);
       }).catch(function(){
@@ -116,7 +114,7 @@ function wireCityField(inputId, listId, onPick){
     var c = hits[Number(li.getAttribute("data-idx"))];
     if(!c) return;
     input.value = c[0];
-    onPick(c);
+    onPick(plaatsUitRij(c));
     close();
   });
 
@@ -124,41 +122,83 @@ function wireCityField(inputId, listId, onPick){
   return input;
 }
 
+/* ================= de berekening =================
+
+   Eén implementatie voor de kaartpagina en voor stap 4 van de wizard. `stap`
+   is een terugmeldfunctie: de wizard toont er zijn voortgangslijst mee
+   (ROUTE ANALYSEREN ✓ / LANDEN CONTROLEREN ✓ / ...), de kaartpagina negeert
+   hem. Zo hoeft de wizard niets van de routelogica te weten en de routelogica
+   niets van de wizard. */
+var ROUTING = false;
+
+function berekenRoute(trip, stap){
+  stap = stap || function(){};
+  if(!trip.origin || !trip.destination){
+    return Promise.reject(new Error(i18n("planner.kiesEerst")));
+  }
+
+  stap("route", "bezig");
+  return laadGeoData().then(function(){
+    return RouteProvider.getRoute(
+      { lat: trip.origin.lat, lon: trip.origin.lon },
+      { lat: trip.destination.lat, lon: trip.destination.lon }
+    );
+  }).then(function(route){
+    stap("route", "klaar");
+
+    stap("landen", "bezig");
+    var coords = route.coordinates;
+    var res = analyseRoute(coords);
+    var landen = res.order.filter(function(c){ return BY_CODE[c]; });
+    if(!landen.length){
+      var leeg = new Error(i18n("planner.geenLanden"));
+      leeg.geenLanden = true;
+      throw leeg;
+    }
+
+    trip.route = { coordinates:coords, meters:route.meters || null,
+                   seconds:route.seconds || null, provider:route.provider || null,
+                   analyse:res };
+    trip.countries = landen;
+    trip.metadata.handmatig = false;
+    trip.metadata.geanalyseerd = true;
+    stap("landen", "klaar", landen.length);
+
+    /* De volgende drie stappen zijn lokaal en snel; ze staan apart omdat de
+       gebruiker moet kunnen zien wát er gecontroleerd is. Niet omdat het lang
+       duurt — de eerlijkheid van de lijst zit in wat er staat, niet in de
+       wachttijd. */
+    stap("zones", "bezig");
+    herbereken(trip);
+    stap("zones", "klaar", tripZones(trip).length);
+
+    stap("tol", "bezig");
+    stap("tol", "klaar", tripTolPunten(trip).length);
+
+    stap("voertuig", "bezig");
+    var tel = checklistTelling(trip);
+    stap("voertuig", "klaar", tel.blockers);
+
+    bewaarTrip();
+    return trip;
+  });
+}
+
+/* De kaartpagina houdt zijn eigen knop en statusregel; de wizard heeft zijn
+   eigen weergave. */
 function doRoute(){
-  if(ROUTING) return;
-  if(!FROM_CITY || !TO_CITY){
+  if(ROUTING || !TRIP) return;
+  if(!TRIP.origin || !TRIP.destination){
     plannerStatus("planner.kiesEerst", true);
     return;
   }
   ROUTING = true;
-  document.getElementById("btn-route").disabled = true;
+  var knop = document.getElementById("btn-route");
+  if(knop) knop.disabled = true;
   plannerStatus("planner.bezig");
 
-  var need = Promise.all([
-    BORDERS ? Promise.resolve(BORDERS) : loadJSON("borders.json").then(function(b){ BORDERS = b; return b; }),
-    ZONES ? Promise.resolve(ZONES) : laadData("zones.json").then(function(z){ ZONES = z.zones || z; return ZONES; })
-             .catch(function(){ ZONES = []; return ZONES; })
-  ]);
-
-  need.then(function(){
-    return RouteProvider.getRoute(
-      { lat: FROM_CITY[3], lon: FROM_CITY[4] },
-      { lat: TO_CITY[3],   lon: TO_CITY[4]   }
-    );
-  }).then(function(route){
-    var coords = route.coordinates;
-    var res = analyseRoute(coords);
-    var toAdd = res.order.filter(function(c){ return BY_CODE[c]; });
-    if(!toAdd.length) throw new Error(i18n("planner.geenLanden"));
-
-    ROUTE = toAdd;
-    ROUTE_RES = res;
-    ROUTE_ZONES = zonesLangsRoute(coords);
-    ROUTE_TOLLS = tolPuntenLangsRoute(coords);
-    ROUTE_COORDS = coords;
-    ROUTE_DURATION = route.seconds || null;
+  berekenRoute(TRIP).then(function(){
     HANDMATIG_ZICHTBAAR = false;
-    saveRoute();
     render();
     plannerStatus("planner.klaar", false, null, true);
   }).catch(function(err){
@@ -167,49 +207,40 @@ function doRoute(){
        checklist werkt net zo goed op een zelf gekozen landenlijst. Bij een
        gewone fout (plaatsnaam, geen bekende landen) helpt zelf kiezen niet, dus
        dan blijft het bij de melding. */
-    var m = String(err && err.message || err);
     if(err && err.handmatig){
       plannerStatus("planner.geenDienst", true);
       HANDMATIG_ZICHTBAAR = true;
       renderHandmatigeKeuze();
     } else {
-      plannerStatus("planner.fout", true, { reden:m });
+      plannerStatus("planner.fout", true, { reden:String(err && err.message || err) });
     }
   }).then(function(){
     ROUTING = false;
-    document.getElementById("btn-route").disabled = false;
+    if(knop) knop.disabled = false;
   });
 }
 
-/* ---------------- handmatige landenkeuze (terugval, §20) ----------------
-   Verschijnt pas als de providerketen helemaal leeg uitkomt. Hij gebruikt de
-   bestaande routebouwer (addCountry/removeAt) die al in js/trips.js staat; de
-   planner vult de landenlijst vóór, hij is er nooit de enige manier voor
-   geweest. Wat je zonder route mist is de afstand, de reistijd, de
-   kilometertol en de kaartschets — dat staat er met zoveel woorden bij, want
-   een getal verzinnen is erger dan het weglaten. */
+/* ---------------- handmatige landenkeuze (§20) ----------------
+   De bestaande routebouwer: landen kiezen uit een lijst, zonder berekening.
+   Wat je zonder route mist — afstand, reistijd, kilometertol, kaartschets —
+   staat er met zoveel woorden bij, want een getal verzinnen is erger dan het
+   weglaten. Twee ingangen: de knop "handmatig doorgaan" in de wizard en de
+   terugval hier op de kaartpagina. */
 var HANDMATIG_ZICHTBAAR = false;
 
-function renderHandmatigeKeuze(){
-  var el = document.getElementById("handmatig");
-  if(!el) return;
-  if(!HANDMATIG_ZICHTBAAR || !DATA){ el.hidden = true; el.innerHTML = ""; return; }
-  el.hidden = false;
-
+function handmatigeKeuzeHTML(trip){
   var opties = DATA.countries.map(function(c){
     return '<option value="' + esc(c.code) + '">' + esc(c.name) + "</option>";
   }).join("");
 
-  var chips = ROUTE.map(function(code, i){
+  var chips = tripLanden(trip).map(function(code, i){
     var c = BY_CODE[code];
-    if(!c) return "";
     return '<span class="hmchip">' + flagHTML(c) + esc(c.name) +
       '<button type="button" data-hm-weg="' + i + '" aria-label="' +
       esc(i18n("handmatig.verwijderen", { land:c.name })) + '">&times;</button></span>';
   }).join("");
 
-  el.innerHTML =
-    "<h3>" + esc(i18n("handmatig.kop")) + "</h3>" +
+  return "<h3>" + esc(i18n("handmatig.kop")) + "</h3>" +
     "<p>" + esc(i18n("handmatig.uitleg")) + "</p>" +
     '<div class="hmrij">' +
       '<select id="hm-land" aria-label="' + esc(i18n("handmatig.landToevoegen")) + '">' + opties + "</select>" +
@@ -220,16 +251,25 @@ function renderHandmatigeKeuze(){
            : '<p class="hint">' + esc(i18n("handmatig.geenLanden")) + "</p>");
 }
 
+function renderHandmatigeKeuze(){
+  var el = document.getElementById("handmatig");
+  if(!el) return;
+  if(!HANDMATIG_ZICHTBAAR || !DATA || !TRIP){ el.hidden = true; el.innerHTML = ""; return; }
+  el.hidden = false;
+  el.innerHTML = handmatigeKeuzeHTML(TRIP);
+}
+
+/* ---------------- kaartpagina: samenvatting naast de schets ---------------- */
 function renderDashboardStats(){
   var el = document.getElementById("stat-cards");
-  var reisBtn = document.getElementById("btn-bekijk-reis");
-  if(!ROUTE_RES){ el.hidden = true; el.innerHTML = ""; reisBtn.hidden = true; return; }
+  if(!el || !TRIP) return;
+  var res = tripAnalyse(TRIP);
+  if(!res){ el.hidden = true; el.innerHTML = ""; return; }
   el.hidden = false;
-  reisBtn.hidden = false;
 
-  var afstand = getal(Math.round(ROUTE_RES.total));
-  var duur = fmtDuur(ROUTE_DURATION);
-  var tol = tolTotaalRetour();
+  var afstand = getal(Math.round(res.total));
+  var duur = fmtDuur(tripDuur(TRIP));
+  var tol = tolTotaalRetour(TRIP);
   var tolWaarde = tol
     ? '&euro;' + euroTekst(tol.bedrag) +
       (tol.zeker ? "" : ' <small>' + esc(i18n("planner.ofMeer")) + '</small>')
@@ -247,11 +287,12 @@ function renderDashboardStats(){
 function renderLandenLijst(){
   var wrap = document.getElementById("landenblok");
   var box = document.getElementById("landenlijst");
-  if(!ROUTE.length){ wrap.hidden = true; box.innerHTML = ""; return; }
+  if(!wrap || !box || !TRIP) return;
+  var landen = tripLanden(TRIP);
+  if(!landen.length){ wrap.hidden = true; box.innerHTML = ""; return; }
   wrap.hidden = false;
-  box.innerHTML = ROUTE.map(function(code){
+  box.innerHTML = landen.map(function(code){
     var c = BY_CODE[code];
-    if(!c) return "";
     return '<div class="landrow" data-land="' + esc(code) + '" role="button" tabindex="0">' + flagHTML(c) +
       '<span class="landnaam">' + esc(c.name) + '</span>' +
       iconUse("chevron-right") + '</div>';
@@ -260,9 +301,11 @@ function renderLandenLijst(){
 
 function renderMilieuzones(){
   var el = document.getElementById("milieukaart");
-  if(!ROUTE_ZONES.length){ el.hidden = true; el.innerHTML = ""; return; }
+  if(!el || !TRIP) return;
+  var zones = tripZones(TRIP);
+  if(!zones.length){ el.hidden = true; el.innerHTML = ""; return; }
   el.hidden = false;
-  var namen = ROUTE_ZONES.slice(0, 8).map(function(o){ return esc(o.zone.city); });
+  var namen = zones.slice(0, 8).map(function(o){ return esc(o.zone.city); });
   el.innerHTML =
     '<div class="milieuhead">' + iconUse("eco") +
       "<div><h3>" + esc(i18n("planner.milieuzones")) + "</h3>" +

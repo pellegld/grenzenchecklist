@@ -24,8 +24,12 @@ function toepassenThema(){
   if(t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
   else document.documentElement.removeAttribute("data-theme");
   var donker = huidigThema() === "dark";
-  var toggle = document.getElementById("dark-toggle");
-  if(toggle) toggle.checked = donker;
+  /* Twee schakelaars: onder Instellingen in de zijbalk en in het Meer-paneel op
+     mobiel. Ze staan altijd in dezelfde stand, ook als je de andere gebruikt. */
+  ["dark-toggle", "dark-toggle-meer"].forEach(function(id){
+    var toggle = document.getElementById(id);
+    if(toggle) toggle.checked = donker;
+  });
 }
 function wisselThema(donker){
   lsSet(STORE_THEME, donker ? "dark" : "light");

@@ -97,10 +97,12 @@ function itemKey(it){
   return t.replace(/[^a-z0-9]+/g," ").trim();
 }
 
-/* The core distinction: "the law lists it" vs "you can be fined for it here". */
-function effectiveStatus(item, country){
+/* Het kernonderscheid: "het staat in de wet daar" tegenover "jij kunt er hier
+   een boete voor krijgen". Het kentekenland komt uit de reis, niet uit een
+   global: dezelfde uitrustingseis valt anders uit voor een andere reis. */
+function effectiveStatus(item, country, trip){
   if(item.status === "registration-country"){
-    return country.code === HOME ? "must" : "na";
+    return country.code === (trip && trip.vehicle.plateCountry) ? "must" : "na";
   }
   if(item.status === "required") return "must";
   return "advice";

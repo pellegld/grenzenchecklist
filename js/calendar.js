@@ -1,9 +1,8 @@
 "use strict";
 /* Drukte per dag uit drukte.json.
-   
+
    Dormant: de data en de logica staan er, de kalenderpagina nog niet (fase 5). */
 
-/* ================= wanneer rijden (dormant tot Kalender-pagina) ================= */
 var DRUKTE = null;
 var KAL_MAAND = null;
 
@@ -26,18 +25,14 @@ function drukteVoor(iso){
 
 var DRUKTE_RANG = { rustig:0, matig:1, druk:2, zeerdruk:3, zwart:4 };
 
-function renderKalender(){
-  var sec = document.getElementById("wanneer");
-  if(!sec) return;
-  if(!ROUTE.length || !DRUKTE){ sec.hidden = true; sec.innerHTML = ""; return; }
-  sec.hidden = false;
-}
-
-function kalRichting(){
-  if(!ROUTE_RES || ROUTE_RES.zuidwaarts === null || ROUTE_RES.zuidwaarts === undefined){
+/* Rijd je zuidwaarts, dan zit je in dezelfde stroom als de Franse
+   vertrekgolf; oost-west zegt die prognose weinig. */
+function kalRichting(trip){
+  var res = tripAnalyse(trip);
+  if(!res || res.zuidwaarts === null || res.zuidwaarts === undefined){
     return i18n("kalender.vertrek");
   }
-  return i18n(ROUTE_RES.zuidwaarts ? "kalender.zuid" : "kalender.noord");
+  return i18n(res.zuidwaarts ? "kalender.zuid" : "kalender.noord");
 }
 
 /* Was een vaste array; als functie volgt hij de taalkeuze. */

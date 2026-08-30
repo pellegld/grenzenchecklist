@@ -7,43 +7,56 @@
 /* ================= Checklist-pagina =================
    Hergebruikt buildGroups()/buildTasks()/checklistTelling() ongewijzigd —
    alleen de render-laag is nieuw (bento-kaarten i.p.v. de oude 6-koloms grid). */
-function bentoRow(key, titel, sub, badge, extraClass, vlaggenHTML){
-  var done = !!TICKED[key];
+function bentoRow(key, titel, sub, badge, extraClass, vlaggenHTML, printNamen){
+  var done = isAangevinkt(TRIP, key);
   return '<div class="chkrow' + (done ? " done" : "") + (extraClass ? " " + extraClass : "") + '">' +
     '<label class="chklabel">' +
       '<input type="checkbox" data-tick="' + esc(key) + '"' + (done ? " checked" : "") + '>' +
       '<span class="chktext"><span class="ttl">' + esc(titel) + (badge || "") + '</span>' +
-        (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + (vlaggenHTML || "") + '</span>' +
+        (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + (vlaggenHTML || "") +
+        /* Vlaggen zijn CSS-achtergronden en drukken niet af; print.css wisselt
+           deze regel ervoor in de plaats (zie .printnamen). */
+        (printNamen ? '<span class="sub printnamen">' + esc(printNamen) + '</span>' : "") + '</span>' +
     '</label>' +
     (sub ? '<button type="button" class="infobtn" title="' + esc(sub) + '">' + iconUse("info") + '</button>' : "") +
   '</div>';
 }
 
+/* De landnamen achter een rij vlaggen, voor de printuitdraai. */
+function landNamen(fel, dof){
+  var namen = fel.map(function(c){ return c.name; });
+  if(dof && dof.length) namen.push("(" + dof.map(function(c){ return c.name; }).join(" · ") + ")");
+  return namen.join(" · ");
+}
+
 function renderChecklistPagina(){
   var wrap = document.getElementById("checklist-wrap");
   if(!wrap) return;
-  var G = buildGroups(), T = buildTasks(), tel = checklistTelling();
+  var G = buildGroups(TRIP), T = buildTasks(TRIP), tel = checklistTelling(TRIP);
   var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
 
   var docRows = DOC_ITEMS.map(function(d){
     return bentoRow("doc:" + d.key, docNaam(d), docInfo(d));
   }).join("");
 
-  var autoRows = G.must.map(function(row){
-    var vl = vlaggenRij(row.main.map(function(e){ return e.country; }), row.other.map(function(e){ return e.country; }));
+  function uitrustingRij(row, badge){
+    var fel = row.main.map(function(e){ return e.country; });
+    var dof = row.other.map(function(e){ return e.country; });
     return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "",
-      '<span class="pill">' + esc(i18n("checklist.verplicht")) + '</span>', "", vl);
+      badge, "", vlaggenRij(fel, dof), landNamen(fel, dof));
+  }
+  var autoRows = G.must.map(function(row){
+    return uitrustingRij(row, '<span class="pill">' + esc(i18n("checklist.verplicht")) + '</span>');
   }).concat(G.advice.map(function(row){
-    var vl = vlaggenRij(row.main.map(function(e){ return e.country; }), row.other.map(function(e){ return e.country; }));
-    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "", "", "", vl);
+    return uitrustingRij(row, "");
   })).join("");
 
   var landRows = T.todo.map(function(t){
     var isZone = /^zone:/.test(t.key);
-    var vl = vlaggenRij(t.cs || (t.c ? [t.c] : []), []);
+    var landen = t.cs || (t.c ? [t.c] : []);
     return bentoRow("task:" + t.key, t.what, t.meta || "",
       isZone ? '<span class="pill">' + esc(i18n("checklist.verplicht")) + '</span>' : "",
-      isZone ? "zone" : "", vl);
+      isZone ? "zone" : "", vlaggenRij(landen, []), landNamen(landen, []));
   }).join("");
 
   var blokHtml = T.blockers.length
@@ -109,7 +122,7 @@ var LAND_REGIO = {
 /* Landkiezer als doorzoekbaar dropdownpaneel i.p.v. een rij vlagchips: schaalt
    beter dan 16 losse chips en houdt de hero net zo rustig als het voorbeeld. */
 function landSwitcherHTML(){
-  var route = ROUTE.slice();
+  var route = tripLanden(TRIP);
   var overig = DATA.countries.map(function(c){ return c.code; })
     .filter(function(code){ return route.indexOf(code) === -1; })
     .sort(function(a, b){ return BY_CODE[a].name.localeCompare(BY_CODE[b].name); });
@@ -147,7 +160,7 @@ function landSwitcherHTML(){
 
 function landDetailHTML(c){
   var eqCards = (c.mandatoryEquipment || []).map(function(it){
-    var must = effectiveStatus(it, c) === "must";
+    var must = effectiveStatus(it, c, TRIP) === "must";
     return '<div class="eqcard' + (must ? " must" : "") + '">' +
       '<div class="eqicon">' + iconUse(must ? "warning" : "info") + "</div>" +
       "<div><h4>" + esc(it.item) +
@@ -251,8 +264,9 @@ function filterLandSwitch(q){
 function renderLandenInfo(){
   var detail = document.getElementById("land-detail");
   if(!detail) return;
+  var landen = tripLanden(TRIP);
   if(!LANDEN_ACTIEF || !BY_CODE[LANDEN_ACTIEF]){
-    LANDEN_ACTIEF = ROUTE.length ? ROUTE[0] : (DATA.countries[0] && DATA.countries[0].code);
+    LANDEN_ACTIEF = landen.length ? landen[0] : (DATA.countries[0] && DATA.countries[0].code);
   }
   var c = BY_CODE[LANDEN_ACTIEF];
   detail.innerHTML = c ? landDetailHTML(c)
@@ -261,20 +275,21 @@ function renderLandenInfo(){
 
 /* ================= Mijn Reizen-pagina ================= */
 function tripStatChips(trip){
-  var aantal = trip.route ? trip.route.length : 0;
+  var aantal = tripLanden(trip).length;
   var chips = ['<span class="tripchip">' + iconUse("globe") +
     esc(i18nAantal("reizen.landen", aantal)) + "</span>"];
-  if(trip.routeRes) chips.push('<span class="tripchip">' + iconUse("ruler") +
-    getal(Math.round(trip.routeRes.total)) + " " + esc(i18n("planner.km")) + "</span>");
-  var duur = fmtDuur(trip.routeDuration);
+  var afstand = tripAfstandKm(trip);
+  if(afstand) chips.push('<span class="tripchip">' + iconUse("ruler") +
+    getal(Math.round(afstand)) + " " + esc(i18n("planner.km")) + "</span>");
+  var duur = fmtDuur(tripDuur(trip));
   if(duur) chips.push('<span class="tripchip">' + iconUse("clock") + duur + "</span>");
   return chips.join("");
 }
 
 function tripKaartHTML(trip){
-  var van = trip.fromCity ? trip.fromCity[0] : null;
-  var naar = trip.toCity ? trip.toCity[0] : null;
-  var tel = metTrip(trip, checklistTelling);
+  var van = trip.origin ? trip.origin.naam : null;
+  var naar = trip.destination ? trip.destination.naam : null;
+  var tel = checklistTelling(trip);
   var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
   var actief = trip.id === ACTIVE_TRIP_ID;
   var blockerNote = tel.blockers
@@ -343,9 +358,9 @@ var JOURNEY_PIJL_SVG = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/s
 function jTolBits(code, c){
   var bits = [];
   if((c.tollVignette || {}).required) bits.push(i18n("reis.vignetVereist"));
-  var sch = tolSchatting(ROUTE_RES).filter(function(t){ return t.c.code === code; })[0];
+  var sch = tolSchatting(TRIP).filter(function(t){ return t.c.code === code; })[0];
   if(sch) bits.push(i18n("reis.tolCirca", { bedrag:euroTekst(sch.hoog) }));
-  var punten = ROUTE_TOLLS.filter(function(o){ return o.c.code === code && !o.p.optional; })
+  var punten = tripTolPunten(TRIP).filter(function(o){ return o.c.code === code && !o.p.optional; })
     .map(function(o){ return o.p.name; });
   if(punten.length) bits.push(punten.slice(0, 2).join(", "));
   return bits;
@@ -354,8 +369,8 @@ function jTolBits(code, c){
 function reisNodeHTML(code, idx, eerste, laatste){
   var c = BY_CODE[code];
   if(!c) return "";
-  var must = (c.mandatoryEquipment || []).filter(function(it){ return effectiveStatus(it, c) === "must"; });
-  var advice = (c.mandatoryEquipment || []).filter(function(it){ return effectiveStatus(it, c) === "advice"; });
+  var must = (c.mandatoryEquipment || []).filter(function(it){ return effectiveStatus(it, c, TRIP) === "must"; });
+  var advice = (c.mandatoryEquipment || []).filter(function(it){ return effectiveStatus(it, c, TRIP) === "advice"; });
   var tolBits = jTolBits(code, c);
 
   var badge = eerste ? '<span class="jbadge">' + esc(i18n("reis.start")) + "</span>"
@@ -386,8 +401,9 @@ function reisNodeHTML(code, idx, eerste, laatste){
 
 function renderReisErvaring(){
   var wrap = document.getElementById("reis-wrap");
-  if(!wrap) return;
-  if(!ROUTE.length){
+  if(!wrap || !TRIP) return;
+  var landen = tripLanden(TRIP);
+  if(!landen.length){
     wrap.innerHTML =
       '<div class="journeyempty">' + iconUse("journey").replace('class="icon sm"', 'class="icon lg"') +
       "<h1>" + esc(i18n("reis.leegKop")) + "</h1>" +
@@ -397,7 +413,9 @@ function renderReisErvaring(){
     return;
   }
 
-  var nodes = ROUTE.map(function(code, i){ return reisNodeHTML(code, i, i === 0, i === ROUTE.length - 1); }).join("");
+  var nodes = landen.map(function(code, i){
+    return reisNodeHTML(code, i, i === 0, i === landen.length - 1);
+  }).join("");
   wrap.innerHTML =
     '<div class="journeyhead"><h1>' + esc(i18n("reis.kop")) + "</h1>" +
     "<p>" + esc(i18n("reis.intro")) + "</p></div>" +

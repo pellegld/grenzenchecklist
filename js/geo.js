@@ -145,30 +145,30 @@ function zonesLangsRoute(coords){
   return uit;
 }
 
-/* Zelfde oordeelslogica als op landniveau, maar tegen de drempel van deze zone.
-   Dormant: er is nog geen steden-pagina om dit te tonen. */
-function zoneStadVerdict(z){
+/* Zelfde oordeelslogica als op landniveau, maar tegen de drempel van deze zone. */
+function zoneStadVerdict(z, trip){
+  var veh = trip.vehicle, soort = brandstofVoorDrempel(veh);
   if(!z.threshold) return { level:"unknown", text:i18n("zoneStad.geenDrempel") };
-  if(VEH.fuel === "ev") return { level:"ok", text:i18n("zoneStad.ev") };
-  var need = VEH.fuel === "diesel" ? z.threshold.diesel : z.threshold.petrol;
-  var brandstof = i18n("profiel.brandstofKort." + (VEH.fuel === "diesel" ? "diesel" : "petrol"));
+  if(soort === "ev") return { level:"ok", text:i18n("zoneStad.ev") };
+  var need = soort === "diesel" ? z.threshold.diesel : z.threshold.petrol;
+  var brandstof = i18n("profiel.brandstofKort." + soort);
   if(need === null || need === undefined){
     return { level:"ok", text:i18n("zoneStad.geenDrempelBrandstof", { brandstof:brandstof }) };
   }
-  if(VEH.euro === null){
+  if(veh.euro === null){
     return { level:"unknown", text:i18n("zoneStad.vulEuronorm", { need:need }) };
   }
-  if(VEH.euro >= need){
-    return { level:"ok", text:i18n("zoneStad.voldoet", { euro:VEH.euro, need:need }) };
+  if(veh.euro >= need){
+    return { level:"ok", text:i18n("zoneStad.voldoet", { euro:veh.euro, need:need }) };
   }
-  return { level:"bad", text:i18n("zoneStad.voldoetNiet", { euro:VEH.euro, need:need }) };
+  return { level:"bad", text:i18n("zoneStad.voldoetNiet", { euro:veh.euro, need:need }) };
 }
 
 /* ================= tol ================= */
 
 /* Losse tolpunten: tunnels, passen en bruggen die je apart betaalt, óók als je
    al een vignet hebt. Precies de kosten die mensen niet zien aankomen. */
-function tolPuntenLangsRoute(coords){
+function tolPuntenLangsRoute(coords, trip){
   if(!coords || !coords.length) return [];
   var stap = Math.max(1, Math.floor(coords.length / 1200));
   var punten = [];
@@ -176,7 +176,7 @@ function tolPuntenLangsRoute(coords){
   punten.push(coords[coords.length - 1]);
 
   var uit = [];
-  ROUTE.forEach(function(code){
+  tripLanden(trip).forEach(function(code){
     var c = BY_CODE[code];
     if(!c || !c.tollPoints) return;
     c.tollPoints.forEach(function(p){
@@ -190,7 +190,8 @@ function tolPuntenLangsRoute(coords){
 
 /* Ruwe schatting op basis van de kilometers per land. Bewust als indicatie
    gepresenteerd: lang niet elke kilometer in Frankrijk is autoroute. */
-function tolSchatting(res){
+function tolSchatting(trip){
+  var res = tripAnalyse(trip);
   if(!res) return [];
   var uit = [];
   res.order.forEach(function(code){
