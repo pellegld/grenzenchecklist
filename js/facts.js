@@ -170,30 +170,36 @@ function leesGetal(ruw){
    Alleen over openstaande acties: wat je hebt afgevinkt is geen risico meer.
    Blokkades tellen mee — die zijn per definitie niet geregeld. Acties zonder
    bekend eurobedrag blijven buiten het totaal en zetten `ofMeer`, zodat er geen
-   bedrag ontstaat dat lager is dan de werkelijkheid zonder dat je dat ziet. */
+   bedrag ontstaat dat lager is dan de werkelijkheid zonder dat je dat ziet.
+
+   `ofMeer` gaat bewust alléén aan bij een actie die wél een boete in de data
+   heeft maar geen bedrag in euro's (een boete in frank, pond of kronen). Voor
+   uitrusting en documenten staat er nergens een bedrag; die zouden `ofMeer`
+   permanent aan zetten en daarmee betekenisloos maken. Hoeveel acties dat zijn,
+   staat als apart getal in het antwoord, zodat de UI het kan zeggen. */
+function openActies(trip){
+  return bouwActies(trip).filter(function(a){
+    return !a.afgevinkt && (a.status === "actie" || a.status === "blokkade");
+  });
+}
+
 function boeteRisico(trip){
   var open = openActies(trip);
-  var laag = 0, hoog = 0, metBedrag = 0, zonderBedrag = 0;
+  var laag = 0, hoog = 0, metBedrag = 0, zonderBedrag = 0, zonderBoeteData = 0;
   var items = [];
 
-  open.forEach(function(t){
-    var bedrag = euroBedragen(t.fineIndication);
-    if(bedrag){
-      laag += bedrag.laag; hoog += bedrag.hoog; metBedrag++;
-    } else if(t.fineIndication){
-      /* Er staat wél een boete, maar niet in euro's (frank, pond, kronen) of
-         niet als bedrag. Dat is iets anders dan "geen boete bekend", en de
-         gebruiker mag dat verschil zien. */
-      zonderBedrag++;
-    } else {
-      zonderBedrag++;
-    }
-    items.push({ actie:t, bedrag:bedrag });
+  open.forEach(function(a){
+    if(!a.boete){ zonderBoeteData++; return; }
+    var bedrag = euroBedragen(a.boete);
+    if(bedrag){ laag += bedrag.laag; hoog += bedrag.hoog; metBedrag++; }
+    else zonderBedrag++;
+    items.push({ actie:a, bedrag:bedrag });
   });
 
   return {
     laag: Math.round(laag), hoog: Math.round(hoog),
     metBedrag: metBedrag, zonderBedrag: zonderBedrag,
+    zonderBoeteData: zonderBoeteData,
     ofMeer: zonderBedrag > 0,
     items: items,
     open: open.length

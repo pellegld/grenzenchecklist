@@ -1,15 +1,14 @@
 "use strict";
-/* De actie-engine: uitrustingsgroepen en afgeleide acties per reis.
+/* De bouwers: uitrustingsgroepen en afgeleide regeltaken per reis.
 
-   buildGroups() en buildTasks() leveren data, geen HTML — de paginarenderers in
-   js/pages.js en js/dashboard.js maken daar kaarten van.
+   Dit bestand levert de ruwe onderdelen; js/actions.js maakt er de actielijst
+   uit §7 van (met prioriteit, deadline en herkomstregel), en de paginarenderers
+   maken daar kaarten van. Hier staat dus geen HTML en geen groepsindeling.
 
-   Elke actie draagt sinds deze fase ook waar hij vandaan komt: `factId`,
-   `confidence`, `sourceUrl` en `lastVerified` van het feit waar hij op rust.
-   Dat is de voorbereiding op de herkomstregel per actie (sessie B2): de
-   renderlaag hoeft er straks alleen een regel van te maken, de data ligt er al.
-   Ze zijn nu al in gebruik — de vertrouwensbalk en het boetekans-totaal op het
-   dashboard lezen dezelfde velden, zodat het geen dode voorbereiding is. */
+   Elke taak draagt waar hij vandaan komt: `factId`, `confidence`, `sourceUrl`,
+   `lastVerified` en `fineIndication` van het feit waar hij op rust. Dat is wat
+   de herkomstregel bij elke actie, het boetekans-totaal en de vertrouwensbalk
+   allemaal lezen — één herkomst, drie plekken waar hij zichtbaar wordt. */
 
 /* ---------------- uitrusting, gegroepeerd over landen heen ---------------- */
 function buildGroups(trip){
@@ -65,18 +64,10 @@ function docInfo(d){ return i18n("doc." + d.key + ".info"); }
 
 function isAangevinkt(trip, key){ return !!(trip.ticked && trip.ticked[key]); }
 
+/* De voortgangstelling hoort bij de actielijst, niet bij de checklist-bouwers:
+   die weten niet wat een taak is en wat naslag. Zie js/actions.js. */
 function checklistTelling(trip){
-  var G = buildGroups(trip), T = buildTasks(trip);
-  var totaal = 0, gedaan = 0;
-  DOC_ITEMS.forEach(function(d){ totaal++; if(isAangevinkt(trip, "doc:" + d.key)) gedaan++; });
-  G.must.concat(G.advice, G.na).forEach(function(r){
-    totaal++; if(isAangevinkt(trip, r.g.key)) gedaan++;
-  });
-  T.todo.forEach(function(t){
-    totaal++; if(isAangevinkt(trip, "task:" + t.key)) gedaan++;
-  });
-  return { totaal:totaal, gedaan:gedaan, open:totaal - gedaan,
-           blockers:T.blockers.length, warnings:T.notices.length };
+  return actieTelling(trip);
 }
 
 function kortBedrag(s){
@@ -98,6 +89,7 @@ function herkomstVan(feit, land){
     confidence: confidenceVan(feit),
     sourceUrl: feit.sourceUrl || (land && land.sourceUrl) || null,
     lastVerified: feit.lastVerified || (land && land.lastVerified) || null,
+    verificationNote: feit.verificationNote || null,
     fineIndication: feit.fineIndication || null
   };
 }
@@ -108,6 +100,7 @@ function actie(basis, feit, land){
   basis.confidence = h.confidence;
   basis.sourceUrl = h.sourceUrl;
   basis.lastVerified = h.lastVerified;
+  basis.verificationNote = h.verificationNote;
   basis.fineIndication = h.fineIndication;
   return basis;
 }
@@ -186,23 +179,11 @@ function buildTasks(trip){
   return { todo:todo, blockers:blockers, notices:notices };
 }
 
-/* Openstaande acties: waar het boetekans-totaal en het dashboard over rekenen.
-   Blokkades tellen mee — een blokkade is per definitie niet geregeld, en het
-   is dezelfde boete die je riskeert. Dubbeltellen kan niet: een land levert óf
-   een blokkade óf een zone-actie op, nooit allebei. */
-function openActies(trip){
-  var T = buildTasks(trip);
-  var open = T.todo.filter(function(t){ return !isAangevinkt(trip, "task:" + t.key); });
-  return open.concat(T.blockers);
-}
-
-/* ---------------- herkomstregel per actie (voorbereiding, sessie B2) ----------------
-   De data staat er (factId/confidence/sourceUrl/lastVerified); de regel eronder
-   wordt in B2 een zichtbare "volgens <bron>, gecontroleerd op <datum>". Deze
-   functie is nu het ene aangrijpingspunt daarvoor: elke actierenderer roept hem
-   aan, dus straks verandert er één functie in plaats van vijf renderers. */
+/* De link naar de officiële bron, visueel herkenbaar (§16). Werkt zowel op een
+   ruwe taak uit buildTasks() als op een actie uit js/actions.js. */
 function herkomstRegelHTML(t){
-  if(!t || !t.sourceUrl) return "";
-  return '<a class="herkomst" href="' + esc(t.sourceUrl) + '" target="_blank" rel="noopener">' +
-    esc(i18n("actie.officieleBron")) + "</a>";
+  var url = t && (t.sourceUrl || (t.bron && t.bron.sourceUrl));
+  if(!url) return "";
+  return '<a class="bronlink" href="' + esc(url) + '" target="_blank" rel="noopener">' +
+    esc(i18n("actie.officieleWebsite")) + ' <span aria-hidden="true">&rarr;</span></a>';
 }
