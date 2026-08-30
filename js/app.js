@@ -8,7 +8,10 @@
    achter [hidden], dus dat werk zou verspild zijn. */
 var RENDERS = {
   home:      renderHome,
-  wizard:    function(){ renderWizard(true); },
+  /* Zonder force: renderWizard() bouwt alleen opnieuw op als de reis, de stap
+     of de taal veranderde. Anders zou terugkomen op een stap de velden onder je
+     vingers vandaan halen. */
+  wizard:    function(){ renderWizard(); },
   dashboard: renderDashboard,
   acties:    renderChecklistPagina,
   kaart:     function(){

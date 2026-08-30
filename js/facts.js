@@ -74,11 +74,10 @@ function tripFeiten(trip){
     if(c.speedLimits) uit.push(feit("speedLimits", c.speedLimits, c));
     if(c.winterEquipment) uit.push(feit("winterEquipment", c.winterEquipment, c));
 
+    /* Zonder berekende route weten we niet welke tolpunten je raakt; dan telt
+       er geen enkele mee in plaats van allemaal. */
     (c.tollPoints || []).forEach(function(p){
-      /* Zonder berekende route weten we niet welke tolpunten je raakt; dan
-         telt er geen enkele mee in plaats van allemaal. */
-      if(heeftRoute && !puntenOpRoute[p.id]) return;
-      if(!heeftRoute) return;
+      if(!heeftRoute || !puntenOpRoute[p.id]) return;
       uit.push(feit("tollPoint", p, c));
     });
 
