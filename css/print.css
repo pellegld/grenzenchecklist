@@ -12,10 +12,11 @@
 
 @media print {
   /* Alles wat je op papier niet kunt aanraken, gaat eruit. */
-  .topbar, .bottomnav, .sidebar, .panel-map, .mapctrl,
+  .topbar, .bottomnav, .meersheet, .sidebar, .panel-map, .mapctrl,
   .swapbtn, .landswitch, .tripactions, .tripgo, .infobtn,
-  #btn-route, #btn-reset, #btn-bekijk-reis, #btn-nieuwe-reis, #btn-tripnew,
-  #btn-reis-checklist, #btn-reis-naar-planner,
+  .wizbalk, .wizknoppen, .docacties, .snelkoppelingen, .cijfercel .clbl .icon,
+  #btn-route, #btn-reset, #btn-nieuwe-reis, #btn-tripnew, #btn-plan, #btn-analyse,
+  #btn-reis-checklist, #btn-reis-naar-planner, .btn.primary,
   .journeyroad-wrap > .journeyroad, .journeymarker,
   .results, .langswitch { display: none !important; }
 
@@ -72,7 +73,8 @@
 
   /* Kaders in plaats van vlakken, zodat de structuur zonder kleur leesbaar blijft. */
   .bentocard, .landcard, .tripcard, .progresscard, .statcard, .milieukaart,
-  .blockerbar, .eqcard, .jcard {
+  .blockerbar, .eqcard, .jcard, .dashkaart, .wizkaart, .reisdocument,
+  .voorbeeldkaart, .vertrouwensbalk, .boetekaart, .cijfercel, .docsectie {
     border:1px solid #999 !important; box-shadow:none !important;
     background:#fff !important; color:#000 !important;
     break-inside:avoid; page-break-inside:avoid;
