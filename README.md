@@ -20,16 +20,18 @@ js/geo.js                landen, zones en tolpunten uit de routegeometrie
 js/trip.js               het trip-object: de bron van waarheid, met serialisatie
 js/vehicle.js            voertuigprofiel en milieuzone-oordeel
 js/trips.js              de lijst opgeslagen reizen, en de handmatige landenkeuze
-js/checklist.js          de actie-engine: uitrusting, taken en hun herkomst
+js/checklist.js          uitrustingsgroepen en afgeleide regeltaken
 js/facts.js              feiten, vertrouwensniveaus en het boetekans-totaal
+js/actions.js            de actielijst: prioriteit, deadline, reden en herkomst
 js/costs.js              tol en de kostenpagina
 js/calendar.js           drukte per dag
-js/countries.js          landkaart-onderdelen en correctielink
+js/countries.js          de correctielink per feit
 js/planner.js            de plaatsvelden en de routeberekening
 js/home.js               de homepage
 js/wizard.js             de reiswizard in vier stappen
 js/dashboard.js          het reisdashboard
-js/pages.js              acties, regels, mijn reizen, reiservaring
+js/acties.js             de actiepagina
+js/pages.js              regels per land, mijn reizen, reiservaring
 js/document.js           het reisdocument
 js/map.js                routeschets als SVG
 js/app.js                orkestratie, events en start
@@ -339,10 +341,10 @@ een pagina die er echt is; een navigatie-item zonder pagina is erger dan geen it
 |---|---|
 | **Home** | wat het product is, en één knop. Met het voorbeeld Brussel → Salzburg als **statische illustratie** — die draagt dat label ook in de kaart zelf |
 | **Reis** | het dashboard: waar ga je heen, hoe ver ben je, wat moet je eerst regelen, wat riskeer je, en waar de informatie vandaan komt |
-| **Acties** | de checklist: documenten, uitrusting en landspecifieke acties, met vinkjes die in de reis bewaard blijven |
+| **Acties** | één actielijst, gegroepeerd naar wat eerst moet; met deadline, herkomst en bron per actie |
 | **Kaart** | de routeschets als SVG, met de plaatsvelden, de landenlijst, de milieuzones en het voertuigprofiel ernaast |
 | **Kosten** | het tol-kasboekje: één regel per post in routevolgorde, met het retourtotaal, plus een lijst van wat er *niet* in zit |
-| **Regels** | per land alle velden, bronnen en `lastVerified`, met een doorzoekbare landkiezer |
+| **Regels** | per land eerst de conclusie (mag ik rijden, moet ik iets regelen), daaronder de details uitklapbaar |
 | **Document** | één printbare pagina om mee te nemen, opgebouwd uit dezelfde bouwers als de rest |
 | **Meer** (mobiel) | Regels, Document, Reiservaring, Mijn reizen en de donkere modus |
 
@@ -533,37 +535,179 @@ zijn veel AP-wegen sinds 2021 gratis — en staat daarom als onzeker gemarkeerd.
 De OSRM demoserver ondersteunt `exclude=toll` niet (400 Bad Request), dus een tolvrij alternatief
 berekenen kan niet met deze routeprovider.
 
-### Doen versus weten
+### De actielijst
 
-De pagina is ingedeeld rond één onderscheid: **wat moet ik dóén** staat bovenaan en kort,
-**wat moet ik weten** staat eronder als naslag.
+Alles wat je moet doen staat in één lijst (`js/actions.js`), gebouwd uit vier producenten die
+voorheen los van elkaar op het scherm stonden: de vier universele documenten, de uitrusting per
+land, de afgeleide regeltaken (vignet, milieusticker, winterbanden, apparatuur) en de
+voertuignotities.
 
-Kopen en inpakken stonden eerst in twee losse secties. Dat waren twee lijsten die je allebei
-moest aflopen voor hetzelfde moment — vlak voor vertrek — dus ze zijn samengevoegd tot één
-checklist met kolomgroepen:
+Waarom één lijst: de gebruiker heeft geen drie categorieën taken, hij heeft één avond vóór
+vertrek. De vraag is niet "welk soort taak is dit" maar "wat moet ik eerst doen en wanneer
+uiterlijk". De groepen volgen die vraag:
 
 | groep | inhoud |
 |---|---|
-| Vooraf regelen | vignetten, milieustickers, kentekenregistraties, winterbanden |
-| In de auto | uitrusting die hier afdwingbaar is |
-| Uit de auto | dashcam eruit, flitsmeldingen uit |
-| Aanbevolen | verstandig, maar geen boete |
-| Niet voor jouw kenteken | staat in de wet, geldt niet voor jou |
-| Let op | regels voor aanhanger of camper, niet af te vinken |
+| **Eerst oplossen** | je auto mag een milieuzone op deze route niet in; niet af te vinken |
+| **Voor vertrek** | vignet, milieusticker, registratie, winterbanden, flitsapp en dashcam |
+| **In de auto** | de documenten en de uitrusting die hier afdwingbaar is |
+| **Aanbevolen** | verstandig, maar geen boete |
+| **Let op** | regels voor aanhanger of camper; geen taak, wel iets om te weten |
+| **Klaar** | alles wat je hebt afgevinkt, ongeacht waar het vandaan kwam |
+| **Niet voor jouw kenteken** | staat in de wet daar, maar geldt niet voor jouw auto |
 
-Omdat de groepskop de betekenis draagt, is de badge per item vervallen — dat scheelt een hoop
-gekleurde ruis. Blokkades (*je auto mag hier niet in*) staan boven het raster: dat is geen
-afvinkwerk maar een probleem.
+Die laatste twee staan ingeklapt. **"Niet voor jouw kenteken" is geen restcategorie maar het
+belangrijkste onderscheid dat deze app maakt** (zie *verplicht ≠ beboetbaar* verderop); hij
+verdwijnt daarom niet in "aanbevolen" en legt in zijn groepskop uit waaróm hij niet voor jou
+geldt. Die items telden overigens wél mee in de voortgangsnoemer maar stonden nergens op het
+scherm — 100% was dus onbereikbaar zodra er één was. Ze tellen nu niet meer mee en zijn wel
+zichtbaar.
 
-Onder een uitrustingsregel staat alleen een rij vlaggetjes: fel waar het item afdwingbaar is,
-dof voor landen op je route waar het in de wet staat maar niet voor jou geldt. De toelichting
-per land (`note` uit `mandatoryEquipment`) stond er eerst voluit onder; dat maakte elke regel
-drie tot vijf tekstregels lang en de kolom onleesbaar. Die tekst stond al op de landkaart onder
-*Uitrusting*, dus in de checklist is hij vervallen en verwijst een regel onder de kop ernaar.
+Afvinken verplaatst een actie naar *Klaar*. De pagina wordt daarvoor opnieuw opgebouwd, dus de
+scrollpositie blijft staan, de focus verhuist mee naar hetzelfde vinkje in zijn nieuwe groep
+(die daarvoor openklapt), en een schermlezer hoort *"Vignet kopen voor Oostenrijk afgevinkt en
+verplaatst naar Klaar"*.
 
-Vlaggen zijn CSS-achtergronden, en achtergronden drukken standaard niet af. Elke regel houdt
-daarom een verborgen `.printnamen` met de landnamen voluit; `@media print` wisselt de twee om,
-zodat de papieren lijst niet verliest welke landen het betreft.
+De sleutels in `trip.ticked` zijn niet gewijzigd. Een reis die half afgevinkt was voordat deze
+pagina bestond, is dat nog steeds.
+
+#### Elke actie draagt zijn herkomst
+
+```
+🇦🇹 Vignet kopen voor Oostenrijk
+   ! Actie · 📅 Regel dit uiterlijk 2 september 2026 · Vanaf € 9,60
+   Digitaal via de ASFINAG-webshop of app, of als sticker bij tankstations…
+   ⚠ Niet zeker — controleer de officiële bron. Prijzen worden jaarlijks
+     geïndexeerd. Officiële website →
+   ▸ Waarom zie ik dit?
+       omdat je route 289 km door Oostenrijk loopt
+       Boete zonder: Ersatzmaut van circa 120 euro ter plaatse
+       [onzeker] gecontroleerd op 19 augustus 2026
+       Officiële website →   Klopt dit niet?
+```
+
+**De reden is afgeleid, niet ingetypt.** Hij komt uit de route-analyse (`route.analyse.km` per
+land) en het voertuigprofiel, niet uit een tekst per item. Dat is het verschil tussen "dit geldt
+in Slovenië" — dat wist je al — en "je route loopt er 63 km doorheen", wat verklaart waarom het
+op jóuw scherm staat. De zinnen staan heel in de vertaaltabel met plaatshouders:
+
+| situatie | reden |
+|---|---|
+| land op een berekende route | *omdat je route 289 km door Oostenrijk loopt* |
+| land met de hand toegevoegd | *omdat je Oostenrijk zelf aan je route hebt toegevoegd* |
+| registratieplicht voor buitenlanders | *…, en je auto staat niet in België geregistreerd* |
+| blokkade | *…, en je rijdt diesel Euro 4 en hier is minimaal Euro 6 vereist* |
+| winteruitrusting | *…, en je vertrekdatum (12 december 2026) valt in de winterperiode* |
+| niet voor jouw kenteken | *dit geldt alleen voor auto's met een kenteken uit Duitsland; jouw auto staat in Nederland geregistreerd* |
+| documenten | *omdat dit voor elke rit over de grens geldt* |
+
+**Onzekerheid staat niet achter de uitklap.** Wie een boete riskeert op grond van een feit dat wij
+niet hard kunnen maken, hoort dat te zien zonder te klikken — dus staat *"Niet zeker —
+controleer de officiële bron"* met de `verificationNote` en de link gewoon in de kaart (§13).
+
+**De correctielink staat bij elke actie**, niet meer alleen onder de landkaart, en draagt het
+`id` van het feit waarop je klikte. Een binnenkomende melding is daarmee aan één feit te
+koppelen in plaats van aan een heel land — precies waar de structuur uit fase A op mikte. Werkt
+de klembord-API niet (via `file://`, of in een browser die hem blokkeert), dan verschijnt het
+meldvenster; sluiten zet de focus terug op de knop waarmee je hem opende.
+
+De vier universele documenten dragen géén betrouwbaarheidsniveau. Ze rusten op geen enkel feit
+in `countries.json`, en ze "niet beschikbaar" noemen zou suggereren dat we het probeerden na te
+zoeken en niets vonden.
+
+#### Deadlines zijn richttijden, geen termijnen
+
+Elke actie kan een deadline krijgen, teruggerekend vanaf `departureDate` (§8):
+
+> 🔴 Vandaag regelen · 🟠 Regel dit uiterlijk 7 juli · Dit had al geregeld moeten zijn
+
+**Dit zijn richttijden van de app.** Ze zeggen hoeveel voorbereiding iets kost, niet wanneer de
+wet iets eist, en de pagina zegt dat er met zoveel woorden bij. Een datum die eruitziet als een
+regel terwijl hij een schatting is, is precies de schijnzekerheid die deze app moet vermijden.
+
+| soort | dagen vooraf | waarom |
+|---|---|---|
+| milieusticker | 14 | komt per post; *"levering naar het buitenland duurt al snel een tot twee weken"* (`fr.environmentalZone.howToGet`) |
+| registratie | 2 | gaat online, maar niet elke gemeente verwerkt dezelfde dag |
+| betaling (ULEZ e.d.) | 0 | kan bij de meeste zones ook nog kort na de rit |
+| vignet | 1 | koop je aan de grens of bij het eerste tankstation |
+| winteruitrusting | 7 | banden en kettingen moet je halen, en in het seizoen zijn ze op |
+| documenten | 14 | een verlopen rijbewijs vervangen kost bij de gemeente een week of langer |
+| apparatuur | 0 | flitsmeldingen uitzetten kan op de oprit |
+
+Eén uitzondering staat wél hard in de data en is daarom aan een `factId` gekoppeld in plaats van
+aan een soort: bij online aankoop van het **Oostenrijkse vignet** geldt een wettelijke bedenktijd
+van 18 dagen voordat het ingaat (`at.tollVignette.howToGet`). Die deadline draagt geen
+"richttijd"-voorbehoud, want hij is er geen.
+
+#### Prijs alleen als hij in de data staat
+
+`howToGet` en `note` bevatten bij een handjevol landen een indicatief tarief. Eén bedrag is een
+prijs (*Crit'Air, € 3,11*); meer bedragen betekent dat het van de duur of de voertuigcategorie
+afhangt, en dan is **"vanaf"** het enige eerlijke woord (*vignet Oostenrijk, vanaf € 9,60*).
+Staat er geen bedrag, dan staat er geen bedrag — dan doet de link naar de officiële bron het
+werk. Er wordt niets omgerekend en niets gemiddeld.
+
+#### Twee gevallen die eerder stilletjes verdwenen
+
+`zoneVerdict()` levert soms `unknown`, en dat leverde tot nu toe helemaal geen regel op — terwijl
+het juist het geval is waarin de gebruiker iets moet doen. Nu krijgen ze status **ONBEKEND**:
+
+* **de euronorm is niet ingevuld** → één actie voor alle landen samen, met een knop naar stap 3
+  van de wizard. Vier keer dezelfde vraag stellen is geen checklist maar geklaag;
+* **de drempel verschilt te sterk per gemeente** (Portugal, Italië) → één actie per land, met de
+  officiële bron.
+
+### De regelpagina
+
+Per land twee vragen bovenaan, als conclusie:
+
+> **Mag ik hier rijden?** ✓ Ja — *Euro 6 voldoet: hier is minimaal Euro 5 vereist (Crit'Air 3
+> geweerd).*
+>
+> **Moet ik iets regelen?** ! Ja, 2 dingen — *met de acties eronder en een knop naar je lijst.*
+
+Die tweede vraag leest dezelfde actielijst als de actiepagina; er is geen tweede waarheid over
+wat er open staat.
+
+Daaronder staan de details in uitklapbare secties, en **de kop van elke sectie draagt het
+belangrijkste feit al**:
+
+```
+Snelheid            130 km/u, maar 100 km/u op alle IG-L-trajecten      +
+Uitrusting          3 verplicht, 0 aanbevolen                           +
+Milieuzone en tol   Milieuzone én vignet                                +
+Winteruitrusting    1 november tot en met 15 april                      +
+Bijzondere regels   4 regels                                            +
+Bronnen             3 bronnen                                           +
+```
+
+Dat is wat progressive disclosure hoort te zijn: je hoeft niets open te klappen om te weten waar
+het over gaat, en de praktische conclusie staat nooit onder de juridische details (§15). Elke
+sectie draagt zijn eigen bron, controledatum, betrouwbaarheidsniveau en correctielink (§13,
+§16); is de landdata ouder dan `STALE_DAYS`, dan staat dat als balk boven de pagina.
+
+De uitrusting houdt drie eigen koppen met uitleg — *verplicht op deze route*, *alleen voor een
+kenteken uit dit land*, *aanbevolen* — in plaats van één lijst met badges. Dat onderscheid is de
+belangrijkste correctie die deze app maakt en mag niet vervlakken.
+
+### Toegankelijkheid
+
+* **Status nooit alleen in kleur.** Elke status draagt een teken (`✗ ! i ✓ ?`) en een woord;
+  kleur is de derde laag. In fel zonlicht op een parkeerplaats is kleur het eerste dat wegvalt.
+* **Skiplink** naar de inhoud, want anders loop je met de tab-toets elke pagina opnieuw de hele
+  navigatie af.
+* **Koppenvolgorde zonder sprongen**, op alle tien de pagina's gecontroleerd.
+* **Vinkjes met een echte naam**: `aria-labelledby` op de titel, `aria-describedby` op de status-
+  en deadlineregel. Een schermlezer leest *"Vignet kopen voor Oostenrijk, selectievakje, niet
+  aangevinkt — Actie, regel dit uiterlijk 2 september"*.
+* **Toetsenbord**: Enter en spatie werken op de landrijen, die alleen naar een muisklik
+  luisterden. Escape sluit het Meer-paneel en het meldvenster, met focusherstel.
+* **Raakvlakken minstens 24 px** (WCAG 2.5.8). Dertien elementen zaten daaronder — vooral
+  tekstknoppen en uitklappers van 15 tot 18 px.
+* **Contrast** gemeten met de samengestelde achtergrond (die containers zijn halfdoorzichtig, dus
+  de kleurwaarde alleen zegt niets) in beide thema's; alle tekst boven 4,5:1.
+* **Reduced motion** en zichtbare focus stonden er al.
 
 ### Tol onderweg
 
