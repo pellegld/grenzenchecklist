@@ -2,8 +2,12 @@
 /* Landkaart-onderdelen en de correctielink per land.
    
    countryCard()/renderCountries() zijn dormant sinds de Landeninformatie-pagina
-   die rol overnam; correctionLinks() is wel in gebruik en is het instappunt voor
-   de latere correctie-flow (zie V2_AUDIT.md §4). */
+   die rol overnam, en correctionLinks() daarmee ook: die hing aan die kaart.
+
+   Hij blijft staan omdat hij het instappunt is voor de correctie-flow uit §14A
+   (zie V2_AUDIT.md §4). Die krijgt in sessie B2 zijn plek naast de herkomstregel
+   per actie — dan hangt een melding aan één feit-id in plaats van aan een hele
+   landkaart, en dat is precies waar hij hoort. */
 
 /* ---------------- render: country cards (dormant tot Landeninformatie-pagina) ---------------- */
 function eqBadge(it, c){

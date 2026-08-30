@@ -134,7 +134,7 @@ nl: {
   "kaart.uitzoomen": "Uitzoomen",
   "kaart.leeg": "Vul een van en naar in om de route te zien.",
 
-  "checklist.titel": "Jouw Reis Checklist",
+  "checklist.titel": "Dit moet je regelen",
   "checklist.voortgang": "Voortgang",
   "checklist.gereed": "{pct}% gereed",
   "checklist.documenten": "Documenten",
@@ -261,7 +261,7 @@ nl: {
   "trip.verwijderBevestig": "\"{naam}\" verwijderen? Dit kan niet ongedaan gemaakt worden.",
   "trip.naamPrompt": "Naam voor deze rit:",
 
-  "reis.kop": "Reis Route Ervaring",
+  "reis.kop": "Je reis, halte voor halte",
   "reis.intro": "Scroll naar beneden om je reis te ervaren en de verplichtingen per land te ontdekken.",
   "reis.start": "Start",
   "reis.bestemming": "Bestemming",
@@ -271,8 +271,8 @@ nl: {
   "reis.aanbevolen": "Aanbevolen",
   "reis.bekijkChecklist": "Bekijk checklist",
   "reis.leegKop": "Nog geen reis gepland",
-  "reis.leegIntro": "Bereken eerst een route op de Routeplanner-pagina, dan verschijnt hier je reisbeleving.",
-  "reis.naarPlanner": "Naar Routeplanner",
+  "reis.leegIntro": "Plan eerst je reis, dan loop je hier land voor land langs wat er geldt.",
+  "reis.naarPlanner": "Plan mijn reis",
   "reis.vignetVereist": "Vignet vereist",
   "reis.tolCirca": "Tol circa €{bedrag}",
 
@@ -616,7 +616,7 @@ en: {
   "kaart.uitzoomen": "Zoom out",
   "kaart.leeg": "Fill in a from and to to see the route.",
 
-  "checklist.titel": "Your Trip Checklist",
+  "checklist.titel": "This is what you need to arrange",
   "checklist.voortgang": "Progress",
   "checklist.gereed": "{pct}% done",
   "checklist.documenten": "Documents",
@@ -743,7 +743,7 @@ en: {
   "trip.verwijderBevestig": "Delete \"{naam}\"? This cannot be undone.",
   "trip.naamPrompt": "Name for this trip:",
 
-  "reis.kop": "Journey Experience",
+  "reis.kop": "Your trip, stop by stop",
   "reis.intro": "Scroll down to travel through your trip and discover the obligations per country.",
   "reis.start": "Start",
   "reis.bestemming": "Destination",
@@ -753,8 +753,8 @@ en: {
   "reis.aanbevolen": "Recommended",
   "reis.bekijkChecklist": "View checklist",
   "reis.leegKop": "No trip planned yet",
-  "reis.leegIntro": "Calculate a route on the route planner page first, and your journey will appear here.",
-  "reis.naarPlanner": "Go to the route planner",
+  "reis.leegIntro": "Plan your trip first, and you can walk through it country by country here.",
+  "reis.naarPlanner": "Plan my trip",
   "reis.vignetVereist": "Vignette required",
   "reis.tolCirca": "Tolls about €{bedrag}",
 

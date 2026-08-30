@@ -8,23 +8,29 @@ stylesheets en classic scripts, dus de app draait ook zonder dat er ooit iets ge
 index.html               shell: <head>, de app-markup en de scripttags
 css/base.css             kleurtokens, thema's, reset, typografie
 css/components.css       navigatie, layout, routepaneel, kaarten, knoppen
-css/pages.css            de vier pagina's
+css/pages.css            de pagina's
 css/print.css            print / PDF
 js/i18n.js               vertalingen (nl, en) en de taalkeuze
-js/config.js             sleutels, drempels, werkgeheugen van de actieve rit
+js/config.js             sleutels, drempels, geladen referentiedata, zichtbare pagina
 js/storage.js            localStorage die nooit gooit, donkere modus
 js/util.js               escapen, formatteren, vlaggen, iconen
 js/data.js               regeldata laden, met terugval
 js/routeProvider.js      route- en geocodediensten achter één interface
 js/geo.js                landen, zones en tolpunten uit de routegeometrie
+js/trip.js               het trip-object: de bron van waarheid, met serialisatie
 js/vehicle.js            voertuigprofiel en milieuzone-oordeel
-js/trips.js              opgeslagen ritten
-js/checklist.js          uitrustingsgroepen en taken
-js/costs.js              tol
+js/trips.js              de lijst opgeslagen reizen, en de handmatige landenkeuze
+js/checklist.js          de actie-engine: uitrusting, taken en hun herkomst
+js/facts.js              feiten, vertrouwensniveaus en het boetekans-totaal
+js/costs.js              tol en de kostenpagina
 js/calendar.js           drukte per dag
 js/countries.js          landkaart-onderdelen en correctielink
-js/planner.js            de van/naar-velden en het routepaneel
-js/pages.js              de vier paginarenderers
+js/planner.js            de plaatsvelden en de routeberekening
+js/home.js               de homepage
+js/wizard.js             de reiswizard in vier stappen
+js/dashboard.js          het reisdashboard
+js/pages.js              acties, regels, mijn reizen, reiservaring
+js/document.js           het reisdocument
 js/map.js                routeschets als SVG
 js/app.js                orkestratie, events en start
 fonts.css                @font-face voor de zelf gehoste fonts
@@ -250,28 +256,160 @@ laag voor versheid, niet die vlag.
 
 ---
 
+## De reis is één object
+
+Alles wat de app over de actieve reis weet, staat in één object in `js/trip.js`:
+
+```js
+{
+  id, naam, createdAt, updatedAt,
+  origin: { naam, omschrijving, land, lat, lon },   // of null
+  destination: { ... },
+  departureDate: "2027-07-12", returnDate: "2027-07-19",
+  vehicle: { plateCountry, fuel, euro, type, gewichtKg, hoogteM },
+  route: { coordinates, meters, seconds, provider, analyse },   // of null
+  countries: ["BE", "DE", "AT"],
+  ticked: { "task:vig:AT": 1 },
+  metadata: { stap, geanalyseerd, handmatig }
+}
+```
+
+`TRIPS` is de lijst opgeslagen reizen; `TRIP` **wijst naar** een element daarvan, dus er wordt
+niets gekopieerd en er kan niets uit de pas lopen. Elke functie die over een reis rekent —
+`buildTasks(trip)`, `checklistTelling(trip)`, `zoneVerdict(c, trip)`, `tolRegels(trip)` — krijgt
+hem als parameter.
+
+Dat was er eerder niet. Het werkgeheugen zat in een stuk of tien globals (`ROUTE`, `HOME`, `VEH`,
+`DEPART`, `TICKED`, `FROM_CITY`, `TO_CITY`, `ROUTE_COORDS`, `ROUTE_RES`, `ROUTE_ZONES`,
+`ROUTE_TOLLS`, `ROUTE_DURATION`) met twee functies die heen en weer kopieerden. Dat werkte, en het
+was consistent, maar het kostte drie dingen:
+
+* een nieuwe eigenschap moest op vier plekken bij: de global, het wegschrijven, het inlezen en de
+  migratie;
+* de voortgangsbalk per rit op *Mijn reizen* kon alleen door de globals tijdelijk om te wisselen
+  (`metTrip()`), want de checklistfuncties lazen ze rechtstreeks;
+* een half ingevulde reis — precies wat een wizard oplevert — was er niet in te modelleren.
+
+**Serialisatie loopt over een expliciete whitelist** (`serialiseerTrip`). Afgeleide waarden gaan
+niet mee: zones en tolpunten langs de route staan onder `trip._afgeleid` en worden opnieuw
+berekend bij het activeren. Dat kost milliseconden; een verouderde kopie tonen kost vertrouwen.
+De routegeometrie wordt uitgedund (elk derde punt) voordat hij de opslag in gaat.
+
+`leesTrip()` leest ook de vorige vorm, zodat een reis die vóór deze wijziging is opgeslagen
+gewoon blijft bestaan — inclusief de nog oudere losse `localStorage`-sleutels uit versie 1.
+
+### De reis binnenkomen: de wizard
+
+De wizard (`js/wizard.js`) vraagt in vier stappen wat er nodig is en schrijft rechtstreeks in
+`TRIP`; er is geen aparte formulierstaat die daarna overgeschreven moet worden. De stap zelf staat
+in `metadata.stap`, dus wie halverwege wegklikt, komt terug waar hij was.
+
+| stap | vraagt | valt terug op |
+|---|---|---|
+| 1 | vertrek en bestemming, met de autocomplete uit `cities.json` | online zoeken via `RouteProvider.geocode` |
+| 2 | vertrekdatum, en optioneel de retourdatum | vandaag |
+| 3 | kentekenland, brandstof, euroklasse, voertuigtype, en optioneel gewicht en hoogte | Nederlands kenteken, benzine, personenauto |
+| 4 | de analyse | de handmatige landenkeuze |
+
+Stap 4 laat zien wát er gecontroleerd wordt — route, landen, milieuzones, tol, voertuig — en houdt
+die lijst daarna staan. Het is geen laadbalk: hij duurt bijna niets, en de waarde zit in wat er
+staat, niet in de wachttijd.
+
+De wizard kent **vier voertuigtypen en vier brandstoffen**, terwijl `countries.json` er minder
+kent. Twee afbeeldingen, allebei op één plek in `js/vehicle.js`: een caravan is voor de
+`vehicleNotes` een aanhanger, en een hybride wordt in milieuzones op zijn verbrandingsmotor
+beoordeeld — dat is bij personenauto's vrijwel altijd benzine. Wie een diesel-hybride rijdt kiest
+diesel; dat staat als hint bij het veld. Liever een expliciete afbeelding dan een vijfde waarde in
+de data die nergens onderzocht is.
+
+**Als de routeberekening faalt** (§20) verschijnt er geen foutcode maar een uitleg met twee
+uitwegen: opnieuw proberen, of *handmatig doorgaan*. Die tweede knop opent de landenbouwer die er
+altijd al was. Wat je zonder berekende route mist — afstand, reistijd, kilometertol, kaartschets —
+staat er met zoveel woorden bij, want een getal verzinnen is erger dan het weglaten.
+
+---
+
 ## Wat de app doet
 
-1. **Routebouwer** — landen toevoegen met accent-ongevoelige autocomplete (`belgie` vindt
-   `België`), herordenen met pijltjes of slepen, verwijderen. Route, kentekenland en afvinkstatus
-   worden in `localStorage` bewaard.
-2. **Routeplanner** — vul vertrekplaats en bestemming in, en de app bepaalt zelf welke landen
-   je doorkruist. Zie de aparte paragraaf hieronder.
-3. **Voertuigprofiel** — kentekenland, brandstof, euronorm en voertuigtype (auto / aanhanger /
-   camper). Bepaalt of je de milieuzones in mag en welke extra regels er gelden. Staat ingeklapt
-   achter één samenvattingsregel, want je stelt het één keer in.
-4. **Eén checklist** — kopen én inpakken staan bij elkaar, verdeeld over kolomgroepen zoals in
-   het ontwerp: *Vooraf regelen · In de auto · Uit de auto · Aanbevolen · Niet voor jouw
-   kenteken · Let op*. Zie hieronder.
-5. **Tol onderweg** — een kasboekje van wat de rit aan tol kost: één regel per post in
-   routevolgorde, met het retourtotaal eronder. Zie hieronder.
-6. **Wanneer rijden** — een maandkalender die per dag laat zien hoe druk het op de weg wordt.
-   Zie hieronder.
-7. **Per land een inklapbare kaart** met alle velden, bronnen, `lastVerified` en correctielink.
-8. **Print/PDF** — `@media print` verbergt de bediening, klapt alle landkaarten open en zet
-   bron-URL's voluit achter de linkteksten.
-9. **Sticky navigatie** — Route / Checklist / Tol / Wanneer / Steden / Landen, met een teller voor
-   wat er nog openstaat en markering van de sectie waar je bent. Verschijnt zodra er een route is.
+De navigatie volgt de informatiearchitectuur uit §3 van de masterprompt: **Reis · Acties · Kaart ·
+Kosten · Regels · Document**, en op mobiel dezelfde vier plus *Meer*. Elke bestemming leidt naar
+een pagina die er echt is; een navigatie-item zonder pagina is erger dan geen item.
+
+| pagina | wat er staat |
+|---|---|
+| **Home** | wat het product is, en één knop. Met het voorbeeld Brussel → Salzburg als **statische illustratie** — die draagt dat label ook in de kaart zelf |
+| **Reis** | het dashboard: waar ga je heen, hoe ver ben je, wat moet je eerst regelen, wat riskeer je, en waar de informatie vandaan komt |
+| **Acties** | de checklist: documenten, uitrusting en landspecifieke acties, met vinkjes die in de reis bewaard blijven |
+| **Kaart** | de routeschets als SVG, met de plaatsvelden, de landenlijst, de milieuzones en het voertuigprofiel ernaast |
+| **Kosten** | het tol-kasboekje: één regel per post in routevolgorde, met het retourtotaal, plus een lijst van wat er *niet* in zit |
+| **Regels** | per land alle velden, bronnen en `lastVerified`, met een doorzoekbare landkiezer |
+| **Document** | één printbare pagina om mee te nemen, opgebouwd uit dezelfde bouwers als de rest |
+| **Meer** (mobiel) | Regels, Document, Reiservaring, Mijn reizen en de donkere modus |
+
+### Het dashboard
+
+Bovenaan de reis zelf: vlaggen, plaatsen, periode, voertuig. Daaronder de voortgang en de tellers
+voor *geregeld*, *acties*, *problemen* en *let op*. Elke teller draagt een eigen teken en een
+woord; kleur alleen is geen betekenis (§21).
+
+Daarna wat je moet regelen — blokkades bovenaan — met per regel het land, de reden, en een link
+naar de officiële bron.
+
+Twee dingen staan er die niet in de masterprompt staan.
+
+#### Het boetekans-totaal
+
+> Als je niets regelt loop je op deze route circa **€220 of meer** risico.
+
+De app noemde per land wel een boetebedrag, maar nergens wat het samen is. Juist dat getal maakt
+het verschil tussen een lijstje en iets waar je vanavond nog wat mee doet. Het rekent uit de
+`fineIndication`-velden die al in `countries.json` staan, met drie regels waar niet van afgeweken
+wordt:
+
+* **alleen over openstaande acties.** Wat je hebt afgevinkt is geen risico meer. Blokkades tellen
+  wél mee — die zijn per definitie niet geregeld, en het is dezelfde boete. Dubbeltellen kan niet:
+  een land levert óf een blokkade óf een zone-actie op;
+* **alleen bedragen die als euro's in de data staan.** Een boete in frank, pond of kronen wordt
+  niet omgerekend: dat zou een wisselkoers verzinnen die we niet hebben. Zo'n post verschijnt in de
+  uitsplitsing als *niet in euro's*;
+* **als bandbreedte, en met "of meer".** Staat er een actie zonder bekend eurobedrag, dan komt er
+  *of meer* achter het totaal in plaats van een getal dat te laag is zonder dat je dat ziet.
+
+Het lezen van de bedragen (`euroBedragen()` in `js/facts.js`) is met opzet streng: alleen getallen
+die zelf aan een euro-aanduiding vastzitten tellen mee. In *"vanaf 3 maanden na een eerste
+overtreding tot 350 euro"* is de 3 een aantal maanden, en die als € 3 meetellen zou de ondergrens
+onzin maken. Bereiken (*"80 tot 120 euro"*) worden apart herkend, want daar draagt alleen het
+tweede getal de eenheid.
+
+#### De vertrouwensbalk
+
+> Deze reis is gebaseerd op 39 feiten. 10 officieel bevestigd, 27 gecontroleerd, 2 onzeker.
+> Laatst gecontroleerd: 19 augustus 2026.
+
+De `confidence`-velden uit de vorige fase stonden in de data maar nergens op het scherm. Onderaan
+het dashboard staat nu wat de reis waard is, klikbaar naar precies de feiten die onzeker zijn —
+met hun bron en de reden waarom ze onzeker zijn. Een balk die alleen een getal noemt en je daarna
+laat zoeken, is een balk die niemand gebruikt.
+
+Twee keuzes in de telling:
+
+* **alleen de feiten die deze reis ook echt gebruikt.** Een tolpunt in Denemarken zegt niets over
+  een rit naar Oostenrijk, en een voertuignotitie voor campers niet over een personenauto. Zonder
+  berekende route telt geen enkel tolpunt mee, want dan weten we niet welke je raakt;
+* **de oudste controledatum, niet de nieuwste.** "Laatst gecontroleerd" moet een belofte zijn die
+  voor de hele reis geldt. De nieuwste datum tonen terwijl één land al een jaar niet is nagekeken,
+  is precies de schijnzekerheid die deze app moet vermijden. Is die datum ouder dan `STALE_DAYS`,
+  dan kleurt de balk amber en zegt hij dat erbij.
+
+#### Herkomst per actie
+
+Elke actie uit `buildTasks()` draagt sinds deze fase `factId`, `confidence`, `sourceUrl`,
+`lastVerified` en `fineIndication` van het feit waar hij op rust. De renderlaag toont daar nu één
+link van (*Officiële bron*) via `herkomstRegelHTML()`; dat is het ene aangrijpingspunt waar de
+volle herkomstregel uit sessie B2 landt. Het is geen dode voorbereiding: het boetekans-totaal en
+de vertrouwensbalk lezen dezelfde velden.
+
+---
 
 ### De routeplanner
 
