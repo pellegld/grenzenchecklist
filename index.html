@@ -59,6 +59,9 @@
 
 <div id="loaderr" class="loaderr" hidden></div>
 
+<!-- §21: met de tab-toets is de navigatie anders elke pagina opnieuw aflopen. -->
+<a class="skiplink" href="#hoofd" data-i18n="alg.naarInhoud">Naar de inhoud</a>
+
 <div id="app">
 
 <nav class="topbar">
@@ -160,7 +163,7 @@
   </div>
 </aside>
 
-<main class="main">
+<main class="main" id="hoofd" tabindex="-1">
 
 <!-- ================= Homepage (§4) ================= -->
 <section class="view view-page view-home" id="view-home" hidden>
@@ -211,7 +214,7 @@
     <div class="statgrid" id="stat-cards" hidden></div>
 
     <div id="landenblok" hidden>
-      <h3 data-i18n="planner.landenOpRoute">Landen op deze route</h3>
+      <h2 class="paneelkop" data-i18n="planner.landenOpRoute">Landen op deze route</h2>
       <div id="landenlijst"></div>
     </div>
 
@@ -312,6 +315,21 @@
 </section>
 </main>
 
+<!-- Statusmeldingen voor schermlezers: afvinken verplaatst een actie naar een
+     andere groep, en dat moet je kunnen horen in plaats van alleen zien. -->
+<p id="actie-melding" class="sr" role="status" aria-live="polite"></p>
+
+<!-- Terugval voor de correctielink als de klembord-API niet beschikbaar is
+     (file://, of een browser die hem blokkeert). -->
+<div class="melddialoog" id="melddialoog" hidden>
+  <div class="meldvenster" role="dialog" aria-modal="true" aria-labelledby="meldkop">
+    <h2 id="meldkop" data-i18n="correctie.dialoogKop">Melding kopiëren</h2>
+    <p class="hint" data-i18n="correctie.dialoogUitleg">Kopieer deze tekst en stuur hem via het kanaal dat je zelf kiest.</p>
+    <textarea rows="9" readonly aria-labelledby="meldkop"></textarea>
+    <button type="button" class="btn" id="meld-sluit" data-i18n="alg.sluiten">Sluiten</button>
+  </div>
+</div>
+
 </div>
 
 <!-- Classic scripts, geen modules: die laden niet via file://, en de app moet
@@ -328,8 +346,9 @@
 <script src="js/trip.js"></script>          <!-- het trip-object: de bron van waarheid -->
 <script src="js/vehicle.js"></script>       <!-- voertuigprofiel en milieuzone-oordeel -->
 <script src="js/trips.js"></script>         <!-- de lijst opgeslagen reizen -->
-<script src="js/checklist.js"></script>     <!-- de actie-engine -->
+<script src="js/checklist.js"></script>     <!-- uitrustingsgroepen en regeltaken -->
 <script src="js/facts.js"></script>         <!-- feiten, vertrouwen en boetekans -->
+<script src="js/actions.js"></script>       <!-- de actielijst: prioriteit, deadline, herkomst -->
 <script src="js/costs.js"></script>         <!-- tol en de kostenpagina -->
 <script src="js/calendar.js"></script>      <!-- drukte per dag -->
 <script src="js/countries.js"></script>     <!-- landkaart-onderdelen en correctielink -->
@@ -337,7 +356,8 @@
 <script src="js/home.js"></script>          <!-- homepage -->
 <script src="js/wizard.js"></script>        <!-- de reiswizard in vier stappen -->
 <script src="js/dashboard.js"></script>     <!-- het reisdashboard -->
-<script src="js/pages.js"></script>         <!-- acties, regels, reizen, reiservaring -->
+<script src="js/acties.js"></script>        <!-- de actiepagina -->
+<script src="js/pages.js"></script>         <!-- regels, reizen, reiservaring -->
 <script src="js/document.js"></script>      <!-- reisdocument en print -->
 <script src="js/map.js"></script>           <!-- routeschets -->
 <script src="js/app.js"></script>           <!-- orkestratie en start — moet als laatste -->

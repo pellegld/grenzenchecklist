@@ -68,7 +68,7 @@
 .landhero .regio{display:flex;align-items:center;gap:var(--sp-sm);opacity:.85;font:600 .72rem/1 var(--f-display);
   letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
 .landhero .regio .flag{width:34px;height:24px}
-.landhero h2{font:700 2.75rem/1.1 var(--f-display);color:#fff;margin:0 0 10px}
+.landhero h1{font:700 2.75rem/1.1 var(--f-display);color:#fff;margin:0 0 10px}
 .landhero p{font-size:.95rem;opacity:.9;max-width:60ch;margin:0}
 
 /* Landkiezer: pillknop rechtsboven in de hero, dropdownpaneel eronder. Als
@@ -374,7 +374,7 @@ button.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;t
   color:var(--on-surface-var);background:var(--surface-c);border:1px solid var(--outline-var);
   border-radius:var(--r-full);padding:5px 10px;display:inline-block;margin-bottom:var(--sp-sm)}
 .vbkop{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
-.vbkop h3{margin:0;text-transform:none;letter-spacing:0;font:700 1.1rem/1.3 var(--f-display);color:var(--primary)}
+.vbkop h2{margin:0;text-transform:none;letter-spacing:0;font:700 1.1rem/1.3 var(--f-display);color:var(--primary)}
 .vbvlaggen,.dashvlaggen{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .vbvlaggen .pijl,.dashvlaggen .pijl{color:var(--outline);font-size:.8rem}
 .vbmeta{font:600 .8rem/1.4 var(--f-mono);color:var(--on-surface-var);margin:6px 0 var(--sp-md)}
@@ -398,7 +398,7 @@ button.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;t
   border-radius:var(--r-xl);padding:var(--sp-md);margin-bottom:var(--sp-lg)}
 .verderkaart .lbl{font:600 .68rem/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;
   color:var(--on-surface-var)}
-.verderkaart h3{margin:4px 0 2px;text-transform:none;letter-spacing:0;
+.verderkaart h2{margin:4px 0 2px;text-transform:none;letter-spacing:0;
   font:700 1.05rem/1.3 var(--f-display);color:var(--primary)}
 
 .homeblok{margin-bottom:var(--sp-lg)}
@@ -671,3 +671,240 @@ html,body{overflow-x:hidden}
   /* Ruimte onder de onderbalk, inclusief de veilige zone van een iPhone. */
   .view-page{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 }
+
+/* ================================================================
+   Actiepagina (§7), deadlines (§8), herkomst (§13/§16) en de
+   regelpagina met progressive disclosure (§15).
+
+   Alle statussen dragen hier een teken en een woord; kleur is de derde laag.
+   Dat is geen extra werk voor de toegankelijkheid maar een voorwaarde: in
+   fel zonlicht op een parkeerplaats is kleur het eerste dat wegvalt.
+   ================================================================ */
+
+/* ---------------- skiplink (§21) ---------------- */
+.skiplink{position:absolute;left:8px;top:-60px;z-index:100;padding:10px 16px;
+  background:var(--surface-lowest);color:var(--on-surface);border:1px solid var(--outline-var);
+  border-radius:var(--r-lg);box-shadow:var(--shadow-2);font:600 .85rem/1 var(--f-display);
+  transition:top .15s}
+.skiplink:focus{top:8px}
+
+/* ---------------- groepen ---------------- */
+.actiegroep{margin-bottom:var(--sp-lg)}
+.actiegroep>details>summary{list-style:none;cursor:pointer}
+.actiegroep>details>summary::-webkit-details-marker{display:none}
+.groepkop{display:flex;flex-direction:column;gap:2px;padding-bottom:var(--sp-sm);
+  margin-bottom:var(--sp-sm);border-bottom:2px solid var(--outline-var)}
+.groepkop h2{display:flex;align-items:center;gap:10px;margin:0;
+  font:700 1.05rem/1.3 var(--f-display);color:var(--primary)}
+.groepteken{display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;flex:0 0 auto;border-radius:var(--r-full);
+  border:1px solid var(--outline-var);background:var(--surface-c);
+  font:700 .8rem/1 var(--f-mono);color:var(--on-surface-var)}
+.groeptel{margin-left:auto;font:700 .8rem/1 var(--f-mono);color:var(--on-surface-var);
+  background:var(--surface-c);border-radius:var(--r-full);padding:4px 9px}
+.groepuitleg{font-size:.82rem;line-height:1.5;color:var(--on-surface-var);max-width:66ch}
+
+.g-eerst .groepkop{border-bottom-color:var(--error)}
+.g-eerst .groepteken{background:var(--error-container);border-color:var(--error);color:var(--error)}
+.g-voorVertrek .groepkop{border-bottom-color:var(--amber-line)}
+.g-voorVertrek .groepteken{background:var(--amber-container);border-color:var(--amber-line);color:var(--amber-ink)}
+.g-klaar .groepteken{background:var(--ok-container);border-color:var(--ok-line);color:var(--ok)}
+
+/* ---------------- de actiekaart ---------------- */
+.actielijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-sm)}
+.actiekaart{display:flex;gap:var(--sp-sm);align-items:flex-start;
+  background:var(--surface-lowest);border:1px solid var(--outline-var);
+  border-left:4px solid var(--outline-var);border-radius:var(--r-lg);
+  padding:var(--sp-sm) var(--sp-sm) var(--sp-sm) calc(var(--sp-sm) - 1px)}
+.actiekaart.s-blokkade{border-left-color:var(--error);background:var(--error-container)}
+.actiekaart.s-actie{border-left-color:var(--amber)}
+.actiekaart.s-waarschuwing{border-left-color:var(--secondary)}
+.actiekaart.s-onbekend{border-left-color:var(--outline)}
+.actiekaart.af{opacity:.72;border-left-color:var(--ok)}
+.actiekaart.af .actietitel span{text-decoration:line-through}
+
+.actievink{width:24px;height:24px;flex:0 0 auto;margin:3px 0 0;accent-color:var(--secondary);cursor:pointer}
+.actiemerk{width:22px;height:22px;flex:0 0 auto;margin-top:2px;display:flex;align-items:center;
+  justify-content:center;font:700 .85rem/1 var(--f-mono);color:var(--on-surface-var);
+  border:1px dashed var(--outline-var);border-radius:var(--r-sm)}
+.actiehoofd{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px}
+.actietitel{display:flex;align-items:flex-start;gap:8px;margin:0;
+  font:600 .95rem/1.35 var(--f-body);color:var(--on-surface)}
+.actietitel .flag{margin-top:2px;flex:0 0 auto}
+.actiemeta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.actieuitleg{font-size:.82rem;line-height:1.5;color:var(--on-surface-var);max-width:70ch}
+.actiehoofd .landnamen{font-size:.76rem;color:var(--on-surface-var)}
+
+/* ---------------- chips: status, deadline, prijs ---------------- */
+.statuschip,.deadlinechip,.prijschip{display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:var(--r-full);border:1px solid var(--outline-var);
+  font:600 .7rem/1.4 var(--f-display);color:var(--on-surface-var);white-space:nowrap}
+.statuschip .teken,.actiestatus .teken{font:700 .78rem/1 var(--f-mono)}
+.statuschip.s-blokkade{border-color:var(--error);background:var(--error-container);color:var(--on-error-container)}
+.statuschip.s-actie{border-color:var(--amber-line);background:var(--amber-container);color:var(--amber-ink)}
+.statuschip.s-waarschuwing{border-color:var(--secondary);color:var(--secondary)}
+.statuschip.s-ok{border-color:var(--ok-line);background:var(--ok-container);color:var(--ok)}
+.statuschip.s-onbekend{border-style:dashed}
+
+.deadlinechip .icon{width:12px;height:12px}
+.deadlinechip.u-vandaag,.deadlinechip.u-verstreken{border-color:var(--error);
+  background:var(--error-container);color:var(--on-error-container)}
+.deadlinechip.u-bijna{border-color:var(--amber-line);background:var(--amber-container);color:var(--amber-ink)}
+.prijschip{font-family:var(--f-mono);border-style:dashed}
+
+/* ---------------- onzekerheid (§13) ---------------- */
+.onzeker{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;
+  background:var(--amber-container);border:1px solid var(--amber-line);
+  border-radius:var(--r-md);padding:7px 10px;font-size:.8rem;line-height:1.5;
+  color:var(--amber-ink);max-width:70ch}
+.onzeker .icon{width:14px;height:14px;color:var(--amber-ink);align-self:center}
+
+/* ---------------- waarom zie ik dit (§14A, §16) ---------------- */
+.waarom{border-top:1px dashed var(--outline-var);padding-top:6px;margin-top:2px}
+.waarom>summary{cursor:pointer;font:600 .78rem/1.4 var(--f-display);color:var(--secondary);
+  list-style:none;display:inline-flex;align-items:center;gap:6px;min-height:32px}
+.waarom>summary::-webkit-details-marker{display:none}
+.waarom>summary::before{content:"?";display:inline-flex;align-items:center;justify-content:center;
+  width:17px;height:17px;border-radius:var(--r-full);border:1px solid currentColor;
+  font:700 .68rem/1 var(--f-mono)}
+.waarom[open]>summary::before{content:"−"}
+.waarombody{display:flex;flex-direction:column;gap:6px;padding:6px 0 2px}
+.waaromtekst{font-size:.84rem;line-height:1.55;color:var(--on-surface);max-width:70ch}
+.waaromtekst::first-letter{text-transform:uppercase}
+.boeteregel{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--on-surface-var)}
+.boeteregel .icon{width:13px;height:13px}
+.bronregel{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.76rem}
+.controledatum{font:500 .74rem/1.4 var(--f-mono);color:var(--on-surface-var)}
+.bronacties{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.bronlink{display:inline-flex;align-items:center;gap:4px;font:600 .78rem/1.4 var(--f-display);
+  color:var(--secondary);text-decoration:underline;min-height:32px}
+.meldlink{appearance:none;background:none;border:0;padding:0;cursor:pointer;
+  font:500 .76rem/1.4 var(--f-body);color:var(--on-surface-var);text-decoration:underline;min-height:32px}
+.meldlink:hover{color:var(--on-surface)}
+
+/* Niveau-badge (§13). De rand verschilt per niveau, zodat het onderscheid ook
+   in grijstinten en op papier zichtbaar blijft. */
+.niveau.n-verified{border-color:var(--secondary);color:var(--secondary)}
+.niveau.n-unavailable{border-style:dotted}
+.niveau.n-uncertain{border-style:dashed}
+
+.deadlinenoot{display:flex;gap:8px;align-items:flex-start;font-size:.8rem;line-height:1.5;
+  color:var(--on-surface-var);background:var(--surface-low);border:1px solid var(--outline-var);
+  border-radius:var(--r-lg);padding:10px 12px;margin-bottom:var(--sp-md);max-width:74ch}
+.deadlinenoot .icon{flex:0 0 auto;width:15px;height:15px;margin-top:2px}
+
+/* ---------------- meldvenster ---------------- */
+.melddialoog{position:fixed;inset:0;z-index:60;background:rgba(9,20,38,.5);
+  display:flex;align-items:center;justify-content:center;padding:var(--sp-md)}
+.melddialoog[hidden]{display:none}
+.meldvenster{width:100%;max-width:34rem;background:var(--surface-lowest);
+  border-radius:var(--r-xl);padding:var(--sp-md);box-shadow:var(--shadow-2);
+  display:flex;flex-direction:column;gap:var(--sp-sm)}
+.meldvenster h2{font:700 1.05rem/1.3 var(--f-display);color:var(--primary);margin:0}
+.meldvenster textarea{width:100%;border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  padding:10px;font:400 .82rem/1.5 var(--f-mono);background:var(--surface-low);
+  color:var(--on-surface);resize:vertical}
+
+/* ---------------- regelpagina (§15) ---------------- */
+.verouderdbalk{display:flex;gap:8px;align-items:center;background:var(--amber-container);
+  border:1px solid var(--amber-line);border-radius:var(--r-lg);padding:10px 12px;
+  margin-bottom:var(--sp-md);font-size:.84rem;line-height:1.5;color:var(--amber-ink)}
+.verouderdbalk .icon{flex:0 0 auto;width:16px;height:16px}
+
+.regeloordeel{display:grid;grid-template-columns:1fr;gap:var(--sp-gutter);margin-bottom:var(--sp-lg)}
+@media (min-width:760px){ .regeloordeel{grid-template-columns:1fr 1fr} }
+.oordeelkaart{background:var(--surface-lowest);border:1px solid var(--outline-var);
+  border-radius:var(--r-xl);box-shadow:var(--shadow-1);padding:var(--sp-md)}
+.oordeelkaart h2{margin:0 0 var(--sp-sm);text-transform:none;letter-spacing:0;
+  font:600 .88rem/1.3 var(--f-display);color:var(--on-surface-var)}
+.oordeel{display:flex;align-items:center;gap:10px;margin:0}
+.oordeel b{font:700 1.75rem/1.1 var(--f-display);color:var(--primary)}
+.oordeel .teken{display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex:0 0 auto;border-radius:var(--r-full);
+  font:700 1rem/1 var(--f-mono);border:2px solid currentColor}
+.oordeel.o-ja .teken{color:var(--ok)}
+.oordeel.o-nee .teken{color:var(--error)}
+.oordeel.o-mits .teken{color:var(--amber-ink)}
+.oordeel.o-check .teken{color:var(--on-surface-var);border-style:dashed}
+.oordeeluitleg{margin-top:8px;font-size:.86rem;line-height:1.55;color:var(--on-surface-var);max-width:60ch}
+.oordeelacties{list-style:none;margin:var(--sp-sm) 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.oordeelacties li{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:7px 0;
+  border-bottom:1px solid var(--surface-highest);font-size:.86rem;color:var(--on-surface)}
+.oordeelacties li:last-child{border-bottom:0}
+
+.regeldetails{display:flex;flex-direction:column;gap:var(--sp-sm)}
+.regelsectie{background:var(--surface-lowest);border:1px solid var(--outline-var);
+  border-radius:var(--r-lg);overflow:hidden}
+.regelsectie>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;
+  padding:var(--sp-sm) var(--sp-md);cursor:pointer;list-style:none;min-height:52px}
+.regelsectie>summary::-webkit-details-marker{display:none}
+.regelsectie>summary:hover{background:var(--surface-low)}
+.regelsectie>summary::after{content:"+";margin-left:auto;font:700 1.1rem/1 var(--f-mono);
+  color:var(--secondary);align-self:center}
+.regelsectie[open]>summary::after{content:"−"}
+.regelsectie[open]>summary{border-bottom:1px solid var(--outline-var)}
+.sectienaam{font:700 .95rem/1.4 var(--f-display);color:var(--primary)}
+.sectiekop{font-size:.82rem;color:var(--on-surface-var);line-height:1.4;min-width:0}
+.sectiebody{padding:var(--sp-md);display:flex;flex-direction:column;gap:var(--sp-sm)}
+.sectiebody p{font-size:.86rem;line-height:1.6;color:var(--on-surface-var);max-width:70ch}
+.sectiebody .hoe{background:var(--surface-low);border-left:3px solid var(--secondary);
+  border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 12px}
+.eqkop{margin:var(--sp-sm) 0 2px;text-transform:none;letter-spacing:0;
+  font:700 .85rem/1.3 var(--f-display);color:var(--on-surface)}
+.eqtoelichting{font-size:.78rem;color:var(--on-surface-var);margin-bottom:6px}
+.eqlijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.eqlijst li{padding:8px 0;border-bottom:1px solid var(--surface-highest);display:flex;
+  flex-direction:column;gap:2px}
+.eqlijst li:last-child{border-bottom:0}
+.eqnaam{font:600 .88rem/1.35 var(--f-body);color:var(--on-surface)}
+.eqnote{font-size:.78rem;line-height:1.5;color:var(--on-surface-var);max-width:70ch}
+.sectienoot{font-size:.8rem;font-style:italic}
+.quirklijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.quirklijst li{display:flex;gap:10px;align-items:flex-start;font-size:.86rem;line-height:1.55;
+  color:var(--on-surface-var)}
+.quirklijst .teken{display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;flex:0 0 auto;border-radius:var(--r-full);border:1px solid var(--outline-var);
+  font:700 .7rem/1 var(--f-mono);margin-top:1px}
+.quirklijst li.verbod .teken{color:var(--error);border-color:var(--error)}
+.bronnenlijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.bronnenlijst a{display:inline-flex;align-items:center;gap:5px;font:600 .85rem/1.45 var(--f-display);
+  text-decoration:underline;min-height:32px}
+.bronnenintro{font-size:.82rem}
+
+/* ---------------- reisdocument: groepen en deadlines ---------------- */
+.docgroep{margin:var(--sp-sm) 0 4px;text-transform:none;letter-spacing:0;
+  font:700 .85rem/1.3 var(--f-display);color:var(--on-surface)}
+.docdeadline{font:600 .74rem/1 var(--f-mono);color:var(--on-surface-var)}
+.doclijst .vak.leeg{border-style:dashed}
+
+/* ---------------- print ---------------- */
+@media print{
+  .skiplink,.melddialoog,.meldlink,.waarom>summary::before{display:none !important}
+  /* Op papier is alles open: een dichtgeklapte sectie is een lege pagina. */
+  .waarom[open],.waarom{display:block}
+  .regelsectie>summary::after{content:""}
+  .actiekaart{break-inside:avoid;page-break-inside:avoid;border:1px solid #999 !important;
+    background:#fff !important}
+  .statuschip,.deadlinechip,.prijschip,.niveau{border-color:#666 !important;background:#fff !important;
+    color:#000 !important}
+}
+
+/* ---------------- raakvlakken (§21, WCAG 2.5.8) ----------------
+   Alles wat je kunt aanraken is minstens 24 px hoog. Voor een link midden in
+   een zin geldt de uitzondering voor inline tekst, maar een losstaande knop of
+   een uitklapper valt daar niet onder — en juist die zaten hier op 15 tot 18 px.
+   De extra hoogte komt uit padding, zodat de tekstgrootte niet verandert. */
+.tekstknop,.herkomst,.bronlink,.meldlink,
+.boetedetail>summary,.vdetail>summary,.waarom>summary,
+.bronnenlijst a,.docbronnen a{min-height:24px;display:inline-flex;align-items:center;gap:4px}
+.oordeelacties li,.feitenlijst li{min-height:24px}
+
+/* Ook de bronlijst onder de disclaimer en in de colofon telt als raakvlak. */
+details.disclaimer ul li a,.colofon a{display:inline-flex;align-items:center;min-height:24px}
+
+/* Sectiekoppen in het routepaneel en de milieukaart: de koppenvolgorde hoort
+   h1 → h2 te zijn, maar de maat blijft die van de oude h3 (§21). */
+.paneelkop{font:700 .8rem/1.3 var(--f-display);letter-spacing:.03em;text-transform:uppercase;
+  color:var(--on-surface-var);margin:0 0 var(--sp-sm)}
+.milieuhead h2.paneelkop{margin:0 0 4px;text-transform:none;letter-spacing:0;
+  font:700 .88rem/1.3 var(--f-display);color:var(--on-surface)}

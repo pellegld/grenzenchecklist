@@ -13,7 +13,7 @@ var RENDERS = {
      vingers vandaan halen. */
   wizard:    function(){ renderWizard(); },
   dashboard: renderDashboard,
-  acties:    renderChecklistPagina,
+  acties:    renderActies,
   kaart:     function(){
     renderDashboardStats();
     renderLandenLijst();
@@ -130,26 +130,49 @@ function wire(){
     if(v && v !== VIEW) switchView(v, true);
   });
   document.addEventListener("keydown", function(e){
-    if(e.key === "Escape") sluitMeer();
+    if(e.key !== "Escape") return;
+    sluitMeer();
+    sluitMelding();
   });
 
-  /* Afvinken: gedeeld tussen alle pagina's met een vinkje; trip.ticked is toch
-     één pot. Alleen de voortgangsbalk wordt bijgewerkt in plaats van de hele
-     pagina — anders springt de lijst onder je vinger vandaan. */
+  /* §21: een rij die als knop werkt, moet ook met het toetsenbord werken. De
+     landenlijst op de kaartpagina had role="button" en tabindex, maar luisterde
+     alleen naar een muisklik. */
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "Enter" && e.key !== " ") return;
+    var rij = e.target.closest(".landrow, .landswitch-row");
+    if(!rij) return;
+    e.preventDefault();
+    rij.click();
+  });
+
+  /* Afvinken. Een afgevinkte actie verhuist naar "Klaar", dus de pagina wordt
+     opnieuw opgebouwd; naAfvinken() bewaart de scrollpositie, zet de focus terug
+     op hetzelfde vinkje en zegt tegen een schermlezer waar het heen ging. */
   document.addEventListener("change", function(e){
     var cb = e.target.closest("input[data-tick]");
     if(!cb || !TRIP) return;
     var k = cb.getAttribute("data-tick");
     if(cb.checked) TRIP.ticked[k] = 1; else delete TRIP.ticked[k];
     bewaarTrip();
-    var row = cb.closest(".chkrow");
-    if(row) row.classList.toggle("done", cb.checked);
-    var tel = checklistTelling(TRIP);
-    var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
-    var pval = document.querySelector(".progresscard .pval");
-    var bar = document.querySelector(".progresscard .progressbar>i");
-    if(pval) pval.textContent = i18n("checklist.gereed", { pct:pct });
-    if(bar) bar.style.width = pct + "%";
+    if(VIEW === "acties") naAfvinken(k, cb.checked);
+    else render();
+  });
+
+  /* De correctielink (§14A). Staat bij elke actie en bij elke sectie van de
+     regelpagina, dus één afhandelaar op document-niveau. */
+  document.addEventListener("click", function(e){
+    var meld = e.target.closest("[data-melden]");
+    if(meld){
+      e.preventDefault();
+      MELD_HERKOMST = meld;
+      kopieerMelding(meld.getAttribute("data-melden"),
+                     meld.getAttribute("data-melden-feit"), meld);
+      return;
+    }
+    if(e.target.closest("#meld-sluit")){ sluitMelding(); return; }
+    var dlg = e.target.closest(".melddialoog");
+    if(dlg && !e.target.closest(".meldvenster")) sluitMelding();
   });
 
   /* ---------------- wizard ---------------- */

@@ -2,7 +2,7 @@
 /* Het reisdocument: één pagina die je meeneemt.
 
    Dit is de printbare samenvatting van §11, gebouwd uit precies dezelfde
-   bouwers als de rest van de app (buildTasks, tolRegels, tripFeiten). Er staat
+   bouwers als de rest van de app (bouwActies, tolRegels, tripFeiten). Er staat
    dus niets in wat je op het scherm niet ook ziet — een document dat afwijkt
    van de app is erger dan geen document.
 
@@ -16,30 +16,26 @@ function docSectie(kop, inhoud){
   return '<section class="docsectie"><h2>' + esc(kop) + "</h2>" + inhoud + "</section>";
 }
 
+/* De acties, in dezelfde groepen als op het scherm. Op papier staat er een
+   leeg vakje voor wat nog moet en een kruisje voor wat af is, plus de deadline —
+   dat is wat een uitdraai bruikbaar maakt naast het stuur. */
 function docActieLijst(trip){
-  var T = buildTasks(trip);
-  var rijen = T.blockers.map(function(t){
-    return '<li class="blok">' + esc(t.c ? t.c.name + " — " : "") + esc(t.what) +
-      (t.meta ? '<span class="sub">' + esc(t.meta) + "</span>" : "") + "</li>";
-  }).concat(T.todo.map(function(t){
-    var af = isAangevinkt(trip, "task:" + t.key);
-    return '<li class="' + (af ? "af" : "open") + '">' +
-      '<span class="vak" aria-hidden="true">' + (af ? "×" : "") + "</span>" +
-      esc(t.what) + (t.meta ? '<span class="sub">' + esc(t.meta) + "</span>" : "") + "</li>";
-  })).join("");
-  return rijen ? '<ul class="doclijst">' + rijen + "</ul>" : "";
-}
-
-function docUitrusting(trip){
-  var G = buildGroups(trip);
-  var rijen = G.must.concat(G.advice).map(function(row){
-    var af = isAangevinkt(trip, row.g.key);
-    var landen = row.main.map(function(e){ return e.country.name; }).join(" · ");
-    return '<li class="' + (af ? "af" : "open") + '">' +
-      '<span class="vak" aria-hidden="true">' + (af ? "×" : "") + "</span>" +
-      esc(row.g.label) + '<span class="sub">' + esc(landen) + "</span></li>";
+  var groepen = groepeerActies(bouwActies(trip));
+  return groepen.map(function(g){
+    return '<h3 class="docgroep">' + esc(i18n("groep." + g.sleutel)) + "</h3>" +
+      '<ul class="doclijst">' + g.acties.map(function(a){
+        return '<li class="' + (a.afgevinkt ? "af" : a.status === "blokkade" ? "blok" : "open") + '">' +
+          (a.afvinkbaar
+            ? '<span class="vak" aria-hidden="true">' + (a.afgevinkt ? "×" : "") + "</span>"
+            : '<span class="vak leeg" aria-hidden="true">' + STATUS_TEKEN[a.status] + "</span>") +
+          esc(a.wat) +
+          (a.deadline ? ' <span class="docdeadline">' + esc(deadlineTekst(a.deadline)) + "</span>" : "") +
+          (a.landen.length ? '<span class="sub">' +
+            esc(a.landen.map(function(c){ return c.name; }).join(" · ")) +
+            (a.waarom ? " — " + esc(a.waarom) : "") + "</span>" : "") +
+        "</li>";
+      }).join("") + "</ul>";
   }).join("");
-  return rijen ? '<ul class="doclijst">' + rijen + "</ul>" : "";
 }
 
 function docKosten(trip){
@@ -100,7 +96,6 @@ function renderDocument(){
       "</header>" +
       docSectie(i18n("document.landen"), '<div class="docchips">' + landen + "</div>") +
       docSectie(i18n("document.acties"), docActieLijst(TRIP)) +
-      docSectie(i18n("document.uitrusting"), docUitrusting(TRIP)) +
       docSectie(i18n("document.kosten"), docKosten(TRIP)) +
       docSectie(i18n("document.risico"),
         r.open ? "<p>" + esc(i18n("dashboard.boete.zin", {

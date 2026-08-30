@@ -69,35 +69,42 @@ function dashboardVoortgangHTML(trip){
 }
 
 /* ---------------- eerst regelen ----------------
-   Blokkades bovenaan, daarna de openstaande acties. Elke regel zegt waaróm hij
-   er staat (het land en de reden) en draagt de herkomstlink. */
-function actieRegelHTML(t, soort){
-  var land = t.c ? t.c : (t.cs && t.cs[0]);
-  return '<li class="actierij ' + soort + '">' +
+   Blokkades bovenaan, daarna de openstaande acties op deadline. Dezelfde
+   actielijst als op de actiepagina (js/actions.js), alleen ingekort: het
+   dashboard toont wat er nu speelt, de actiepagina het geheel. */
+function actieRegelHTML(a){
+  var land = a.landen[0];
+  return '<li class="actierij s-' + esc(a.status) + '">' +
     (land ? flagHTML(land) : iconUse("globe")) +
     '<div class="actietekst">' +
-      '<span class="wat">' + esc(t.what) + "</span>" +
-      (t.meta ? '<span class="waarom">' + esc(t.meta) + "</span>" : "") +
-      herkomstRegelHTML(t) +
+      '<span class="wat">' + esc(a.wat) + "</span>" +
+      (a.waarom ? '<span class="waarom">' + esc(a.waarom) + "</span>" : "") +
+      (a.deadline ? '<span class="deadlinechip u-' + esc(a.deadline.urgentie) + '">' +
+        esc(deadlineTekst(a.deadline)) + "</span>" : "") +
     "</div>" +
-    '<span class="actiestatus">' + esc(i18n("status." + soort)) + "</span>" +
+    '<span class="actiestatus">' +
+      '<span class="teken" aria-hidden="true">' + STATUS_TEKEN[a.status] + "</span>" +
+      esc(i18n("status." + a.status)) + "</span>" +
   "</li>";
 }
 
 function dashboardActiesHTML(trip){
-  var T = buildTasks(trip);
-  var open = T.todo.filter(function(t){ return !isAangevinkt(trip, "task:" + t.key); });
-  if(!T.blockers.length && !open.length){
+  var acties = bouwActies(trip);
+  var blokkades = acties.filter(function(a){ return a.status === "blokkade"; });
+  var open = sorteerActies(acties.filter(function(a){
+    return a.status === "actie" && !a.afgevinkt;
+  }));
+
+  if(!blokkades.length && !open.length){
     return '<section class="dashkaart"><h2>' + esc(i18n("dashboard.actiesKop")) + "</h2>" +
       '<p class="leeg">' + iconUse("check") + esc(i18n("dashboard.allesGeregeld")) + "</p></section>";
   }
 
-  var lijst = T.blockers.map(function(t){ return actieRegelHTML(t, "blokkade"); })
-    .concat(open.slice(0, 5).map(function(t){ return actieRegelHTML(t, "actie"); })).join("");
-
-  var meer = open.length > 5
+  var lijst = blokkades.concat(open.slice(0, 5)).map(actieRegelHTML).join("");
+  var rest = open.length - Math.min(open.length, 5);
+  var meer = rest > 0
     ? '<button type="button" class="tekstknop" data-view="acties">' +
-      esc(i18nAantal("dashboard.nogMeer", open.length - 5)) + "</button>"
+      esc(i18nAantal("dashboard.nogMeer", rest)) + "</button>"
     : "";
 
   return '<section class="dashkaart"><h2>' + esc(i18n("dashboard.actiesKop")) + "</h2>" +
@@ -139,15 +146,14 @@ function boetekansHTML(trip){
       })
     : esc(i18n("dashboard.boete.geenBedrag"));
 
-  var posten = r.items.filter(function(it){ return it.bedrag || it.actie.fineIndication; })
-    .map(function(it){
-      var t = it.actie;
-      return "<li>" + (t.c ? flagHTML(t.c) : "") +
-        '<span class="post">' + esc(t.what) + "</span>" +
+  var posten = r.items.map(function(it){
+      var t = it.actie, land = t.landen[0];
+      return "<li>" + (land ? flagHTML(land) : "") +
+        '<span class="post">' + esc(t.wat) + "</span>" +
         '<span class="bedrag">' + (it.bedrag
           ? "&euro;" + getal(it.bedrag.laag) + (it.bedrag.hoog !== it.bedrag.laag ? "–&euro;" + getal(it.bedrag.hoog) : "")
           : esc(i18n("dashboard.boete.nietInEuro"))) + "</span>" +
-        (t.fineIndication ? '<span class="brontekst">' + esc(kortBedrag(t.fineIndication)) + "</span>" : "") +
+        '<span class="brontekst">' + esc(kortBedrag(t.boete)) + "</span>" +
       "</li>";
     }).join("");
 
@@ -157,7 +163,10 @@ function boetekansHTML(trip){
     (posten
       ? "<details class=\"boetedetail\"><summary>" + esc(i18n("dashboard.boete.uitsplitsing")) + "</summary>" +
         '<ul class="boetelijst">' + posten + "</ul>" +
-        '<p class="hint">' + esc(i18n("dashboard.boete.uitleg")) + "</p></details>"
+        '<p class="hint">' + esc(i18n("dashboard.boete.uitleg")) +
+        (r.zonderBoeteData
+          ? " " + esc(i18nAantal("dashboard.boete.zonderBedrag", r.zonderBoeteData))
+          : "") + "</p></details>"
       : '<p class="hint">' + esc(i18n("dashboard.boete.uitleg")) + "</p>") +
   "</section>";
 }

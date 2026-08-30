@@ -308,7 +308,7 @@ function renderMilieuzones(){
   var namen = zones.slice(0, 8).map(function(o){ return esc(o.zone.city); });
   el.innerHTML =
     '<div class="milieuhead">' + iconUse("eco") +
-      "<div><h3>" + esc(i18n("planner.milieuzones")) + "</h3>" +
+      "<div><h2 class=\"paneelkop\">" + esc(i18n("planner.milieuzones")) + "</h2>" +
       "<p>" + esc(i18n("planner.milieuzonesUitleg")) + "</p></div></div>" +
     '<div class="milieuchips">' + namen.map(function(n){ return '<span class="mchip">' + n + "</span>"; }).join("") + "</div>";
 }

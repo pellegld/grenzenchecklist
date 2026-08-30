@@ -9,7 +9,7 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v21";
+var CACHE = "grenschecklist-v22";
 /* ASSETS wordt gegenereerd door build/build.mjs (npm run build:sw). Voeg je met
    de hand een bestand toe, draai die dan; anders staat het nieuwe bestand wel op
    de server maar niet in de offline cache, en dat merk je pas zonder bereik.
@@ -19,9 +19,9 @@ var ASSETS = [
   "./css/base.css", "./css/components.css", "./css/pages.css", "./css/print.css",
   "./js/i18n.js", "./js/config.js", "./js/storage.js", "./js/util.js", "./js/data.js",
   "./js/routeProvider.js", "./js/geo.js", "./js/trip.js", "./js/vehicle.js", "./js/trips.js",
-  "./js/checklist.js", "./js/facts.js", "./js/costs.js", "./js/calendar.js", "./js/countries.js",
-  "./js/planner.js", "./js/home.js", "./js/wizard.js", "./js/dashboard.js", "./js/pages.js",
-  "./js/document.js", "./js/map.js", "./js/app.js",
+  "./js/checklist.js", "./js/facts.js", "./js/actions.js", "./js/costs.js", "./js/calendar.js",
+  "./js/countries.js", "./js/planner.js", "./js/home.js", "./js/wizard.js", "./js/dashboard.js",
+  "./js/acties.js", "./js/pages.js", "./js/document.js", "./js/map.js", "./js/app.js",
   "./countries.json", "./cities.json", "./borders.json", "./zones.json", "./drukte.json",
   // Zelf gehost, zodat de app offline werkt en er niets naar Google gaat.
   // Variabele assen: één bestand per subset dekt alle gewichten.
