@@ -62,7 +62,7 @@
 <div id="app">
 
 <nav class="topbar">
-  <span class="brand" data-i18n="app.naam">Grenschecklist</span>
+  <button type="button" class="brand" data-view="home" data-i18n="app.naam">Grenschecklist</button>
   <span class="topbar-acties">
     <button type="button" class="taalknop" id="taal-toggle-mobiel"
             aria-label="Taal" data-i18n-aria="taal.kies">NL</button>
@@ -72,32 +72,64 @@
   </span>
 </nav>
 
+<!-- §3: op mobiel vier bestemmingen plus Meer. De vier zijn wat je onderweg
+     nodig hebt; alles waar je één keer naar kijkt zit achter Meer. -->
 <nav class="bottomnav">
-  <button type="button" class="bnitem active" data-view="route"><svg class="icon"><use href="#i-map"></use></svg><span data-i18n="nav.kort.route">Route</span></button>
-  <button type="button" class="bnitem" data-view="landen"><svg class="icon"><use href="#i-flag"></use></svg><span data-i18n="nav.kort.landen">Info</span></button>
-  <button type="button" class="bnitem" data-view="checklist"><svg class="icon"><use href="#i-checklist"></use></svg><span data-i18n="nav.kort.checklist">Check</span></button>
-  <button type="button" class="bnitem" data-view="reizen"><svg class="icon"><use href="#i-car"></use></svg><span data-i18n="nav.kort.reizen">Reizen</span></button>
-  <button type="button" class="bnitem" data-view="reis"><svg class="icon"><use href="#i-journey"></use></svg><span data-i18n="nav.kort.reis">Reis</span></button>
+  <button type="button" class="bnitem active" data-view="dashboard"><svg class="icon"><use href="#i-journey"></use></svg><span data-i18n="nav.kort.reis">Reis</span></button>
+  <button type="button" class="bnitem" data-view="acties"><svg class="icon"><use href="#i-checklist"></use></svg><span data-i18n="nav.kort.acties">Acties</span></button>
+  <button type="button" class="bnitem" data-view="kaart"><svg class="icon"><use href="#i-map"></use></svg><span data-i18n="nav.kort.kaart">Kaart</span></button>
+  <button type="button" class="bnitem" data-view="kosten"><svg class="icon"><use href="#i-payments"></use></svg><span data-i18n="nav.kort.kosten">Kosten</span></button>
+  <button type="button" class="bnitem" id="btn-meer" aria-expanded="false" aria-controls="meerpaneel"><svg class="icon"><use href="#i-more"></use></svg><span data-i18n="nav.kort.meer">Meer</span></button>
 </nav>
+
+<!-- Het Meer-paneel: geen aparte pagina, maar een blad over de onderbalk. -->
+<div class="meersheet" id="meerpaneel" hidden>
+  <div class="meerkaart" role="dialog" aria-modal="true" aria-labelledby="meerkop">
+    <h2 id="meerkop" data-i18n="nav.meer">Meer</h2>
+    <button type="button" class="meerrij" data-view="regels"><svg class="icon"><use href="#i-flag"></use></svg><span data-i18n="nav.regels">Regels per land</span></button>
+    <button type="button" class="meerrij" data-view="document"><svg class="icon"><use href="#i-doc"></use></svg><span data-i18n="nav.document">Reisdocument</span></button>
+    <button type="button" class="meerrij" data-view="reis"><svg class="icon"><use href="#i-journey"></use></svg><span data-i18n="nav.reis">Reiservaring</span></button>
+    <button type="button" class="meerrij" data-view="reizen"><svg class="icon"><use href="#i-car"></use></svg><span data-i18n="nav.reizen">Mijn reizen</span></button>
+    <button type="button" class="meerrij" data-view="home"><svg class="icon"><use href="#i-info"></use></svg><span data-i18n="nav.home">Over deze app</span></button>
+    <label class="switchrow">
+      <span data-i18n="nav.donkereModus">Donkere modus</span>
+      <span class="switch">
+        <input type="checkbox" id="dark-toggle-meer">
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+      </span>
+    </label>
+    <button type="button" class="btn wide" id="meer-sluit" data-i18n="alg.sluiten">Sluiten</button>
+  </div>
+</div>
 
 <aside class="sidebar">
   <div class="brandblock">
-    <div class="brand" data-i18n="app.naam">Grenschecklist</div>
-    <div class="tagline" data-i18n="app.tagline">Klaar voor de grens</div>
+    <button type="button" class="brand" data-view="home" data-i18n="app.naam">Grenschecklist</button>
+    <div class="tagline" data-i18n="app.tagline">Je auto-reisassistent voor Europa</div>
   </div>
   <button type="button" class="btn primary newtrip" id="btn-reset">
-    <svg class="icon sm"><use href="#i-add"></use></svg> <span data-i18n="nav.nieuweRit">Nieuwe rit</span>
+    <svg class="icon sm"><use href="#i-add"></use></svg> <span data-i18n="nav.nieuweRit">Nieuwe reis</span>
   </button>
   <nav class="sidenav">
-    <button type="button" class="navitem active" data-view="route" aria-current="page">
-      <svg class="icon"><use href="#i-map"></use></svg> <span data-i18n="nav.route">Routeplanner</span>
+    <button type="button" class="navitem active" data-view="dashboard" aria-current="page">
+      <svg class="icon"><use href="#i-journey"></use></svg> <span data-i18n="nav.reisPagina">Reis</span>
     </button>
-    <button type="button" class="navitem" data-view="landen">
-      <svg class="icon"><use href="#i-flag"></use></svg> <span data-i18n="nav.landen">Landeninformatie</span>
+    <button type="button" class="navitem" data-view="acties">
+      <svg class="icon"><use href="#i-checklist"></use></svg> <span data-i18n="nav.acties">Acties</span>
     </button>
-    <button type="button" class="navitem" data-view="checklist">
-      <svg class="icon"><use href="#i-checklist"></use></svg> <span data-i18n="nav.checklist">Checklist</span>
+    <button type="button" class="navitem" data-view="kaart">
+      <svg class="icon"><use href="#i-map"></use></svg> <span data-i18n="nav.kaart">Kaart</span>
     </button>
+    <button type="button" class="navitem" data-view="kosten">
+      <svg class="icon"><use href="#i-payments"></use></svg> <span data-i18n="nav.kosten">Kosten</span>
+    </button>
+    <button type="button" class="navitem" data-view="regels">
+      <svg class="icon"><use href="#i-flag"></use></svg> <span data-i18n="nav.regels">Regels per land</span>
+    </button>
+    <button type="button" class="navitem" data-view="document">
+      <svg class="icon"><use href="#i-doc"></use></svg> <span data-i18n="nav.document">Reisdocument</span>
+    </button>
+    <div class="sidenav-scheiding"></div>
     <button type="button" class="navitem" data-view="reizen">
       <svg class="icon"><use href="#i-car"></use></svg> <span data-i18n="nav.reizen">Mijn reizen</span>
     </button>
@@ -124,17 +156,36 @@
       </select>
     </label>
     <p class="hint taalnotitie" id="taal-notitie" hidden></p>
-    <span class="navitem disabled" aria-disabled="true">
-      <svg class="icon"><use href="#i-help"></use></svg> <span data-i18n="nav.help">Help</span>
-    </span>
     <p class="rstat hint" id="offline-state"></p>
   </div>
 </aside>
 
 <main class="main">
-<section class="view view-route" id="view-route">
+
+<!-- ================= Homepage (§4) ================= -->
+<section class="view view-page view-home" id="view-home" hidden>
+  <div id="home-wrap"></div>
+</section>
+
+<!-- ================= Reiswizard (§5) ================= -->
+<section class="view view-page view-wizard" id="view-wizard" hidden>
+  <div id="wizard-wrap"></div>
+</section>
+
+<!-- ================= Reisdashboard (§6) ================= -->
+<section class="view view-page" id="view-dashboard" hidden>
+  <div id="dashboard-wrap"></div>
+</section>
+
+<!-- ================= Acties (§7) ================= -->
+<section class="view view-page" id="view-acties" hidden>
+  <div id="checklist-wrap"></div>
+</section>
+
+<!-- ================= Kaart ================= -->
+<section class="view view-kaart" id="view-kaart" hidden>
   <section class="panel-route">
-    <h1 data-i18n="planner.titel">Route Plan</h1>
+    <h1 data-i18n="planner.titel">Route</h1>
 
     <div class="fields" id="planner" hidden>
       <div class="field">
@@ -153,15 +204,11 @@
         <ul class="results" id="to-res" role="listbox"></ul>
       </div>
       <button type="button" class="btn primary wide" id="btn-route" data-i18n="planner.berekenen">Route berekenen</button>
-      <p class="rstat" id="route-status"></p>
+      <p class="rstat" id="route-status" role="status" aria-live="polite"></p>
       <div class="handmatig" id="handmatig" hidden></div>
     </div>
 
     <div class="statgrid" id="stat-cards" hidden></div>
-
-    <button type="button" class="btn primary wide" id="btn-bekijk-reis" hidden>
-      <svg class="icon sm"><use href="#i-journey"></use></svg> <span data-i18n="planner.bekijkReis">Bekijk je reiservaring</span>
-    </button>
 
     <div id="landenblok" hidden>
       <h3 data-i18n="planner.landenOpRoute">Landen op deze route</h3>
@@ -171,7 +218,7 @@
     <div class="milieukaart" id="milieukaart" hidden></div>
 
     <details class="profile" id="profile">
-      <summary><span class="lbl" data-i18n="profiel.kop">Voertuigprofiel</span><span class="val" id="profile-sum">—</span></summary>
+      <summary><span class="lbl" data-i18n="profiel.kop">Voertuig</span><span class="val" id="profile-sum">—</span></summary>
       <div class="pbody">
         <div class="row2">
           <div class="field">
@@ -189,6 +236,7 @@
             <select id="fuel">
               <option value="petrol" data-i18n="profiel.benzine">Benzine</option>
               <option value="diesel" data-i18n="profiel.diesel">Diesel</option>
+              <option value="hybride" data-i18n="profiel.hybride">Hybride</option>
               <option value="ev" data-i18n="profiel.ev">Elektrisch of waterstof</option>
             </select>
           </div>
@@ -208,7 +256,8 @@
             <label for="vtype" data-i18n="profiel.voertuig">Voertuig</label>
             <select id="vtype">
               <option value="auto" data-i18n="profiel.auto">Personenauto</option>
-              <option value="aanhanger" data-i18n="profiel.aanhanger">Met aanhanger of caravan</option>
+              <option value="caravan" data-i18n="profiel.caravan">Auto + caravan</option>
+              <option value="aanhanger" data-i18n="profiel.aanhanger">Auto + aanhanger</option>
               <option value="camper" data-i18n="profiel.camper">Camper</option>
             </select>
           </div>
@@ -237,18 +286,27 @@
   </section>
 </section>
 
-<section class="view view-page" id="view-landen" hidden>
+<!-- ================= Kosten ================= -->
+<section class="view view-page" id="view-kosten" hidden>
+  <div id="kosten-wrap"></div>
+</section>
+
+<!-- ================= Regels per land ================= -->
+<section class="view view-page" id="view-regels" hidden>
   <div id="land-detail"></div>
 </section>
 
-<section class="view view-page" id="view-checklist" hidden>
-  <div id="checklist-wrap"></div>
+<!-- ================= Reisdocument ================= -->
+<section class="view view-page" id="view-document" hidden>
+  <div id="document-wrap"></div>
 </section>
 
+<!-- ================= Mijn reizen ================= -->
 <section class="view view-page" id="view-reizen" hidden>
   <div id="reizen-wrap"></div>
 </section>
 
+<!-- ================= Reiservaring ================= -->
 <section class="view view-page" id="view-reis" hidden>
   <div id="reis-wrap"></div>
 </section>
@@ -261,20 +319,26 @@
      voor app.js (die onderaan de boel start); de rest is bovenin allemaal
      functiedeclaraties en losse var-toewijzingen. -->
 <script src="js/i18n.js"></script>          <!-- vertalingen; wordt door alles gelezen -->
-<script src="js/config.js"></script>        <!-- sleutels, drempels, werkgeheugen -->
+<script src="js/config.js"></script>        <!-- sleutels, drempels, geladen data -->
 <script src="js/storage.js"></script>       <!-- localStorage en thema -->
 <script src="js/util.js"></script>          <!-- escapen, formatteren, vlaggen, iconen -->
 <script src="js/data.js"></script>          <!-- regeldata laden, met terugval -->
 <script src="js/routeProvider.js"></script> <!-- route- en geocodediensten achter een interface -->
 <script src="js/geo.js"></script>           <!-- landen, zones en tolpunten uit de routegeometrie -->
+<script src="js/trip.js"></script>          <!-- het trip-object: de bron van waarheid -->
 <script src="js/vehicle.js"></script>       <!-- voertuigprofiel en milieuzone-oordeel -->
-<script src="js/trips.js"></script>         <!-- opgeslagen ritten -->
-<script src="js/checklist.js"></script>     <!-- uitrustingsgroepen en taken -->
-<script src="js/costs.js"></script>         <!-- tol -->
+<script src="js/trips.js"></script>         <!-- de lijst opgeslagen reizen -->
+<script src="js/checklist.js"></script>     <!-- de actie-engine -->
+<script src="js/facts.js"></script>         <!-- feiten, vertrouwen en boetekans -->
+<script src="js/costs.js"></script>         <!-- tol en de kostenpagina -->
 <script src="js/calendar.js"></script>      <!-- drukte per dag -->
 <script src="js/countries.js"></script>     <!-- landkaart-onderdelen en correctielink -->
-<script src="js/planner.js"></script>       <!-- de van/naar-velden en het routepaneel -->
-<script src="js/pages.js"></script>         <!-- de vier paginarenderers -->
+<script src="js/planner.js"></script>       <!-- de plaatsvelden en de routeberekening -->
+<script src="js/home.js"></script>          <!-- homepage -->
+<script src="js/wizard.js"></script>        <!-- de reiswizard in vier stappen -->
+<script src="js/dashboard.js"></script>     <!-- het reisdashboard -->
+<script src="js/pages.js"></script>         <!-- acties, regels, reizen, reiservaring -->
+<script src="js/document.js"></script>      <!-- reisdocument en print -->
 <script src="js/map.js"></script>           <!-- routeschets -->
 <script src="js/app.js"></script>           <!-- orkestratie en start — moet als laatste -->
 </body>

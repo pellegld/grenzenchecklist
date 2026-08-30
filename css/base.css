@@ -21,6 +21,11 @@
   --amber:#f59e0b; --amber-container:rgba(245,158,11,.10); --amber-line:rgba(245,158,11,.32);
   --amber-ink:#7a5205;
   --eco:#6b8e23;
+  /* Groen voor "in orde" en teal als rustig accent (§23). Ze staan los van
+     --secondary: dat is de knopkleur, en een status mag niet dezelfde kleur
+     hebben als iets waar je op kunt drukken. */
+  --ok:#2f8f5b; --ok-container:rgba(47,143,91,.10); --ok-line:rgba(47,143,91,.3);
+  --teal:#0e7c7b; --teal-container:rgba(14,124,123,.08); --teal-line:rgba(14,124,123,.25);
   --background:#f7f9fb;
   --topbar-bg:rgba(247,249,251,.9);
   --map-alt:#dfe6ea;
@@ -68,6 +73,8 @@
     --amber:#ffc267; --amber-container:rgba(255,194,103,.14); --amber-line:rgba(255,194,103,.4);
     --amber-ink:#ffdca3;
     --eco:#a0cf62;
+    --ok:#7bd6a2; --ok-container:rgba(123,214,162,.14); --ok-line:rgba(123,214,162,.34);
+    --teal:#4fd1c5; --teal-container:rgba(79,209,197,.12); --teal-line:rgba(79,209,197,.3);
     --background:#0f1420;
     --topbar-bg:rgba(15,20,32,.85);
     --map-alt:#1a2233;
@@ -85,6 +92,8 @@
   --amber:#ffc267; --amber-container:rgba(255,194,103,.14); --amber-line:rgba(255,194,103,.4);
   --amber-ink:#ffdca3;
   --eco:#a0cf62;
+  --ok:#7bd6a2; --ok-container:rgba(123,214,162,.14); --ok-line:rgba(123,214,162,.34);
+  --teal:#4fd1c5; --teal-container:rgba(79,209,197,.12); --teal-line:rgba(79,209,197,.3);
   --background:#0f1420;
   --topbar-bg:rgba(15,20,32,.85);
   --map-alt:#1a2233;
@@ -95,6 +104,7 @@ body{background:var(--background);color:var(--on-surface);font:400 15px/1.55 var
   -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
 h1,h2,h3{font-family:var(--f-display);color:var(--primary);margin:0}
 h1{font:700 1.5rem/1.25 var(--f-display);letter-spacing:-.01em;margin:0 0 var(--sp-md)}
+@media (min-width:760px){ h1{font-size:1.9rem} }
 h3{font:700 .8rem/1.3 var(--f-display);letter-spacing:.03em;text-transform:uppercase;
   color:var(--on-surface-var);margin:0 0 var(--sp-sm)}
 p{margin:0}
@@ -107,3 +117,18 @@ a{color:var(--secondary);text-decoration:none}
   stroke-linecap:round;stroke-linejoin:round}
 .icon.sm{width:16px;height:16px}
 .icon.lg{width:32px;height:32px}
+
+/* Zichtbare focus, overal en met dezelfde vorm (§21). :focus-visible zodat een
+   muisklik geen ring achterlaat, maar toetsenbordnavigatie wel. */
+:focus-visible{outline:2px solid var(--secondary);outline-offset:2px;border-radius:var(--r-sm)}
+
+/* Alleen voor schermlezers: statuswoorden naast een icoon, zodat betekenis
+   nooit alleen aan kleur hangt (§21). */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Beweging is versiering; wie er last van heeft, krijgt hem niet (§21). */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important}
+}

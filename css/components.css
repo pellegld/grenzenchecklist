@@ -21,7 +21,7 @@
   padding:8px 4px 10px;border:0;background:none;color:var(--on-surface-var);
   font:600 .62rem/1 var(--f-display);cursor:pointer}
 .bnitem.active{color:var(--secondary)}
-@media (max-width:1023px){ .panel-route,.view-page{padding-bottom:76px} }
+@media (max-width:1023px){ .panel-route{padding-bottom:calc(84px + env(safe-area-inset-bottom))} }
 
 /* ---------------- zijbalk ---------------- */
 .sidebar{display:none}
@@ -67,7 +67,7 @@ button.navitem{appearance:none;background:none;border:0;width:100%;text-align:le
 /* ---------------- layout ----------------
    .main is a neutral positioning shell; exactly one .view is visible at a time
    (toggled via [hidden] by switchView()). The Routeplanner view keeps the
-   sidebar+map two-pane split (.view-route); the other views are simple
+   sidebar+map two-pane split (.view-kaart); the other views are simple
    scrollable pages (.view-page), like their mockups. */
 #app{display:flex;flex-direction:column;min-height:100vh}
 .main{flex:1 1 auto;display:flex;flex-direction:column}
@@ -78,7 +78,7 @@ button.navitem{appearance:none;background:none;border:0;width:100%;text-align:le
 .view{flex:1 1 auto;display:flex;flex-direction:column;min-width:0}
 .view[hidden]{display:none}
 @media (min-width:1024px){
-  .view-route{flex-direction:row;height:100vh}
+  .view-kaart{flex-direction:row;height:100vh}
 }
 .view-page{padding:var(--sp-margin-mobile);max-width:1280px;margin:0 auto;width:100%}
 @media (min-width:1024px){
