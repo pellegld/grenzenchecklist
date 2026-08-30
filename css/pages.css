@@ -504,7 +504,9 @@ button.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;t
 .statustellers .s-ok{border-color:var(--ok-line);background:var(--ok-container)}
 .statustellers .s-ok .icon,.statustellers .s-ok b{color:var(--ok)}
 .statustellers .s-todo{border-color:var(--amber-line);background:var(--amber-container)}
-.statustellers .s-todo .icon,.statustellers .s-todo b{color:var(--amber)}
+/* --amber is de vlakkleur; op een amber vlak is hij zelf onleesbaar (1,99:1).
+   --amber-ink is de tekstvariant en haalt 5,7:1 in beide thema's. */
+.statustellers .s-todo .icon,.statustellers .s-todo b{color:var(--amber-ink)}
 .statustellers .s-bad{border-color:var(--error);background:var(--error-container)}
 .statustellers .s-bad .icon,.statustellers .s-bad b{color:var(--error)}
 .statustellers .s-info .icon{color:var(--secondary)}

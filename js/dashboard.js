@@ -50,8 +50,8 @@ function dashboardVoortgangHTML(trip){
 
   var tellers = [
     { klasse:"s-ok",   icoon:"check",   n:tel.gedaan,   label:i18n("dashboard.geregeld") },
-    { klasse:"s-todo", icoon:"warning", n:tel.open,     label:i18n("dashboard.acties") },
-    { klasse:"s-bad",  icoon:"block",   n:tel.blockers, label:i18n("dashboard.problemen") },
+    { klasse:"s-todo", icoon:"warning", n:tel.open,     label:i18nAantal("dashboard.acties", tel.open) },
+    { klasse:"s-bad",  icoon:"block",   n:tel.blockers, label:i18nAantal("dashboard.problemen", tel.blockers) },
     { klasse:"s-info", icoon:"info",    n:tel.warnings, label:i18n("dashboard.waarschuwingen") }
   ].filter(function(t){ return t.n > 0 || t.klasse === "s-ok" || t.klasse === "s-todo"; });
 

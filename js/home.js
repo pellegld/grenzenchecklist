@@ -40,8 +40,8 @@ function voorbeeldKaartHTML(){
 
       '<ul class="vbstatus">' +
         '<li class="s-ok"><b>' + VOORBEELD.gedaan + "</b> " + esc(i18n("dashboard.geregeld")) + "</li>" +
-        '<li class="s-todo"><b>' + VOORBEELD.acties + "</b> " + esc(i18n("dashboard.acties")) + "</li>" +
-        '<li class="s-bad"><b>' + VOORBEELD.problemen + "</b> " + esc(i18n("dashboard.problemen")) + "</li>" +
+        '<li class="s-todo"><b>' + VOORBEELD.acties + "</b> " + esc(i18nAantal("dashboard.acties", VOORBEELD.acties)) + "</li>" +
+        '<li class="s-bad"><b>' + VOORBEELD.problemen + "</b> " + esc(i18nAantal("dashboard.problemen", VOORBEELD.problemen)) + "</li>" +
       "</ul>" +
 
       '<p class="vbkosten"><span>' + esc(i18n("home.geschatteKosten")) + "</span>" +
