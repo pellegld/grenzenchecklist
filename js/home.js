@@ -27,7 +27,7 @@ function voorbeeldKaartHTML(){
   return (
     '<figure class="voorbeeldkaart">' +
       '<figcaption class="voorbeeldlabel">' + esc(i18n("home.voorbeeldLabel")) + "</figcaption>" +
-      '<div class="vbkop"><h3>' + esc(VOORBEELD.van) + " → " + esc(VOORBEELD.naar) + "</h3>" +
+      '<div class="vbkop"><h2>' + esc(VOORBEELD.van) + " → " + esc(VOORBEELD.naar) + "</h2>" +
         '<div class="vbvlaggen">' + vlaggen + "</div></div>" +
       '<p class="vbmeta">' +
         esc(getal(VOORBEELD.km) + " " + i18n("planner.km")) + " · " + esc(VOORBEELD.duur) + " · " +
@@ -69,7 +69,7 @@ function verderKaartHTML(){
   var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
   return '<div class="verderkaart">' +
     "<div><span class=\"lbl\">" + esc(i18n("home.jeReis")) + "</span>" +
-      "<h3>" + esc(TRIP.naam) + "</h3>" +
+      "<h2>" + esc(TRIP.naam) + "</h2>" +
       '<p class="hint">' + esc(i18n("checklist.gereed", { pct:pct })) + " · " +
         esc(i18nAantal("dashboard.openActies", tel.open)) + "</p></div>" +
     '<button type="button" class="btn primary" data-view="dashboard">' +

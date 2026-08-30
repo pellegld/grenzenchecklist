@@ -1,88 +1,8 @@
 "use strict";
-/* De vier paginarenderers: Checklist, Landeninformatie, Mijn Reizen, Reiservaring.
-   
-   Alle vier lezen dezelfde databronnen als de rest van de app; alleen de
-   renderlaag verschilt per pagina. */
+/* Paginarenderers: Regels per land, Mijn reizen, Reiservaring.
 
-/* ================= Checklist-pagina =================
-   Hergebruikt buildGroups()/buildTasks()/checklistTelling() ongewijzigd —
-   alleen de render-laag is nieuw (bento-kaarten i.p.v. de oude 6-koloms grid). */
-function bentoRow(key, titel, sub, badge, extraClass, vlaggenHTML, printNamen){
-  var done = isAangevinkt(TRIP, key);
-  return '<div class="chkrow' + (done ? " done" : "") + (extraClass ? " " + extraClass : "") + '">' +
-    '<label class="chklabel">' +
-      '<input type="checkbox" data-tick="' + esc(key) + '"' + (done ? " checked" : "") + '>' +
-      '<span class="chktext"><span class="ttl">' + esc(titel) + (badge || "") + '</span>' +
-        (sub ? '<span class="sub">' + esc(sub) + '</span>' : "") + (vlaggenHTML || "") +
-        /* Vlaggen zijn CSS-achtergronden en drukken niet af; print.css wisselt
-           deze regel ervoor in de plaats (zie .printnamen). */
-        (printNamen ? '<span class="sub printnamen">' + esc(printNamen) + '</span>' : "") + '</span>' +
-    '</label>' +
-    (sub ? '<button type="button" class="infobtn" title="' + esc(sub) + '">' + iconUse("info") + '</button>' : "") +
-  '</div>';
-}
-
-/* De landnamen achter een rij vlaggen, voor de printuitdraai. */
-function landNamen(fel, dof){
-  var namen = fel.map(function(c){ return c.name; });
-  if(dof && dof.length) namen.push("(" + dof.map(function(c){ return c.name; }).join(" · ") + ")");
-  return namen.join(" · ");
-}
-
-function renderChecklistPagina(){
-  var wrap = document.getElementById("checklist-wrap");
-  if(!wrap) return;
-  var G = buildGroups(TRIP), T = buildTasks(TRIP), tel = checklistTelling(TRIP);
-  var pct = tel.totaal ? Math.round(tel.gedaan / tel.totaal * 100) : 0;
-
-  var docRows = DOC_ITEMS.map(function(d){
-    return bentoRow("doc:" + d.key, docNaam(d), docInfo(d));
-  }).join("");
-
-  function uitrustingRij(row, badge){
-    var fel = row.main.map(function(e){ return e.country; });
-    var dof = row.other.map(function(e){ return e.country; });
-    return bentoRow(row.g.key, row.g.label, (row.main[0] && row.main[0].item.note) || "",
-      badge, "", vlaggenRij(fel, dof), landNamen(fel, dof));
-  }
-  var autoRows = G.must.map(function(row){
-    return uitrustingRij(row, '<span class="pill">' + esc(i18n("checklist.verplicht")) + '</span>');
-  }).concat(G.advice.map(function(row){
-    return uitrustingRij(row, "");
-  })).join("");
-
-  var landRows = T.todo.map(function(t){
-    var isZone = /^zone:/.test(t.key);
-    var landen = t.cs || (t.c ? [t.c] : []);
-    return bentoRow("task:" + t.key, t.what, t.meta || "",
-      isZone ? '<span class="pill">' + esc(i18n("checklist.verplicht")) + '</span>' : "",
-      isZone ? "zone" : "", vlaggenRij(landen, []), landNamen(landen, []));
-  }).join("");
-
-  var blokHtml = T.blockers.length
-    ? '<div class="blockerbar">' + iconUse("block") + '<div>' +
-      T.blockers.map(function(t){ return "<p><b>" + esc(t.c.name) + ".</b> " + esc(t.what) + "</p>"; }).join("") +
-      "</div></div>"
-    : "";
-
-  wrap.innerHTML =
-    "<h1>" + esc(i18n("checklist.titel")) + "</h1>" +
-    '<div class="progresscard"><div class="prow"><span class="plbl">' +
-      esc(i18n("checklist.voortgang")) + '</span>' +
-      '<span class="pval">' + esc(i18n("checklist.gereed", { pct:pct })) + '</span></div>' +
-      '<div class="progressbar"><i style="width:' + pct + '%"></i></div></div>' +
-    blokHtml +
-    '<div class="bento">' +
-      '<div class="bentocard"><div class="bentohead"><div class="bentobubble">' + iconUse("doc") + '</div>' +
-        "<h2>" + esc(i18n("checklist.documenten")) + "</h2></div>" + docRows + "</div>" +
-      '<div class="bentocard"><div class="bentohead"><div class="bentobubble">' + iconUse("tool") + '</div>' +
-        "<h2>" + esc(i18n("checklist.uitrusting")) + "</h2></div>" +
-        (autoRows || '<p class="hint">' + esc(i18n("checklist.geenUitrusting")) + "</p>") + "</div>" +
-      '<div class="bentocard wide"><div class="bentohead"><div class="bentobubble">' + iconUse("globe") + '</div>' +
-        "<h2>" + esc(i18n("checklist.landspecifiek")) + "</h2></div>" +
-        (landRows || '<p class="hint">' + esc(i18n("checklist.geenActies")) + "</p>") + "</div>" +
-    "</div>";
-}
+   De actiepagina staat in js/acties.js — die is sinds §7 een eigen ding
+   geworden en niet meer de "checklist" die hier ooit stond. */
 
 /* ================= Landeninformatie-pagina =================
    Doorbladerbaar voor elk land in countries.json (niet alleen de route),
@@ -158,90 +78,229 @@ function landSwitcherHTML(){
   );
 }
 
-function landDetailHTML(c){
-  var eqCards = (c.mandatoryEquipment || []).map(function(it){
-    var must = effectiveStatus(it, c, TRIP) === "must";
-    return '<div class="eqcard' + (must ? " must" : "") + '">' +
-      '<div class="eqicon">' + iconUse(must ? "warning" : "info") + "</div>" +
-      "<div><h4>" + esc(it.item) +
-      (must ? ' <span class="pill">' + esc(i18n("checklist.verplicht")) + '</span>' : "") + "</h4>" +
-      "<p>" + esc(it.note || "") + "</p></div></div>";
-  }).join("") || '<p class="hint">' + esc(i18n("landen.geenUitrusting")) + "</p>";
+/* ---------------- de regelpagina per land (§15) ----------------
 
-  var z = c.environmentalZone || {}, tv = c.tollVignette || {}, tr = c.tollRoads || {};
-  /* note/name komen uit countries.json en blijven Nederlands (§17A); alleen de
-     terugvaltekst eromheen is vertaald. */
+   De oude pagina zette alles naast elkaar: uitrusting, milieuzone, tol,
+   snelheden, verboden. Alles even groot, en dus geen antwoord op de twee vragen
+   waarmee iemand die pagina opent:
+
+     mag ik hier rijden, en moet ik iets regelen?
+
+   Die twee staan nu bovenaan als conclusie, met één zin uitleg. De rest — de
+   juridische en praktische details — staat eronder in uitklapbare secties,
+   waarvan de kop zelf al het belangrijkste feit draagt ("Snelheid · 130 km/u op
+   de snelweg"). Dat is progressive disclosure: je hoeft niets open te klappen
+   om te weten waar het over gaat, en de conclusie is nooit ondergeschikt aan de
+   details. */
+
+/* Het oordeel in woord én teken, nooit alleen in kleur (§21). */
+function oordeelHTML(niveau, woord, uitleg){
+  var teken = { ja:"✓", nee:"✗", mits:"!", check:"?" }[niveau] || "?";
+  return '<p class="oordeel o-' + niveau + '">' +
+      '<span class="teken" aria-hidden="true">' + teken + "</span>" +
+      "<b>" + esc(woord) + "</b></p>" +
+    (uitleg ? '<p class="oordeeluitleg">' + esc(uitleg) + "</p>" : "");
+}
+
+/* Mag ik hier rijden? Het milieuzone-oordeel is het enige in de data dat een
+   auto écht kan tegenhouden; de rest zijn verplichtingen, geen verboden. */
+function magIkRijdenHTML(c){
+  var v = zoneVerdict(c, TRIP);
+  var niveau = v.level === "bad" ? "nee" : v.level === "unknown" ? "check" : "ja";
+  var woord = i18n("regels.mag." + niveau);
+  return '<section class="oordeelkaart" aria-labelledby="vraag-rijden">' +
+    '<h2 id="vraag-rijden">' + esc(i18n("regels.magIkRijden")) + "</h2>" +
+    oordeelHTML(niveau, woord, v.text) + "</section>";
+}
+
+/* Moet ik iets regelen? Precies de acties die voor dit land op deze reis open
+   staan — dezelfde lijst als op de actiepagina, niet een tweede waarheid. */
+function moetIkRegelenHTML(c){
+  var acties = bouwActies(TRIP).filter(function(a){
+    return !a.afgevinkt && a.afvinkbaar && a.landen.length &&
+      a.landen.filter(function(l){ return l.code === c.code; }).length;
+  });
+  var opRoute = tripLanden(TRIP).indexOf(c.code) !== -1;
+
+  var body;
+  if(!opRoute){
+    body = oordeelHTML("check", i18n("regels.regel.nietOpRoute"), i18n("regels.nietOpRouteUitleg"));
+  } else if(!acties.length){
+    body = oordeelHTML("ja", i18n("regels.regel.nee"), i18n("regels.regelNeeUitleg"));
+  } else {
+    body = oordeelHTML("mits", i18nAantal("regels.regel.ja", acties.length), "") +
+      '<ul class="oordeelacties">' + acties.map(function(a){
+        return "<li>" + esc(a.wat) +
+          (a.deadline ? ' <span class="deadlinechip u-' + esc(a.deadline.urgentie) + '">' +
+            esc(deadlineTekst(a.deadline)) + "</span>" : "") + "</li>";
+      }).join("") + "</ul>" +
+      '<button type="button" class="tekstknop" data-view="acties">' +
+        esc(i18n("regels.naarActies")) + "</button>";
+  }
+  return '<section class="oordeelkaart" aria-labelledby="vraag-regelen">' +
+    '<h2 id="vraag-regelen">' + esc(i18n("regels.moetIkRegelen")) + "</h2>" + body + "</section>";
+}
+
+/* Een uitklapbare sectie waarvan de kop het belangrijkste feit al draagt. */
+function detailSectie(sleutel, samenvatting, inhoud){
+  if(!inhoud) return "";
+  return '<details class="regelsectie"><summary>' +
+    "<span class=\"sectienaam\">" + esc(i18n("regels.sectie." + sleutel)) + "</span>" +
+    (samenvatting ? '<span class="sectiekop">' + esc(samenvatting) + "</span>" : "") +
+    "</summary><div class=\"sectiebody\">" + inhoud + "</div></details>";
+}
+
+/* Bron plus controledatum plus niveau, bij elke sectie (§13, §16). */
+function sectieBronHTML(feit, c){
+  var h = herkomstVan(feit, c);
+  if(!h.factId && !h.sourceUrl) return "";
+  return '<p class="bronregel">' + confidenceChipHTML(h) +
+    (h.sourceUrl ? " " + herkomstRegelHTML({ bron:h }) : "") +
+    (c ? '<span class="melden">' + correctionLinks(c, h.factId) + "</span>" : "") + "</p>";
+}
+
+function speedRij(label, val){
+  if(!val) return "";
+  var nummer = String(val).match(/\d+/);
+  var bord = nummer
+    ? '<div class="speedsign"><span>' + esc(nummer[0]) + "</span></div>"
+    : '<div class="speedsign leeg">' + iconUse("speed") + "</div>";
+  return '<div class="speedrow">' + bord +
+    '<div class="speedtext"><span class="slabel">' + esc(label) + '</span>' +
+    '<span class="sval">' + esc(val) + "</span></div></div>";
+}
+
+function snelheidSectie(c){
+  var s = c.speedLimits || {}, n = s.normal || {}, wt = s.wet || {};
+  var rijen = speedRij(i18n("landen.snelweg"), n.motorway) +
+    speedRij(i18n("landen.autoweg"), n.expressway) +
+    speedRij(i18n("landen.buitenDeKom"), n.rural) +
+    speedRij(i18n("landen.bebouwdeKom"), n.builtUp);
+  if(!rijen) return "";
+
+  var wetTxt = (wt.motorway || wt.expressway || wt.rural)
+    ? [wt.motorway && i18n("landen.regenSnelweg", { v:wt.motorway }),
+       wt.expressway && i18n("landen.regenAutoweg", { v:wt.expressway }),
+       wt.rural && i18n("landen.regenBuiten", { v:wt.rural })].filter(Boolean).join(", ")
+    : (wt.note || "");
+
+  var inhoud = rijen +
+    (wetTxt ? '<div class="speednote"><b>' + esc(i18n("landen.regen")) + "</b> " + esc(wetTxt) + "</div>" : "") +
+    (s.notes ? '<p class="sectienoot">' + esc(s.notes) + "</p>" : "") +
+    sectieBronHTML(s, c);
+  return detailSectie("snelheid", n.motorway ? kortZin(n.motorway) : "", inhoud);
+}
+
+function uitrustingSectie(c){
+  var items = c.mandatoryEquipment || [];
+  if(!items.length) return "";
+  var must = items.filter(function(it){ return effectiveStatus(it, c, TRIP) === "must"; });
+  var advies = items.filter(function(it){ return effectiveStatus(it, c, TRIP) === "advice"; });
+  var na = items.filter(function(it){ return effectiveStatus(it, c, TRIP) === "na"; });
+
+  function blok(lijst, sleutel){
+    if(!lijst.length) return "";
+    return '<h4 class="eqkop">' + esc(i18n("regels.uitrusting." + sleutel)) + "</h4>" +
+      '<p class="eqtoelichting">' + esc(i18n("regels.uitrusting." + sleutel + ".uitleg")) + "</p>" +
+      '<ul class="eqlijst">' + lijst.map(function(it){
+        return '<li><span class="eqnaam">' + esc(it.item) + "</span>" +
+          (it.note ? '<span class="eqnote">' + esc(it.note) + "</span>" : "") + "</li>";
+      }).join("") + "</ul>";
+  }
+
+  /* Het onderscheid verplicht / alleen-voor-dat-kenteken / aanbevolen is de kern
+     van deze app en krijgt daarom drie eigen koppen met uitleg, in plaats van
+     één lijst met badges. */
+  return detailSectie("uitrusting",
+    i18n("regels.uitrustingKop", { must:must.length, advies:advies.length }),
+    blok(must, "verplicht") + blok(na, "kenteken") + blok(advies, "aanbevolen") +
+    sectieBronHTML(items[0], c));
+}
+
+function milieuSectie(c){
+  var z = c.environmentalZone || {};
+  var tv = c.tollVignette || {}, tr = c.tollRoads || {};
   var milieuTxt = z.required ? (z.note || z.name || i18n("landen.milieuVereist"))
-                              : (z.note || i18n("landen.geenMilieuzone"));
+                             : (z.note || i18n("landen.geenMilieuzone"));
   var tolTxt = tv.required ? (tv.note || tv.name || i18n("landen.vignetVerplicht"))
              : (tr.perKm
                 ? i18n("landen.tolwegen", { tarief:getal(tr.perKm, { minimumFractionDigits:2, maximumFractionDigits:2 }) }) +
                   (tr.note ? " " + tr.note : "")
                 : i18n("landen.geenTolinfo"));
 
-  var s = c.speedLimits || {}, n = s.normal || {}, wt = s.wet || {};
-  function speedRij(label, val){
-    if(!val) return "";
-    var nummer = String(val).match(/\d+/);
-    var bord = nummer
-      ? '<div class="speedsign"><span>' + esc(nummer[0]) + "</span></div>"
-      : '<div class="speedsign leeg">' + iconUse("speed") + "</div>";
-    return '<div class="speedrow">' + bord +
-      '<div class="speedtext"><span class="slabel">' + esc(label) + '</span>' +
-      '<span class="sval">' + esc(val) + "</span></div></div>";
-  }
-  var speedRows = speedRij(i18n("landen.snelweg"), n.motorway) +
-    speedRij(i18n("landen.autoweg"), n.expressway) +
-    speedRij(i18n("landen.buitenDeKom"), n.rural) +
-    speedRij(i18n("landen.bebouwdeKom"), n.builtUp);
-  var wetTxt = (wt.motorway || wt.expressway || wt.rural)
-    ? [wt.motorway && i18n("landen.regenSnelweg", { v:wt.motorway }),
-       wt.expressway && i18n("landen.regenAutoweg", { v:wt.expressway }),
-       wt.rural && i18n("landen.regenBuiten", { v:wt.rural })]
-        .filter(Boolean).join(", ")
-    : (wt.note || "");
+  var inhoud =
+    '<h4 class="eqkop">' + esc(i18n("landen.milieuzone")) + "</h4>" +
+    "<p>" + esc(milieuTxt) + "</p>" +
+    (z.howToGet ? '<p class="hoe"><b>' + esc(i18n("regels.hoeKrijgJeHet")) + "</b> " + esc(z.howToGet) + "</p>" : "") +
+    sectieBronHTML(z, c) +
+    '<h4 class="eqkop">' + esc(i18n("landen.tol")) + "</h4>" +
+    "<p>" + esc(tolTxt) + "</p>" +
+    (tv.howToGet ? '<p class="hoe"><b>' + esc(i18n("regels.hoeKrijgJeHet")) + "</b> " + esc(tv.howToGet) + "</p>" : "") +
+    sectieBronHTML(tv.required ? tv : tr, c);
 
-  var verboden = (c.quirks || []).filter(function(q){ return /verboden/i.test(quirkTekst(q)); });
-  var verbodItems = verboden.length
-    ? verboden.map(function(q){
-        return "<li>" + iconUse("block") + "<div><h4>" + esc(i18n("landen.letop")) + "</h4><p>" +
-          esc(quirkTekst(q)) + "</p></div></li>";
-      }).join("")
-    : "<li>" + iconUse("info") + "<div><h4>" + esc(i18n("landen.nietsGeregistreerd")) + "</h4><p>" +
-      esc(i18n("landen.geenVerboden")) + "</p></div></li>";
+  var kop = z.required
+    ? (tv.required ? i18n("regels.milieuKop.beide") : i18n("regels.milieuKop.zone"))
+    : (tv.required ? i18n("regels.milieuKop.vignet") : i18n("regels.milieuKop.geen"));
+  return detailSectie("milieu", kop, inhoud);
+}
 
+function winterSectie(c){
+  var w = c.winterEquipment;
+  if(!w || !w.required || w.required === "nee") return "";
+  return detailSectie("winter", w.period ? kortZin(w.period) : "",
+    "<p>" + esc(w.note || "") + "</p>" + sectieBronHTML(w, c));
+}
+
+function regelsSectie(c){
+  var quirks = c.quirks || [];
+  if(!quirks.length) return "";
+  return detailSectie("bijzonder", i18nAantal("regels.bijzonderKop", quirks.length),
+    '<ul class="quirklijst">' + quirks.map(function(q){
+      var verboden = /verboden/i.test(quirkTekst(q));
+      return '<li class="' + (verboden ? "verbod" : "") + '">' +
+        '<span class="teken" aria-hidden="true">' + (verboden ? "✗" : "i") + "</span>" +
+        "<span>" + esc(quirkTekst(q)) + "</span></li>";
+    }).join("") + "</ul>");
+}
+
+/* §16: bronnen bij elkaar, met de controledatum en een duidelijke link. */
+function bronnenSectie(c){
+  var bronnen = c.sources || [];
+  var inhoud = '<p class="bronnenintro">' +
+      esc(i18n("regels.bronnenIntro", { datum: fmtDate(c.lastVerified) })) + "</p>" +
+    (bronnen.length
+      ? '<ul class="bronnenlijst">' + bronnen.map(function(b){
+          return '<li><a href="' + esc(b.url) + '" target="_blank" rel="noopener">' +
+            esc(b.label) + ' <span aria-hidden="true">&rarr;</span></a></li>';
+        }).join("") + "</ul>"
+      : "") +
+    '<p class="bronacties"><span class="melden">' + correctionLinks(c, null) + "</span></p>";
+  return detailSectie("bronnen", i18nAantal("regels.bronnenKop", bronnen.length), inhoud);
+}
+
+function landDetailHTML(c){
   var foto = LAND_PHOTOS[c.code];
   var heroStyle = foto ? ' style="background-image:linear-gradient(to top,var(--navy) 0%,rgba(var(--navy-rgb),.75) 55%,rgba(var(--navy-rgb),.15) 100%),url(' + foto + ');background-size:auto,cover;background-position:center,center 35%"' : '';
   var regio = LAND_REGIO[c.code];
+  var verouderd = daysSince(c.lastVerified) > STALE_DAYS;
 
   return (
     '<div class="landherowrap">' +
       '<div class="landhero"' + heroStyle + '><div class="regio">' + flagHTML(c) +
         "<span>" + esc(i18n("landen.europa")) +
         (regio ? " · " + esc(i18n("landen.regio." + regio)) : "") + "</span></div>" +
-        "<h2>" + esc(c.name) + "</h2><p>" + esc(i18n("landen.intro")) + "</p></div>" +
+        "<h1>" + esc(c.name) + "</h1><p>" + esc(i18n("landen.intro")) + "</p></div>" +
       landSwitcherHTML() +
     "</div>" +
-    '<div class="landgrid"><div class="landmain">' +
-      '<div class="landcard"><div class="landcardhead">' + iconUse("warning") +
-      "<h3>" + esc(i18n("landen.verplichtInAuto")) + "</h3></div>" +
-      '<div class="eqgrid">' + eqCards + "</div></div>" +
-      '<div class="landcard milieupanel"><div class="landcardhead">' + iconUse("eco") +
-      "<h3>" + esc(i18n("landen.milieuEnTol")) + "</h3></div>" +
-      '<div class="milieucols">' +
-        '<div class="milieucol"><h4>' + iconUse("eco") + esc(i18n("landen.milieuzone")) + "</h4><p>" + esc(milieuTxt) + "</p></div>" +
-        '<div class="milieucol"><h4>' + iconUse("payments") + esc(i18n("landen.tol")) + "</h4><p>" + esc(tolTxt) + "</p></div>" +
-      "</div></div>" +
-    '</div><div class="landside">' +
-      '<div class="landcard"><div class="landcardhead">' + iconUse("speed") +
-      "<h3>" + esc(i18n("landen.snelheden")) + "</h3></div>" +
-      (speedRows || '<p class="hint">' + esc(i18n("landen.geenSnelheden")) + "</p>") +
-      (wetTxt ? '<div class="speednote"><b>' + esc(i18n("landen.regen")) + "</b> " + esc(wetTxt) + "</div>" : "") +
-      "</div>" +
-      '<div class="landcard verbodenpanel"><div class="landcardhead">' + iconUse("block") +
-      "<h3>" + esc(i18n("landen.striktVerboden")) + "</h3></div>" +
-      '<ul class="verbodlist">' + verbodItems + "</ul></div>" +
-    "</div></div>"
+    (verouderd
+      ? '<p class="verouderdbalk">' + iconUse("warning") +
+        esc(i18n("regels.verouderd", { datum: fmtDate(c.lastVerified) })) + "</p>"
+      : "") +
+    '<div class="regeloordeel">' + magIkRijdenHTML(c) + moetIkRegelenHTML(c) + "</div>" +
+    '<div class="regeldetails">' +
+      snelheidSectie(c) + uitrustingSectie(c) + milieuSectie(c) +
+      winterSectie(c) + regelsSectie(c) + bronnenSectie(c) +
+    "</div>"
   );
 }
 

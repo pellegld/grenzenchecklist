@@ -24,7 +24,9 @@
   /* Groen voor "in orde" en teal als rustig accent (§23). Ze staan los van
      --secondary: dat is de knopkleur, en een status mag niet dezelfde kleur
      hebben als iets waar je op kunt drukken. */
-  --ok:#2f8f5b; --ok-container:rgba(47,143,91,.10); --ok-line:rgba(47,143,91,.3);
+  /* Iets donkerder dan het groen dat je op een vlak zou zetten: dit is ook
+     tekstkleur (het vinkje in "Mag ik hier rijden? Ja") en haalt zo 5,2:1. */
+  --ok:#28794d; --ok-container:rgba(40,121,77,.10); --ok-line:rgba(40,121,77,.3);
   --teal:#0e7c7b; --teal-container:rgba(14,124,123,.08); --teal-line:rgba(14,124,123,.25);
   --background:#f7f9fb;
   --topbar-bg:rgba(247,249,251,.9);
