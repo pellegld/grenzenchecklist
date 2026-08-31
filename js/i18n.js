@@ -42,6 +42,15 @@ nl: {
   "app.tagline": "Je auto-reisassistent voor Europa",
   "app.titel": "Grenschecklist — je auto-reisassistent voor Europa",
 
+  /* ---------------- tijdelijke toegangspoort ---------------- */
+  "poort.titel": "Grenschecklist",
+  "poort.uitleg": "Deze app is tijdelijk alleen toegankelijk met een wachtwoord.",
+  "poort.label": "Wachtwoord",
+  "poort.knop": "Ontgrendelen",
+  "poort.foutOnjuist": "Onjuist wachtwoord.",
+  "poort.foutNietIngesteld": "Er is nog geen wachtwoord ingesteld voor deze site.",
+  "poort.foutNetwerk": "Controleren lukte niet — controleer je verbinding en probeer het nog eens.",
+
   "nav.route": "Routeplanner",
   "nav.landen": "Landeninformatie",
   "nav.checklist": "Checklist",
@@ -794,6 +803,15 @@ en: {
   "app.naam": "Grenschecklist",
   "app.tagline": "Your car travel assistant for Europe",
   "app.titel": "Grenschecklist — your car travel assistant for Europe",
+
+  /* ---------------- temporary access gate ---------------- */
+  "poort.titel": "Grenschecklist",
+  "poort.uitleg": "This app is temporarily only accessible with a password.",
+  "poort.label": "Password",
+  "poort.knop": "Unlock",
+  "poort.foutOnjuist": "Incorrect password.",
+  "poort.foutNietIngesteld": "No password has been set for this site yet.",
+  "poort.foutNetwerk": "Couldn't check that — check your connection and try again.",
 
   "nav.route": "Route planner",
   "nav.landen": "Country information",

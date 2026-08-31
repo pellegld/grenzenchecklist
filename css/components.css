@@ -271,3 +271,28 @@ details.disclaimer summary b{color:var(--on-surface)}
   background:none;color:var(--on-surface-var);cursor:pointer;
   font:700 .78rem/1 var(--f-display);letter-spacing:.04em;border-radius:var(--r-md)}
 .taalknop:hover{background:var(--surface-high);color:var(--secondary)}
+
+/* ---------------- de tijdelijke toegangspoort ----------------
+   Dekt alles af: hoger dan de incidentknop (z-index 35) en de grensbanner
+   (32), en zichtbaar zonder dat er JS voor nodig is — data-poort-open (gezet
+   door het scriptje in <head>) verbergt hem pas, dus zonder JS blijft de
+   poort standaard dicht in plaats van standaard open. */
+.poortwrap{position:fixed;inset:0;z-index:200;background:var(--navy);
+  display:flex;align-items:center;justify-content:center;padding:var(--sp-md)}
+html[data-poort-open] .poortwrap{display:none}
+.poortkaart{width:100%;max-width:22rem;background:var(--surface-lowest);
+  border-radius:var(--r-xl);box-shadow:var(--shadow-2);padding:var(--sp-lg) var(--sp-md);
+  display:flex;flex-direction:column;gap:var(--sp-sm)}
+.poortkaart h1{margin:0;font:700 1.3rem/1.2 var(--f-display);color:var(--on-surface)}
+.poortkaart p{margin:0;font:500 .88rem/1.5 var(--f-body);color:var(--on-surface-var)}
+.poortkaart label{display:block;font:600 .72rem/1 var(--f-display);letter-spacing:.04em;
+  text-transform:uppercase;color:var(--on-surface-var);margin:var(--sp-xs) 0 6px}
+.poortkaart input[type=password]{width:100%;padding:11px var(--sp-sm);border:1px solid var(--outline-var);
+  border-radius:var(--r-lg);background:var(--surface-low);color:var(--on-surface);
+  font:500 15px/1.4 var(--f-body)}
+.poortkaart input[type=password]:focus{outline:0;border-color:var(--secondary);box-shadow:0 0 0 1px var(--secondary)}
+.poortkaart button[type=submit]{margin-top:var(--sp-xs);padding:11px 16px;border:0;border-radius:var(--r-lg);
+  background:var(--secondary);color:var(--on-secondary);font:600 .88rem/1 var(--f-display);cursor:pointer}
+.poortkaart button[type=submit]:hover{background:var(--secondary-container)}
+.poortkaart button[type=submit]:disabled{opacity:.5;cursor:default}
+.poort-fout{margin:0;font:600 .82rem/1.4 var(--f-body);color:var(--error)}
