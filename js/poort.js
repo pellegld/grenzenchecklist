@@ -24,6 +24,13 @@ function poortOpen(){
   var wrap = document.getElementById("poortwrap");
   var app = document.getElementById("app");
   var sos = document.getElementById("btn-incident");
+  /* Dezelfde weg als het scriptje in <head>: data-poort-open op <html> is wat
+     .poortwrap in css/components.css echt verbergt (display:none met genoeg
+     specificiteit om .poortwrap{display:flex} te verslaan). wrap.hidden alleen
+     zetten deed niets — [hidden] verliest het van die class-regel, dus de
+     poort bleef zichtbaar staan tot een herlaadbeurt het via dit attribuut
+     alsnog goed zette. */
+  document.documentElement.setAttribute("data-poort-open", "1");
   if(wrap) wrap.hidden = true;
   if(app){ app.removeAttribute("inert"); app.removeAttribute("aria-hidden"); }
   /* De incidentknop staat buiten #app (zie index.html) en draagt daarom zijn
