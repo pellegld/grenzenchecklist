@@ -141,3 +141,80 @@ function renderProfile(){
   if(!el || !TRIP) return;
   el.textContent = voertuigSamenvatting(TRIP);
 }
+
+/* ================= vignetgeheugen (fase D2) =================
+
+   Eén auto, dus één geheugen: niet per reis (een nieuwe reis met dezelfde auto
+   moet een nog geldig vignet meteen herkennen) en niet per kenteken (dat
+   nummer staat nergens in het voertuigprofiel, alleen het kentekenland). Een
+   vlakke opslag per landcode is dus de eerlijkste benadering van "hetzelfde
+   voertuig" die met deze data kan.
+
+   De geldigheidsregels komen uit tollVignette.validity in countries.json, en
+   die staat alleen bij landen waar de brontekst een harde looptijd geeft (AT,
+   CH) — ontbreekt hij, dan blijft de actie gewoon openstaand, zoals altijd. */
+function vignetGeheugen(){
+  try{ return JSON.parse(lsGet(STORE_VIGNETTEN) || "null") || {}; }catch(e){ return {}; }
+}
+function bewaarVignetGeldigheid(code, info){
+  var g = vignetGeheugen();
+  g[code] = info;
+  lsSet(STORE_VIGNETTEN, JSON.stringify(g));
+}
+function wisVignetGeldigheid(code){
+  var g = vignetGeheugen();
+  delete g[code];
+  lsSet(STORE_VIGNETTEN, JSON.stringify(g));
+}
+
+/* Geeft de opgeslagen vignetinfo terug als hij op de gegeven vertrekdatum nog
+   geldig is, anders null. ISO-datums vergelijken lexicografisch is hier veilig:
+   allebei altijd "JJJJ-MM-DD". */
+function vignetGeheugenGeldig(code, vertrekISO){
+  var g = vignetGeheugen()[code];
+  if(!g || !g.geldigTot || !vertrekISO) return null;
+  return vertrekISO <= g.geldigTot ? g : null;
+}
+
+/* Zwitserland: één jaarvignet, geldig van 1 december van het voorgaande jaar
+   tot en met 31 januari van het jaar erna (zie tollVignette.note bij CH). Wie
+   in december koopt, koopt in de praktijk het vignet van het jaar erna — vandaar
+   de omslag op maand 12 (index 11). */
+function vignetVervalCalendarYear(aankoopISO){
+  var d = new Date(aankoopISO + "T12:00:00");
+  if(isNaN(d.getTime())) return null;
+  var vignetJaar = d.getMonth() === 11 ? d.getFullYear() + 1 : d.getFullYear();
+  return (vignetJaar + 1) + "-01-31";
+}
+
+/* Gevraagd op het moment dat de gebruiker een vignet-actie afvinkt (zie de
+   tick-afhandelaar in js/app.js), en alleen als de vignetregel een harde
+   looptijd kent. prompt() past bij hoe de rest van de app dit soort losse,
+   zelden ingevulde vraag stelt (zie hernoemTrip() in js/trips.js) — een hele
+   nieuwe dialoog optuigen voor iets dat je hooguit één keer per jaar invult,
+   voegt niets toe. Geannuleerd of ongeldig ingevuld: de actie blijft gewoon
+   afgevinkt, er wordt alleen niets onthouden voor een volgende reis. */
+function vignetVraagBijAfvinken(code){
+  var c = BY_CODE[code];
+  var v = c && c.tollVignette && c.tollVignette.validity;
+  if(!v) return;
+
+  var aankoop = prompt(i18n("vignet.vraagDatum", { naam: c.tollVignette.name }), vandaagISO());
+  if(!aankoop) return;
+  aankoop = aankoop.trim();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(aankoop) || isNaN(new Date(aankoop + "T12:00:00").getTime())) return;
+
+  var geldigTot = null, dagen = null;
+  if(v.type === "calendarYear"){
+    geldigTot = vignetVervalCalendarYear(aankoop);
+  } else if(v.type === "duration" && v.options && v.options.length){
+    var lijst = v.options.map(function(o, i){ return (i + 1) + ": " + o.label; }).join("\n");
+    var keuze = prompt(i18n("vignet.vraagDuur", { lijst: lijst }), "1");
+    var idx = Number(keuze) - 1;
+    if(!v.options[idx]) return;
+    dagen = v.options[idx].dagen;
+    geldigTot = isoPlus(aankoop, dagen);
+  }
+  if(!geldigTot) return;
+  bewaarVignetGeldigheid(code, { gekocht: aankoop, geldigTot: geldigTot, optieDagen: dagen });
+}

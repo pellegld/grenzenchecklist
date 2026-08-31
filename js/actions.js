@@ -328,6 +328,17 @@ function regelActies(trip){
       waarom = voegSamen(waarom, i18n("waarom.verboden"));
     }
 
+    /* Fase D2: een vignet dat voor deze auto nog geldig is op de vertrekdatum
+       (uit een eerdere reis of los ingevuld) hoeft niet opnieuw geregeld te
+       worden. De actie blijft bestaan — bouwActies() hieronder markeert 'm als
+       afgevinkt — maar de reden legt uit waaróm, in plaats van gewoon de
+       gebruikelijke "je route loopt door X". */
+    var vignetGeheugenInfo = (soort === "vignet" && c) ? vignetGeheugenGeldig(c.code, trip.departureDate) : null;
+    if(vignetGeheugenInfo){
+      waarom = i18n("waarom.vignetGeldig", {
+        naam: c.tollVignette.name, datum: fmtDate(vignetGeheugenInfo.geldigTot) });
+    }
+
     uit.push(actieBasis({
       id: t.factId || ("taak." + t.key),
       tickKey: "task:" + t.key,
@@ -445,7 +456,13 @@ function bouwActies(trip){
     .concat(regelActies(trip), documentActies(trip), uitrustingActies(trip));
 
   acties.forEach(function(a){
-    a.afgevinkt = !!(a.afvinkbaar && a.tickKey && isAangevinkt(trip, a.tickKey));
+    /* Fase D2: een nog geldig onthouden vignet telt mee als afgevinkt, ook als
+       trip.ticked deze specifieke reis nooit heeft aangeraakt — dat is precies
+       het punt van het geheugen: een nieuwe reis met dezelfde auto hoeft het
+       vignet niet opnieuw te melden. */
+    var m = a.tickKey && /^task:vig:(.+)$/.exec(a.tickKey);
+    var vignetGeheugenInfo = m ? vignetGeheugenGeldig(m[1], trip.departureDate) : null;
+    a.afgevinkt = !!(a.afvinkbaar && a.tickKey && (isAangevinkt(trip, a.tickKey) || vignetGeheugenInfo));
     if(a.afgevinkt) a.status = "ok";
   });
   return acties;

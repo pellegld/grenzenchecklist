@@ -36,6 +36,26 @@ function nieuwTripId(){
 
 function vandaagISO(){ return new Date().toISOString().slice(0, 10); }
 
+/* Een leeg veld is niet nul. Verbruik 0 en een brandstofprijs van 0 zouden een
+   brandstofpost van precies nul euro opleveren, en dat is een bewering; niets
+   invullen hoort "niet meegerekend" te betekenen.
+
+   Punt en komma allebei accepteren, want het veld toont zijn waarde in de
+   notatie van de gekozen taal en de gebruiker typt in die van zijn toetsenbord.
+   Staan ze er allebei, dan is de laatste de decimale — 1.234,5 en 1,234.5 zijn
+   allebei hetzelfde getal, alleen in een andere taal opgeschreven. */
+function getalOfNull(ruw){
+  if(ruw === null || ruw === undefined || ruw === "") return null;
+  var s = String(ruw).trim();
+  var punt = s.lastIndexOf("."), komma = s.lastIndexOf(",");
+  if(punt > -1 && komma > -1){
+    var decimaal = punt > komma ? "." : ",";
+    s = s.split(decimaal === "." ? "," : ".").join("");
+  }
+  var n = Number(s.replace(",", "."));
+  return isFinite(n) && n > 0 ? n : null;
+}
+
 function legeTrip(){
   var nu = new Date().toISOString();
   return {
@@ -55,9 +75,16 @@ function legeTrip(){
 
     /* plateCountry is het kentekenland: dat bepaalt of een uitrustingseis voor
        jou geldt en welke milieuzone-registratie je moet doen. gewichtKg en
-       hoogteM zijn optioneel (§5) en nu alleen informatief. */
+       hoogteM zijn optioneel (§5) en nu alleen informatief.
+
+       verbruik (L/100 km) en brandstofPrijs (euro per liter) zijn de twee
+       optionele velden uit §10. Ze staan bij het voertuig en niet bij de reis,
+       want verbruik is een eigenschap van de auto; de prijs staat er bewust
+       naast in plaats van dat de app er een verzint. Blijven ze leeg, dan
+       rekent de kostenpagina geen brandstof mee en zegt dat ook. */
     vehicle: { plateCountry:"NL", fuel:"petrol", euro:null, type:"auto",
-               gewichtKg:null, hoogteM:null },
+               gewichtKg:null, hoogteM:null,
+               verbruik:null, brandstofPrijs:null },
 
     /* De berekende route. null zolang er geen berekening geweest is — dan is
        countries handmatig gevuld en tonen afstand/tol een streepje in plaats
@@ -67,7 +94,15 @@ function legeTrip(){
     countries: [],
     ticked: {},
 
-    metadata: { stap:1, geanalyseerd:false, handmatig:false }
+    /* Fase D1: de wijzigingsmonitor vergelijkt trip.countries tegen
+       meta/changelog.json sinds dit tijdstip. Een nieuwe reis heeft nog niets
+       gemist, dus begint bij "nu" — pas ná het opslaan kan er iets wijzigen.
+       notifyEmail ligt hier alvast klaar voor een latere e-mailmelding; er
+       wordt nu nergens naartoe gemaild, het veld reserveert alleen de plek. */
+    laatstGecontroleerd: nu,
+    notifyEmail: null,
+
+    metadata: { stap:1, geanalyseerd:false, handmatig:false, naamAutomatisch:true }
   };
 }
 
@@ -88,7 +123,8 @@ function serialiseerTrip(trip){
     vehicle: {
       plateCountry: trip.vehicle.plateCountry, fuel: trip.vehicle.fuel,
       euro: trip.vehicle.euro, type: trip.vehicle.type,
-      gewichtKg: trip.vehicle.gewichtKg, hoogteM: trip.vehicle.hoogteM
+      gewichtKg: trip.vehicle.gewichtKg, hoogteM: trip.vehicle.hoogteM,
+      verbruik: trip.vehicle.verbruik, brandstofPrijs: trip.vehicle.brandstofPrijs
     },
     route: trip.route ? {
       coordinates: downsample(trip.route.coordinates),
@@ -97,6 +133,8 @@ function serialiseerTrip(trip){
     } : null,
     countries: trip.countries.slice(),
     ticked: trip.ticked,
+    laatstGecontroleerd: trip.laatstGecontroleerd,
+    notifyEmail: trip.notifyEmail,
     metadata: trip.metadata
   };
 }
@@ -104,10 +142,56 @@ function serialiseerTrip(trip){
 /* Om de zoveel punten bewaren: genoeg voor een herkenbare routeschets en om
    zones en tolpunten opnieuw te bepalen, zonder de volle (soms 10.000+ punten
    tellende) geometrie in localStorage te duwen. */
+/* De routegeometrie uitdunnen voordat hij de opslag in gaat — maar alleen als
+   er iets te winnen valt.
+
+   Het was elk derde punt, onvoorwaardelijk. Dat leek onschuldig en was het
+   niet, want het werd toegepast op wat er al opgeslagen stónd. Elke keer dat
+   je de reis opende en er iets aan veranderde, ging er opnieuw twee derde af:
+
+       10394 → 3466 → 1156 → 386 → 130 → 44 → 16 → 6 → 3 → 2
+
+   Na een stuk of negen keer opslaan was de route een rechte lijn tussen twee
+   punten. Onderweg daarnaartoe verdwenen eerst de milieuzones en de tolpunten
+   die de app langs die lijn zoekt — je zag na een herlaadbeurt minder dan
+   ervoor, zonder dat er iets veranderd was, en zonder dat er ooit een fout
+   verscheen.
+
+   Nu is er een budget. Onder de grens gaat alles ongeschonden mee, en daarmee
+   stopt het stapelen: een route die al binnen het budget past wordt nooit meer
+   aangeraakt. Daarboven wordt één keer gelijkmatig gedund tot precies dat
+   budget. ROUTE_PUNTEN_BUDGET is hetzelfde getal als waar js/geo.js op
+   bemonstert: fijner opslaan dan waarop gerekend wordt heeft geen zin, grover
+   opslaan kost antwoorden. */
+var ROUTE_PUNTEN_BUDGET = 1200;
+
+/* Is deze opgeslagen route al kapotgedund?
+
+   Het budget hierboven stopt het afkalven, maar geeft niet terug wat er al weg
+   is: een reis die vijf keer is opgeslagen vóór deze wijziging staat nu voor
+   altijd op een handvol punten. Zulke reizen zijn te herkennen aan hun
+   grofheid: een echte route heeft ruwweg een punt per honderd meter, en na het
+   budget hooguit één per kilometer. Eén punt per tien kilometer is geen
+   vereenvoudiging meer maar een ander pad — dat is de grens.
+
+   Bewust ruim: bij twijfel liever niets doen dan een reis opnieuw over het
+   netwerk halen die prima was. Korte ritten hebben van nature weinig punten en
+   vallen door de ondergrens buiten de toets. */
+function routeIsVerschraald(trip){
+  var c = trip && trip.route && trip.route.coordinates;
+  if(!c || c.length < 2) return false;
+  var km = tripAfstandKm(trip);
+  if(!km || km < 50) return false;
+  return c.length < km / 10;
+}
+
 function downsample(coords){
   if(!coords || !coords.length) return null;
+  if(coords.length <= ROUTE_PUNTEN_BUDGET) return coords;
+
+  var stap = Math.ceil(coords.length / ROUTE_PUNTEN_BUDGET);
   var out = [];
-  for(var i = 0; i < coords.length; i += 3) out.push(coords[i]);
+  for(var i = 0; i < coords.length; i += stap) out.push(coords[i]);
   var last = coords[coords.length - 1];
   if(out[out.length - 1] !== last) out.push(last);
   return out;
@@ -141,7 +225,9 @@ function leesTrip(raw){
     euro: (v.euro === null || v.euro === undefined || v.euro === "") ? null : Number(v.euro),
     type: v.type || "auto",
     gewichtKg: v.gewichtKg == null ? null : Number(v.gewichtKg),
-    hoogteM: v.hoogteM == null ? null : Number(v.hoogteM)
+    hoogteM: v.hoogteM == null ? null : Number(v.hoogteM),
+    verbruik: getalOfNull(v.verbruik),
+    brandstofPrijs: getalOfNull(v.brandstofPrijs)
   };
 
   if(oud){
@@ -157,11 +243,22 @@ function leesTrip(raw){
   t.countries = Array.isArray(oud ? raw.route : raw.countries)
     ? (oud ? raw.route : raw.countries).slice() : [];
 
+  /* Een reis van vóór dit veld heeft nooit gecontroleerd — de eigen createdAt is
+     dan de eerlijkste ondergrens: alles wat sindsdien in de changelog kwam is
+     voor deze reis ook echt nieuw, in plaats van alsnog jaren changelog in één
+     keer op te lepelen. */
+  t.laatstGecontroleerd = raw.laatstGecontroleerd || t.createdAt;
+  t.notifyEmail = raw.notifyEmail || null;
+
   var m = raw.metadata || {};
   t.metadata = {
     stap: m.stap || (t.countries.length ? 4 : 1),
     geanalyseerd: m.geanalyseerd !== undefined ? !!m.geanalyseerd : !!t.countries.length,
-    handmatig: !!m.handmatig
+    handmatig: !!m.handmatig,
+    /* Reizen van vóór dit veld: een naam die eruitziet als een afgeleide naam
+       is er ook een. Zo blijft een zelf getypte naam staan en gaat een
+       automatische alsnog meebewegen. */
+    naamAutomatisch: m.naamAutomatisch !== undefined ? !!m.naamAutomatisch : isAfgeleideNaam(t)
   };
   return t;
 }
@@ -190,10 +287,19 @@ function bewaarTrips(){
    berekening van vóór de wijziging. */
 function bewaarTrip(){
   if(!TRIP) return;
-  if(isStandaardNaam(TRIP.naam) && TRIP.origin && TRIP.destination){
-    TRIP.naam = TRIP.origin.naam + " → " + TRIP.destination.naam;
+  if(TRIP.metadata.naamAutomatisch && TRIP.origin && TRIP.destination){
+    TRIP.naam = afgeleideNaam(TRIP);
   }
   herbereken(TRIP);
+  bewaarTrips();
+}
+
+/* Fase D1: de gebruiker heeft de wijzigingen voor deze reis gezien. Zet het
+   ijkpunt op nu, zodat dezelfde changelogregels niet nog een keer als nieuw
+   verschijnen. */
+function markeerGecontroleerd(trip){
+  if(!trip) return;
+  trip.laatstGecontroleerd = new Date().toISOString();
   bewaarTrips();
 }
 
@@ -207,6 +313,23 @@ function isStandaardNaam(naam){
     if(naam === VERTALINGEN[TALEN[i]]["trip.nieuweRit"]) return true;
   }
   return false;
+}
+
+function afgeleideNaam(trip){
+  return trip.origin.naam + " → " + trip.destination.naam;
+}
+
+/* Draagt deze reis nog de naam die de app hem gaf?
+
+   Dat is de vraag achter `naamAutomatisch`. Zonder dat onderscheid bleef de
+   naam hangen op de vorige route: hij werd één keer afgeleid, was daarna geen
+   standaardnaam meer, en een reis die je naar een andere bestemming ombouwde
+   heette in de kop van je reisdocument nog steeds naar de vorige. Een naam die
+   je zelf getypt hebt moet blijven staan; een naam die de app zelf bedacht
+   heeft hoort mee te bewegen. */
+function isAfgeleideNaam(trip){
+  if(isStandaardNaam(trip.naam)) return true;
+  return !!(trip.origin && trip.destination && trip.naam === afgeleideNaam(trip));
 }
 
 /* ---------------- afgeleide waarden ----------------

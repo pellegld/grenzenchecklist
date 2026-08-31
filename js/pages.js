@@ -396,6 +396,7 @@ function renderMijnReizen(){
       '<button type="button" class="btn primary" id="btn-nieuwe-reis">' + iconUse("plus-pin") + " " +
         esc(i18n("reizen.nieuweReis")) + "</button>" +
     "</div>" +
+    wijzigingenKaartHTML() +
     '<div class="tripgrid">' + kaarten +
       '<div class="tripnew" id="btn-tripnew"><div class="bubble">' + iconUse("plus-pin") + "</div>" +
       "<h3>" + esc(i18n("reizen.planNieuwe")) + "</h3><p>" + esc(i18n("reizen.planNieuweIntro")) + "</p>" +

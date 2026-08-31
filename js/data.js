@@ -21,7 +21,7 @@
    precies wat deze app niet moet doen: dan zie je verouderde verplichtingen. */
 
 var DATA_ENDPOINT = "./api/v1/data/";
-var DATA_BESTANDEN = { "countries.json":1, "zones.json":1, "drukte.json":1 };
+var DATA_BESTANDEN = { "countries.json":1, "zones.json":1, "drukte.json":1, "fuelprices.json":1 };
 
 /* bestand -> "endpoint" | "bundel" | "opslag" */
 var DATA_HERKOMST = {};

@@ -133,3 +133,21 @@ function confidenceVan(feit){
   var c = feit && feit.confidence;
   return CONFIDENCE_NIVEAUS.indexOf(c) === -1 ? "unavailable" : c;
 }
+
+/* ---------------- tekst: de eerste zinnen ----------------
+   Popups, kostenregels en actie-uitleg tonen alleen de kop van een langere
+   tekst. Naïef knippen op elke punt gaat mis bij tijden: "actief van 07.30 tot
+   19.30 uur" werd "actief van 07." — een halve mededeling die eruitziet als een
+   hele. Een punt telt daarom alleen als zinseinde wanneer er geen cijfer op
+   volgt en er wit of het einde van de tekst achter staat. Dat dekt ook 1.500 km
+   en art. 5 blijft aan zijn zin vastzitten.
+
+   De actiepagina toont er twee: genoeg om te weten wat je moet doen, de rest
+   staat op de regelpagina en bij de bron. */
+function eersteZinnen(t, aantal){
+  var zinnen = String(t).match(/[\s\S]+?[.!?](?!\d)(?=\s|$)/g);
+  if(!zinnen) return String(t);
+  return zinnen.slice(0, aantal || 2).join("").trim();
+}
+
+function eersteZin(t){ return eersteZinnen(t, 1); }

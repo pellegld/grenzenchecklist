@@ -8,7 +8,12 @@
 
    Uitgangspunt: zwart op wit, bediening weg, inhoud van de zichtbare pagina
    volledig uitgeklapt, en bron-URL's voluit achter de linktekst zodat een
-   uitdraai ook zonder scherm bruikbaar is. */
+   uitdraai ook zonder scherm bruikbaar is.
+
+   Het reisdocument uit §11 bouwt hierop voort en staat er niet naast: het is
+   een gewone view die deze regels erft, met hieronder alleen wat het document
+   extra nodig heeft. Het openklappen van de <details> gebeurt in js/document.js
+   op `beforeprint`, want dat werkt in engines waar CSS er niet bij komt. */
 
 @media print {
   /* Alles wat je op papier niet kunt aanraken, gaat eruit. */
@@ -18,7 +23,8 @@
   #btn-route, #btn-reset, #btn-nieuwe-reis, #btn-tripnew, #btn-plan, #btn-analyse,
   #btn-reis-checklist, #btn-reis-naar-planner, .btn.primary,
   .journeyroad-wrap > .journeyroad, .journeymarker,
-  .results, .langswitch { display: none !important; }
+  .results, .langswitch,
+  .sosbutton, .sosdialoog, .grensbanner-wrap { display: none !important; }
 
   /* Kleurtokens terug naar papier. De donkere merkpanelen (navy, asfalt) zijn
      op papier alleen maar inkt: die gaan ook naar wit. */
@@ -91,6 +97,35 @@
 
   h1, h2, h3 { break-after:avoid; page-break-after:avoid; color:#000; }
   .bento, .landgrid, .tripgrid, .eqgrid, .milieucols { display:block !important; }
+
+  /* ---------------- reisdocument (§11) ---------------- */
+
+  /* Een sectie hoort niet halverwege een kop af te breken, maar een lange
+     actielijst mag dat wél: die over twee bladen dwingen om hem heel te houden
+     levert een halflege pagina op. */
+  .docsectie { break-inside:auto; page-break-inside:auto; }
+  .docsectie h2 { border-bottom:1px solid #999; padding-bottom:2pt; }
+  .doclijst li, .docwaarschuwingen li, .doctabel tr {
+    break-inside:avoid; page-break-inside:avoid;
+  }
+
+  /* De kostentabel. De zekerheidskolom draagt een teken én een woord, want dit
+     blad heeft geen kleur om het verschil mee te maken. */
+  .dokosten { width:100%; border-collapse:collapse; }
+  .dokosten td, .dokosten th { border-bottom:1px solid #ddd; padding:3pt 4pt;
+    vertical-align:top; text-align:left; }
+  .dokosten tr.dokkop th { border-bottom:1px solid #666; padding-top:8pt;
+    font:700 .95em/1.3 inherit; }
+  .dokosten td:last-child { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .dokosten .dokzeker { white-space:nowrap; font-size:.82em; color:#333; }
+  .dokosten tfoot td { border-top:1.5pt solid #000; border-bottom:0;
+    padding-top:5pt; font-weight:700; }
+  .docnoot { font-size:.82em; color:#333; margin-top:4pt; }
+
+  .docwaarschuwingen { list-style:none; margin:0; padding:0; }
+  .docwaarschuwingen li { display:flex; gap:6pt; margin-bottom:5pt; line-height:1.45; }
+  .docwaarschuwingen .wteken { flex:0 0 auto; width:12pt; height:12pt; border:1pt solid #000;
+    border-radius:2px; text-align:center; font:700 9pt/12pt var(--f-mono); }
 
   @page { margin:16mm 14mm; }
 }

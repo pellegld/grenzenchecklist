@@ -33,6 +33,28 @@ function activeerTrip(id, gaNaar){
   }
   if(TRIP.route && TRIP.route.coordinates && !ZONES) laadGeoData().then(klaar, klaar);
   else klaar();
+
+  herstelVerschraaldeRoute(TRIP);
+}
+
+/* Een route die door het oude uitdunnen tot een rechte lijn is geworden één keer
+   opnieuw laten berekenen. Dat kan alleen met een vertrek- en een bestemmings-
+   plaats; een handmatig samengestelde landenlijst heeft geen geometrie en hoeft
+   die ook niet te hebben.
+
+   Stil op de achtergrond, en bij mislukking gebeurt er niets: zonder netwerk
+   houd je wat je had, en dat is nog altijd een werkende checklist. Er komt geen
+   melding — dit is de app die een oude fout van zichzelf opruimt, niet iets
+   waar de gebruiker een besluit over hoeft te nemen. */
+function herstelVerschraaldeRoute(trip){
+  if(!trip || !routeIsVerschraald(trip)) return;
+  if(!trip.origin || !trip.destination) return;
+  if(ROUTING) return;
+
+  berekenRoute(trip).then(function(){
+    bewaarTrip();
+    render();
+  }).catch(function(){});
 }
 
 /* borders.json en zones.json horen bij elkaar: allebei nodig zodra er een
@@ -75,6 +97,7 @@ function hernoemTrip(id){
   naam = naam.trim();
   if(!naam) return;
   t.naam = naam;
+  t.metadata.naamAutomatisch = false;   /* vanaf nu is de naam van jou */
   t.updatedAt = new Date().toISOString();
   bewaarTrips();
   renderMijnReizen();

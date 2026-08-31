@@ -603,8 +603,46 @@ button.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;t
   margin-top:var(--sp-sm);padding-top:var(--sp-sm);border-top:2px solid var(--outline-var);
   font:600 .85rem/1.3 var(--f-display);color:var(--on-surface-var)}
 .kostentotaal b{font:700 1.4rem/1 var(--f-mono);color:var(--primary);white-space:nowrap}
-.nietmee ul{margin:0;padding-left:1.1rem}
-.nietmee li{font-size:.84rem;line-height:1.55;color:var(--on-surface-var);margin-bottom:8px}
+.nietmee ul{margin:0;padding-left:0;list-style:none}
+.nietmee li{font-size:.84rem;line-height:1.55;color:var(--on-surface-var);margin-bottom:10px}
+.nietmee li b{color:var(--on-surface)}
+
+/* Het bedrag bovenaan. Groot, want het is het antwoord op de vraag waarmee je
+   deze pagina opent; de bandbreedte staat er als bandbreedte en niet als
+   gemiddelde. */
+.kostenkop{margin-bottom:var(--sp-lg)}
+.kostenlabel{margin:var(--sp-md) 0 2px;font:600 .8rem/1.3 var(--f-display);
+  letter-spacing:.04em;text-transform:uppercase;color:var(--on-surface-var)}
+.kostenbedrag{margin:0 0 var(--sp-sm);font:700 clamp(2rem,6vw,3rem)/1 var(--f-mono);
+  color:var(--primary)}
+.kostenbedrag small{font:600 .9rem/1 var(--f-display);color:var(--on-surface-var);
+  white-space:nowrap}
+.kostenkat h2{margin-bottom:2px}
+.kostenkat .hint{margin-top:0;margin-bottom:var(--sp-sm)}
+.katsub{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  margin:var(--sp-sm) 0 0;padding-top:var(--sp-sm);border-top:2px solid var(--outline-var);
+  font:600 .8rem/1.3 var(--f-display);color:var(--on-surface-var)}
+.katsub b{font:700 1.1rem/1 var(--f-mono);color:var(--primary);white-space:nowrap}
+
+/* Een post zonder land houdt de tekst toch op één lijn met de rest. */
+.geenvlag{flex:0 0 auto;width:22px;height:15px}
+
+.kostenbron{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-top:2px}
+
+/* De zekerheid: een woord, een teken en een kleur. Alle drie, want kleur alleen
+   is geen betekenis (§21) en dit blad wordt ook zwart-wit uitgeprint. */
+.zeker{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--outline-var);
+  border-radius:var(--r-full);padding:1px 8px;font:600 .68rem/1.6 var(--f-display);
+  letter-spacing:.03em;text-transform:uppercase;color:var(--on-surface-var);
+  background:var(--surface-low)}
+.zeker .zteken{font:700 .8rem/1 var(--f-mono)}
+.z-bevestigd{border-color:var(--ok-line);background:var(--ok-container);color:var(--ok)}
+.z-indicatief{border-color:var(--outline);background:var(--surface-high);color:var(--on-surface)}
+.z-onbekend{border-color:var(--amber-line);background:var(--amber-container);color:var(--amber-ink)}
+.z-nietmee{opacity:.85}
+.nietmee li .zeker{margin-right:6px;vertical-align:1px}
+
+.brandstofkaart .wizveld{margin:0}
 
 /* ---------------- reisdocument ---------------- */
 .docacties{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-sm);margin-bottom:var(--sp-md)}
@@ -616,6 +654,15 @@ button.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;t
 .dockop h1{margin-bottom:6px}
 .dockop p{font-size:.9rem;color:var(--on-surface-var);line-height:1.5}
 .docdatum{font:600 .76rem/1.4 var(--f-mono);margin-top:6px}
+.deelmelding{display:flex;align-items:flex-start;gap:8px;margin:0 0 var(--sp-md);
+  padding:10px 12px;border:1px solid var(--ok-line);background:var(--ok-container);
+  color:var(--ok);border-radius:var(--r-lg);font-size:.85rem;line-height:1.5}
+.deelmelding .icon{width:16px;height:16px;flex:0 0 auto;margin-top:2px}
+
+.dashdeel{margin:var(--sp-sm) 0 0}
+.deelknop{display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.deelknop .icon{width:15px;height:15px}
+
 .docsectie{margin-bottom:var(--sp-md);break-inside:avoid}
 .docsectie h2{font:700 .78rem/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;
   color:var(--on-surface-var);margin:0 0 var(--sp-sm)}
@@ -636,6 +683,22 @@ button.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;t
 .doctabel td:last-child{text-align:right;white-space:nowrap}
 .doctabel .sub{display:block;font-size:.76rem;color:var(--on-surface-var)}
 .doctabel tfoot td{border-top:2px solid var(--outline-var);border-bottom:0;font-weight:700;padding-top:10px}
+.doctabel tr.dokkop th{text-align:left;padding:14px 0 4px;border-bottom:1px solid var(--outline-var);
+  font:700 .74rem/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--on-surface-var)}
+.doctabel .dokzeker{white-space:nowrap;font-size:.74rem;color:var(--on-surface-var);
+  text-align:left;padding-right:10px}
+.docnoot{margin:8px 0 0;font-size:.78rem;line-height:1.5;color:var(--on-surface-var)}
+
+.docwaarschuwingen{list-style:none;margin:0;padding:0}
+.docwaarschuwingen li{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;
+  font-size:.86rem;line-height:1.5;color:var(--on-surface-var)}
+.docwaarschuwingen b{color:var(--on-surface)}
+.docwaarschuwingen .wteken{flex:0 0 auto;width:18px;height:18px;border-radius:var(--r-sm);
+  border:1px solid var(--outline);text-align:center;font:700 .8rem/17px var(--f-mono)}
+.docwaarschuwingen .w-bad .wteken{border-color:var(--error);color:var(--error)}
+.docwaarschuwingen .w-todo .wteken,.docwaarschuwingen .w-unknown .wteken{
+  border-color:var(--amber-line);color:var(--amber-ink)}
 .docbronnen{margin:0;padding-left:1.1rem;font-size:.82rem;line-height:1.6}
 .docbronnen li{margin-bottom:5px;overflow-wrap:anywhere}
 .docvoet{margin-top:var(--sp-md);padding-top:var(--sp-sm);border-top:1px solid var(--outline-var);
@@ -805,6 +868,110 @@ html,body{overflow-x:hidden}
   padding:10px;font:400 .82rem/1.5 var(--f-mono);background:var(--surface-low);
   color:var(--on-surface);resize:vertical}
 
+/* ---------------- fase C: onderweg-modus ---------------- */
+
+/* De incidentknop: vast op elke pagina, ook zonder actieve reis. Boven de
+   onderbalk op mobiel, laag-rechts op desktop. */
+.sosbutton{position:fixed;right:var(--sp-md);bottom:calc(84px + env(safe-area-inset-bottom));
+  z-index:35;width:52px;height:52px;border-radius:var(--r-full);border:0;
+  background:var(--sos);color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-2);cursor:pointer}
+.sosbutton:hover{filter:brightness(1.08)}
+.sosbutton .icon{width:24px;height:24px}
+@media (min-width:1024px){ .sosbutton{bottom:var(--sp-md)} }
+
+.sosvenster{max-width:38rem;max-height:min(86vh,720px);overflow-y:auto}
+.sosvenster-koprij{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-sm)}
+.sosvenster-koprij h2{margin:0}
+.incident-landveld{margin-bottom:var(--sp-xs)}
+.incident-contact{display:flex;flex-direction:column;gap:8px;margin:var(--sp-xs) 0 var(--sp-sm)}
+.incident-bron{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.78rem;margin:4px 0 0}
+.incident-blok{border-top:1px solid var(--surface-highest);padding-top:var(--sp-sm);margin-top:var(--sp-sm)}
+.incident-blok h3{margin:0 0 6px}
+.incident-veldtabel{width:100%;border-collapse:collapse;font-size:.85rem}
+.incident-veldtabel td{padding:5px 8px 5px 0;border-bottom:1px solid var(--surface-highest)}
+.incident-veldtabel td:first-child{color:var(--on-surface-var);white-space:nowrap}
+.incident-veldtabel td:last-child{font-weight:600}
+.incident-zinnen{list-style:none;margin:var(--sp-xs) 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.incident-zinnen li{display:flex;flex-direction:column;gap:1px;padding:8px 10px;
+  background:var(--surface-low);border-radius:var(--r-lg)}
+.incident-zin-nl{font:600 .82rem/1.3 var(--f-body);color:var(--on-surface-var)}
+.incident-zin-local{font:700 .92rem/1.3 var(--f-display);color:var(--primary)}
+.incident-zin-fon{font:400 .76rem/1.3 var(--f-mono);color:var(--on-surface-var);font-style:italic}
+.incident-fotoherinnering{display:flex;align-items:flex-start;gap:8px}
+.incident-fotoherinnering p{font-size:.85rem;color:var(--on-surface-var)}
+
+/* De grensbanner (reismodus): boven aan het scherm, ongeacht welke pagina open is. */
+.grensbanner-wrap{position:fixed;top:calc(var(--topbar-h) + 8px);left:8px;right:8px;z-index:32}
+@media (min-width:1024px){ .grensbanner-wrap{top:8px;left:calc(var(--sidebar-w) + 8px);right:8px;max-width:30rem} }
+.grensbanner-wrap[hidden]{display:none}
+.grensbanner{background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-2);padding:var(--sp-sm) var(--sp-md)}
+.grensbanner-kop{display:flex;align-items:center;gap:8px}
+.grensbanner-kop b{flex:1 1 auto;font:700 .92rem/1.3 var(--f-display);color:var(--primary)}
+.grensbanner-sluit{appearance:none;border:0;background:none;color:var(--on-surface-var);
+  font-size:1.2rem;line-height:1;cursor:pointer;padding:2px 4px}
+.grensbanner-lijst{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.grensbanner-lijst li{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:var(--on-surface-var)}
+.grensbanner-lijst .icon{flex:0 0 auto;margin-top:1px;color:var(--on-surface-var)}
+
+/* Onderweg-pagina: reismodus + offline reispack. */
+.reismodusrij{margin:var(--sp-sm) 0}
+.waarschuwing-batterij{display:flex;align-items:flex-start;gap:6px}
+.pakinhoud{list-style:none;margin:var(--sp-xs) 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.pakinhoud li{display:flex;align-items:center;gap:8px;font:600 .8rem/1.3 var(--f-mono);color:var(--on-surface-var)}
+.pakinhoud .icon{color:var(--ok)}
+.journeylog{list-style:none;margin:var(--sp-sm) 0 0;padding:0;display:flex;flex-direction:column;gap:6px;
+  max-height:220px;overflow-y:auto}
+.journeylog li{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--on-surface-var)}
+.journeylog li span:first-of-type{flex:1 1 auto}
+.journeylog-tijd{font:600 .74rem/1 var(--f-mono);color:var(--outline)}
+
+/* ---------------- fase D: de terugkeerlus ---------------- */
+
+/* De badge in de nav: alleen een teller, geen kleur-alleen betekenis nodig
+   (het cijfer zelf is de betekenis). Amber, want het is een seintje om iets te
+   bekijken, geen fout. */
+.navbadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;
+  height:18px;padding:0 5px;margin-left:auto;border-radius:var(--r-full);
+  background:var(--amber);color:#1a1200;font:700 .68rem/1 var(--f-mono)}
+.navbadge[hidden]{display:none}
+.meerrij .navbadge{margin-left:auto}
+
+/* De wijzigingenkaart op Mijn reizen. */
+.wijzigingenkaart{border-color:var(--amber-line);background:var(--amber-container)}
+.wijzigingtrip{border-top:1px solid var(--amber-line);padding-top:var(--sp-sm);margin-top:var(--sp-sm)}
+.wijzigingtripkop{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-sm)}
+.wijzigingtripkop h3{margin:0;font:700 .9rem/1.3 var(--f-display);color:var(--on-surface)}
+.wijzigingenlijst{list-style:none;margin:var(--sp-xs) 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.wijzigingregel{display:flex;align-items:flex-start;gap:8px;font-size:.84rem}
+.wijzigingtekst{display:flex;flex-direction:column;gap:2px}
+.wijzigingtekst b{font-weight:600;color:var(--on-surface)}
+.wijzigingwaarden{font:600 .8rem/1.3 var(--f-mono);color:var(--amber-ink)}
+.wijzigingmeta{font-size:.76rem;color:var(--on-surface-var)}
+
+/* Terugreismodus: douane en boete-herkenning, op de Onderweg-pagina. */
+.douanenu{margin-left:var(--sp-xs);font:700 .6rem/1 var(--f-display);letter-spacing:.04em;
+  text-transform:uppercase;color:var(--amber-ink);background:var(--amber-container);
+  border:1px solid var(--amber-line);border-radius:var(--r-md);padding:2px 7px}
+.douaneland{border-top:1px solid var(--surface-highest);padding-top:var(--sp-sm);margin-top:var(--sp-sm)}
+.douaneland h3{margin:0 0 4px;display:flex;align-items:center;gap:6px;font:700 .9rem/1.3 var(--f-display)}
+.douanelijst{list-style:none;margin:var(--sp-xs) 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.douanelijst li{display:flex;flex-direction:column;gap:1px;font-size:.84rem}
+.douanelijst b{font:600 .74rem/1.3 var(--f-display);text-transform:uppercase;letter-spacing:.02em;
+  color:var(--on-surface-var)}
+.douanebron{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.78rem;margin:6px 0 0}
+.boeteherkenninglijst{list-style:none;margin:var(--sp-xs) 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.boeteherkenninglijst li{display:flex;align-items:flex-start;gap:8px;font-size:.84rem;color:var(--on-surface-var)}
+.boeteherkenninglijst .icon{flex:0 0 auto;margin-top:1px}
+
+/* Tankstrategie: kaart op de Kostenpagina. */
+.tankadvies{display:flex;align-items:flex-start;gap:8px;background:var(--teal-container);
+  border:1px solid var(--teal-line);border-radius:var(--r-lg);padding:10px 12px;
+  font-size:.85rem;color:var(--on-surface);margin-bottom:var(--sp-sm)}
+.tankadvies .icon{flex:0 0 auto;color:var(--teal);margin-top:2px}
+.tankdatum{margin-top:var(--sp-sm)}
+
 /* ---------------- regelpagina (§15) ---------------- */
 .verouderdbalk{display:flex;gap:8px;align-items:center;background:var(--amber-container);
   border:1px solid var(--amber-line);border-radius:var(--r-lg);padding:10px 12px;
@@ -908,3 +1075,93 @@ details.disclaimer ul li a,.colofon a{display:inline-flex;align-items:center;min
   color:var(--on-surface-var);margin:0 0 var(--sp-sm)}
 .milieuhead h2.paneelkop{margin:0 0 4px;text-transform:none;letter-spacing:0;
   font:700 .88rem/1.3 var(--f-display);color:var(--on-surface)}
+
+/* ================================================================
+   De kaart (§9). Zelf getekend uit borders.json, de routegeometrie en de
+   markers — geen tegels, dus ook geen externe verzoeken en geen kapotte
+   kaart zonder bereik.
+   ================================================================ */
+.mapwrap{cursor:grab;touch-action:none}
+.mapwrap.sleept{cursor:grabbing}
+/* Bewust géén transitie op transform. Een CSS-transitie op transform houdt de
+   berekende waarde in deze engine op de beginwaarde staan, waardoor het
+   transform-attribuut op de <g> genegeerd wordt: de kaart zoomde dan wel in de
+   code maar niet op het scherm. Zonder transitie werkt het overal hetzelfde, en
+   het scheelt meteen een animatie die niemand vroeg. */
+#kaartlaag{transition:none}
+
+.land{fill:var(--surface-c);stroke:var(--outline-var);stroke-width:.8;vector-effect:non-scaling-stroke}
+.land.op-route{fill:var(--surface-highest);stroke:var(--outline)}
+:root[data-theme="dark"] .land,
+:root:not([data-theme="light"]) .land{fill:var(--surface-low)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .land.op-route{fill:var(--surface-high)}
+}
+:root[data-theme="dark"] .land.op-route{fill:var(--surface-high)}
+
+/* Markers: een ring eromheen zodat ze ook op een druk stuk kaart opvallen, en
+   een teken erin zodat het type zonder kleur te zien is (§21). */
+.marker{cursor:pointer}
+/* Het aanraakvlak. `transparent` en niet `none`: een vlak zonder vulling vangt
+   geen aanrakingen, en dan is het vlak er niet. De straal komt uit map.js, want
+   die hangt af van hoe ver de kaart op dit scherm is uitgeschaald. */
+.marker .mhit{fill:transparent}
+.marker .mring{fill:var(--surface-lowest);opacity:.85}
+.marker .mdot{fill:var(--secondary);stroke:var(--surface-lowest);stroke-width:2}
+.marker .mteken{text-anchor:middle;font:700 11px/1 var(--f-mono);fill:var(--on-secondary);
+  pointer-events:none;user-select:none}
+.marker:hover .mring,.marker:focus-visible .mring{opacity:1;fill:var(--secondary-container)}
+.marker:focus-visible{outline:none}
+.marker:focus-visible .mdot{stroke:var(--on-surface);stroke-width:3}
+.m-start .mdot{fill:var(--surface-lowest);stroke:var(--primary);stroke-width:4}
+.m-eind .mdot{fill:var(--error);stroke:var(--surface-lowest);stroke-width:3}
+.m-tol .mdot{fill:var(--secondary)}
+.m-optioneel .mdot{fill:var(--outline)}
+.m-zone .mdot{fill:var(--eco)}
+.m-zone .mteken{fill:#fff}
+.m-zonebad .mdot{fill:var(--error)}
+.m-zonebad .mteken{fill:#fff}
+
+.kaartlegenda{position:absolute;left:var(--sp-sm);bottom:var(--sp-sm);z-index:8;
+  /* Een bijschrift, geen bediening: een marker die er half achter valt blijft
+     aan te klikken. De knoppen rechtsonder zijn wél bediening, en daar wijkt
+     de tekening voor uit (overlayInset in js/map.js). */
+  pointer-events:none;
+  list-style:none;margin:0;padding:8px 10px;display:flex;flex-wrap:wrap;gap:4px 12px;
+  background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-1);max-width:calc(100% - 2 * var(--sp-sm))}
+.kaartlegenda li{display:flex;align-items:center;gap:6px;font:600 .68rem/1.3 var(--f-display);
+  color:var(--on-surface-var)}
+.lmarker{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
+  border-radius:var(--r-full);flex:0 0 auto;font:700 .58rem/1 var(--f-mono);color:#fff;
+  background:var(--secondary)}
+.lmarker.m-optioneel{background:var(--outline)}
+.lmarker.m-zone{background:var(--eco)}
+.lmarker.m-zonebad{background:var(--error)}
+
+/* De popup is HTML boven de SVG: links, tekstopmaak en schermlezers werken daar
+   gewoon, en de bronregel is dezelfde als op de actiepagina. */
+.kaartpopup{position:absolute;z-index:12;width:min(19rem,calc(100% - 16px));
+  background:var(--surface-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-2);padding:var(--sp-sm) var(--sp-sm) var(--sp-sm) var(--sp-sm);
+  display:flex;flex-direction:column;gap:6px}
+.kaartpopup[hidden]{display:none}
+.popupsluit{position:absolute;top:0;right:0;width:44px;height:44px;border:0;background:none;
+  color:var(--on-surface-var);font:400 1.3rem/1 var(--f-body);cursor:pointer;border-radius:var(--r-full)}
+.popupsluit:hover{background:var(--surface-c);color:var(--on-surface)}
+.popuptype{display:flex;align-items:center;gap:6px;padding-right:40px;
+  font:600 .66rem/1.3 var(--f-display);letter-spacing:.04em;text-transform:uppercase;
+  color:var(--on-surface-var)}
+.popuptype .flag{width:20px;height:14px;flex:0 0 auto}
+.kaartpopup h3{margin:0;text-transform:none;letter-spacing:0;
+  font:700 1rem/1.3 var(--f-display);color:var(--primary)}
+.popupkosten{font:700 1.05rem/1.2 var(--f-mono);color:var(--on-surface)}
+.popupwaarschuwing{display:flex;gap:6px;align-items:flex-start;font-size:.8rem;line-height:1.5;
+  color:var(--amber-ink);background:var(--amber-container);border:1px solid var(--amber-line);
+  border-radius:var(--r-md);padding:6px 8px}
+.popupwaarschuwing .icon{width:14px;height:14px;flex:0 0 auto;margin-top:2px}
+.popupinfo{font-size:.8rem;line-height:1.55;color:var(--on-surface-var)}
+
+@media print{
+  .kaartlegenda,.kaartpopup{display:none !important}
+}

@@ -176,7 +176,51 @@
           "needsVerification": true,
           "confidence": "uncertain"
         }
-      ]
+      ],
+      "onderweg": {
+        "id": "be.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "be.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,2‰ voor professionele bestuurders (bus, taxi, vrachtwagen); geen aparte, strengere limiet voor beginnende bestuurders.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "be.onderweg.roadside",
+          "number": "070 344 777",
+          "org": "Touring",
+          "sourceUrl": "https://www.touring.be/fr/produits/depannage-voiture",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting is niet verplicht overdag; wel verlichting verplicht bij slecht zicht of duisternis.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voordat je uitstapt op een autosnelweg of autoweg.",
+        "languageNote": "In Vlaanderen spreekt men Nederlands. Onderstaande zinnen zijn in het Frans, voor Wallonië en Brussel.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Date et heure" },
+          { "nl": "Plaats", "local": "Lieu" },
+          { "nl": "Gewonden (ja/nee)", "local": "Blessés (oui/non)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Compagnie d'assurance" },
+          { "nl": "Polisnummer", "local": "Numéro de police" },
+          { "nl": "Kenteken", "local": "Plaque d'immatriculation" },
+          { "nl": "Rijbewijsnummer", "local": "Numéro de permis de conduire" },
+          { "nl": "Handtekening", "local": "Signature" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "J'ai eu un accident", "phonetic": "zjay ew un ak-see-DAHN" },
+          { "key": "gewond", "local": "Personne n'est blessé", "phonetic": "per-SUN neh blay-SAY" },
+          { "key": "pech", "local": "Je suis en panne", "phonetic": "zjuh swee ahn PAN" },
+          { "key": "startNiet", "local": "Ma voiture ne démarre pas", "phonetic": "mah vwa-TEWR nuh day-MAR pah" },
+          { "key": "garage", "local": "Où est le garage le plus proche ?", "phonetic": "oo eh luh gah-RAZJ luh ploo prosj" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "NL",
@@ -318,7 +362,51 @@
           "needsVerification": true,
           "confidence": "uncertain"
         }
-      ]
+      ],
+      "onderweg": {
+        "id": "nl.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "nl.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,2‰ voor beginnende bestuurders (eerste 5 jaar met een rijbewijs); voor beroepschauffeurs geldt dezelfde 0,5‰ als voor andere bestuurders.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "nl.onderweg.roadside",
+          "number": "088 269 2888",
+          "org": "ANWB Wegenhulp",
+          "sourceUrl": "https://www.anwb.nl/wegenwacht/service/wegenwacht-telefoonnummer",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting wordt aangeraden, maar is niet wettelijk verplicht voor auto's.",
+        "exitVehicleRule": "Veiligheidshesje wordt aangeraden bij uitstappen op de vluchtstrook, maar is niet wettelijk verplicht.",
+        "languageNote": "Nederlands is hier de landstaal; deze zinnen dienen alleen als voorbeeld van het formaat dat je elders tegenkomt.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum en tijd" },
+          { "nl": "Plaats", "local": "Plaats" },
+          { "nl": "Gewonden (ja/nee)", "local": "Gewonden (ja/nee)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Verzekeringsmaatschappij" },
+          { "nl": "Polisnummer", "local": "Polisnummer" },
+          { "nl": "Kenteken", "local": "Kenteken" },
+          { "nl": "Rijbewijsnummer", "local": "Rijbewijsnummer" },
+          { "nl": "Handtekening", "local": "Handtekening" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Ik heb een ongeval gehad", "phonetic": "ik heb een ongeval gehad" },
+          { "key": "gewond", "local": "Niemand is gewond", "phonetic": "niemand is gewond" },
+          { "key": "pech", "local": "Ik heb pech", "phonetic": "ik heb pech" },
+          { "key": "startNiet", "local": "Mijn auto start niet", "phonetic": "mijn auto start niet" },
+          { "key": "garage", "local": "Waar is de dichtstbijzijnde garage?", "phonetic": "waar is de dichtstbijzijnde garage" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "DE",
@@ -471,7 +559,50 @@
           "needsVerification": true,
           "confidence": "uncertain"
         }
-      ]
+      ],
+      "onderweg": {
+        "id": "de.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "de.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,0‰ voor beginnende bestuurders (eerste 2 jaar op proef) en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "de.onderweg.roadside",
+          "number": "+49 89 222222",
+          "org": "ADAC (Auslandsnotruf)",
+          "sourceUrl": "https://www.adac.de/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting wordt aangeraden, maar is niet wettelijk verplicht voor auto's.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voor de bestuurder bij pech of een ongeval op de openbare weg.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum und Uhrzeit" },
+          { "nl": "Plaats", "local": "Ort" },
+          { "nl": "Gewonden (ja/nee)", "local": "Verletzte (ja/nein)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Versicherungsgesellschaft" },
+          { "nl": "Polisnummer", "local": "Versicherungsscheinnummer" },
+          { "nl": "Kenteken", "local": "Kennzeichen" },
+          { "nl": "Rijbewijsnummer", "local": "Führerscheinnummer" },
+          { "nl": "Handtekening", "local": "Unterschrift" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Ich hatte einen Unfall", "phonetic": "ich HAT-uh einen OON-fal" },
+          { "key": "gewond", "local": "Niemand ist verletzt", "phonetic": "NEE-mant ist fer-LETST" },
+          { "key": "pech", "local": "Ich habe eine Panne", "phonetic": "ich HAH-buh eine PAN-uh" },
+          { "key": "startNiet", "local": "Mein Auto springt nicht an", "phonetic": "mine OW-toh SHPRINGT nicht AN" },
+          { "key": "garage", "local": "Wo ist die nächste Werkstatt?", "phonetic": "voh ist dee NEX-tuh VERK-shtat" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "FR",
@@ -677,7 +808,51 @@
         "note": "In die gemeenten moet je of winterbanden met het 3PMSF-symbool op alle vier de wielen hebben, of sneeuwkettingen of sneeuwsokken voor minimaal twee aandrijfwielen aan boord. Bij de zonegrens staan borden. De handhaving is soepel gebleven, maar de verplichting bestaat wel degelijk.",
         "confidence": "official"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "fr.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "fr.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,2‰ voor beginnende bestuurders (eerste 3 jaar, of 2 jaar bij begeleid rijden) en voor buschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "fr.onderweg.roadside",
+          "number": null,
+          "org": "geen landelijk pechnummer",
+          "note": "Frankrijk kent geen ANWB-achtige landelijke pechhulplijn. Gebruik op de snelweg een van de oranje SOS-palen (om de 2 km) of bel je eigen verzekeraar/pechhulp.",
+          "sourceUrl": "https://www.securite-routiere.gouv.fr/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting is aanbevolen, niet verplicht voor auto's (voor motoren wel al langer verplicht).",
+        "exitVehicleRule": "Veiligheidsvest verplicht voordat je uit de auto stapt op een gevaarlijke plek zoals de snelweg; ook een gevarendriehoek plaatsen.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Date et heure" },
+          { "nl": "Plaats", "local": "Lieu" },
+          { "nl": "Gewonden (ja/nee)", "local": "Blessés (oui/non)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Compagnie d'assurance" },
+          { "nl": "Polisnummer", "local": "Numéro de police" },
+          { "nl": "Kenteken", "local": "Plaque d'immatriculation" },
+          { "nl": "Rijbewijsnummer", "local": "Numéro de permis de conduire" },
+          { "nl": "Handtekening", "local": "Signature" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "J'ai eu un accident", "phonetic": "zjay ew un ak-see-DAHN" },
+          { "key": "gewond", "local": "Personne n'est blessé", "phonetic": "per-SUN neh blay-SAY" },
+          { "key": "pech", "local": "Je suis en panne", "phonetic": "zjuh swee ahn PAN" },
+          { "key": "startNiet", "local": "Ma voiture ne démarre pas", "phonetic": "mah vwa-TEWR nuh day-MAR pah" },
+          { "key": "garage", "local": "Où est le garage le plus proche ?", "phonetic": "oo eh luh gah-RAZJ luh ploo prosj" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "LU",
@@ -779,7 +954,51 @@
         "note": "Bij ijzel, sneeuw of sneeuwmodder zijn winterbanden op alle wielen wettelijk verplicht. Er is geen vaste datumperiode.",
         "confidence": "verified"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "lu.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "lu.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,2‰ voor beginnende bestuurders en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "lu.onderweg.roadside",
+          "number": "+352 26000",
+          "org": "ACL (Automobile Club du Luxembourg)",
+          "sourceUrl": "https://www.acl.lu/en/assistance/mobility-assistance/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting is niet verplicht overdag; wel verplicht in tunnels en bij slecht zicht.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voordat je uitstapt op de snelweg.",
+        "languageNote": "Ook Duits en Luxemburgs worden veel gesproken; onderstaande zinnen zijn in het Frans.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Date et heure" },
+          { "nl": "Plaats", "local": "Lieu" },
+          { "nl": "Gewonden (ja/nee)", "local": "Blessés (oui/non)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Compagnie d'assurance" },
+          { "nl": "Polisnummer", "local": "Numéro de police" },
+          { "nl": "Kenteken", "local": "Plaque d'immatriculation" },
+          { "nl": "Rijbewijsnummer", "local": "Numéro de permis de conduire" },
+          { "nl": "Handtekening", "local": "Signature" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "J'ai eu un accident", "phonetic": "zjay ew un ak-see-DAHN" },
+          { "key": "gewond", "local": "Personne n'est blessé", "phonetic": "per-SUN neh blay-SAY" },
+          { "key": "pech", "local": "Je suis en panne", "phonetic": "zjuh swee ahn PAN" },
+          { "key": "startNiet", "local": "Ma voiture ne démarre pas", "phonetic": "mah vwa-TEWR nuh day-MAR pah" },
+          { "key": "garage", "local": "Où est le garage le plus proche ?", "phonetic": "oo eh luh gah-RAZJ luh ploo prosj" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "AT",
@@ -829,7 +1048,15 @@
         "fineIndication": "Ersatzmaut van circa 120 euro ter plaatse; bij weigering een fors hogere boete",
         "needsVerification": true,
         "verificationNote": "Prijzen worden jaarlijks geïndexeerd. Controleer het actuele tarief bij ASFINAG.",
-        "confidence": "uncertain"
+        "confidence": "uncertain",
+        "validity": {
+          "type": "duration",
+          "options": [
+            { "dagen": 1, "label": "1 dag" },
+            { "dagen": 10, "label": "10 dagen" },
+            { "dagen": 60, "label": "2 maanden" }
+          ]
+        }
       },
       "tollPoints": [
         {
@@ -1010,7 +1237,50 @@
         "note": "Binnen die periode moet je bij sneeuw, sneeuwmodder of ijzel of winterbanden op alle vier de wielen hebben met minimaal 4 mm profiel, of sneeuwkettingen op minimaal twee aandrijfwielen. Bij het ronde blauwe kettingbord zijn kettingen altijd verplicht, ook op winterbanden.",
         "confidence": "official"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "at.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "at.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,1‰ voor beginnende bestuurders (eerste 2 jaar) en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "at.onderweg.roadside",
+          "number": "120",
+          "org": "ÖAMTC",
+          "sourceUrl": "https://www.oeamtc.at/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting verplicht, het hele jaar, ook overdag.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voor de bestuurder bij pech of een ongeval, ook buiten de auto.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum und Uhrzeit" },
+          { "nl": "Plaats", "local": "Ort" },
+          { "nl": "Gewonden (ja/nee)", "local": "Verletzte (ja/nein)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Versicherungsgesellschaft" },
+          { "nl": "Polisnummer", "local": "Versicherungsscheinnummer" },
+          { "nl": "Kenteken", "local": "Kennzeichen" },
+          { "nl": "Rijbewijsnummer", "local": "Führerscheinnummer" },
+          { "nl": "Handtekening", "local": "Unterschrift" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Ich hatte einen Unfall", "phonetic": "ich HAT-uh einen OON-fal" },
+          { "key": "gewond", "local": "Niemand ist verletzt", "phonetic": "NEE-mant ist fer-LETST" },
+          { "key": "pech", "local": "Ich habe eine Panne", "phonetic": "ich HAH-buh eine PAN-uh" },
+          { "key": "startNiet", "local": "Mein Auto springt nicht an", "phonetic": "mine OW-toh SHPRINGT nicht AN" },
+          { "key": "garage", "local": "Wo ist die nächste Werkstatt?", "phonetic": "voh ist dee NEX-tuh VERK-shtat" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "CH",
@@ -1050,7 +1320,12 @@
         "note": "Er bestaat alleen een jaarvignet; een dag- of weekvariant is er niet. Het vignet van een kalenderjaar is geldig van 1 december van het voorgaande jaar tot en met 31 januari van het volgende jaar. De sticker voor 2026 is blauw. Een stickervignet moet echt op de ruit geplakt zitten, want los achter de voorruit gelegd telt niet. Goed nieuws tegenover Oostenrijk: het vignet dekt hier wél de grote alpentunnels. Door de Gotthard- en de San Bernardinotunnel rijd je zonder bijbetalen. Alleen de Grote Sint-Bernhard en de Munt la Schera vallen erbuiten, en de autotreinen door de bergen zijn ook apart betalen.",
         "appliesToForeign": true,
         "fineIndication": "200 frank boete plus alsnog 40 frank voor het vignet",
-        "confidence": "official"
+        "confidence": "official",
+        "validity": {
+          "type": "calendarYear",
+          "endMonthDay": "01-31",
+          "note": "Geldig van 1 december van het voorgaande jaar tot en met 31 januari van het jaar erna."
+        }
       },
       "tollPoints": [
         {
@@ -1211,7 +1486,62 @@
         "note": "Er is geen algemene winterbandenplicht, maar je bent verplicht je voertuig aan de omstandigheden aan te passen. Veroorzaak je met zomerbanden een ongeval of een blokkade, dan volgt een boete en kan je verzekeraar korten. Sneeuwkettingen zijn verplicht bij het ronde blauwe kettingbord.",
         "confidence": "official"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "ch.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "ch.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,1‰ voor beginnende bestuurders en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "ch.onderweg.roadside",
+          "number": "140",
+          "org": "TCS (Touring Club Suisse)",
+          "sourceUrl": "https://www.tcs.ch/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting verplicht, het hele jaar.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voor de bestuurder op autosnelwegen en hoofdwegen.",
+        "languageNote": "In West-Zwitserland (Genève, Lausanne) spreekt men Frans, in Ticino Italiaans; onderstaande zinnen zijn in het Duits, de meest gesproken taal.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum und Uhrzeit" },
+          { "nl": "Plaats", "local": "Ort" },
+          { "nl": "Gewonden (ja/nee)", "local": "Verletzte (ja/nein)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Versicherungsgesellschaft" },
+          { "nl": "Polisnummer", "local": "Versicherungsscheinnummer" },
+          { "nl": "Kenteken", "local": "Kennzeichen" },
+          { "nl": "Rijbewijsnummer", "local": "Führerscheinnummer" },
+          { "nl": "Handtekening", "local": "Unterschrift" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Ich hatte einen Unfall", "phonetic": "ich HAT-uh einen OON-fal" },
+          { "key": "gewond", "local": "Niemand ist verletzt", "phonetic": "NEE-mant ist fer-LETST" },
+          { "key": "pech", "local": "Ich habe eine Panne", "phonetic": "ich HAH-buh eine PAN-uh" },
+          { "key": "startNiet", "local": "Mein Auto springt nicht an", "phonetic": "mine OW-toh SHPRINGT nicht AN" },
+          { "key": "garage", "local": "Wo ist die nächste Werkstatt?", "phonetic": "voh ist dee NEX-tuh VERK-shtat" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      },
+      "douane": {
+        "id": "ch.douane",
+        "note": "Deze grenzen gelden voor je terugkeer in de EU vanuit een land buiten de EU, zoals Zwitserland — niet voor het reizen binnen de EU zelf, waar geen douanelimieten gelden.",
+        "alcohol": "Belastingvrij mee terug de EU in: 1 liter sterkedrank boven 22% (of 2 liter tussen 15% en 22%), plus 4 liter niet-mousserende wijn en 16 liter bier.",
+        "tabak": "200 sigaretten, of 100 cigarillo's, of 50 sigaren, of 250 gram rooktabak — of een evenredige mix daarvan.",
+        "overig": "Tot 430 euro aan overige goederen per volwassen reiziger (150 euro voor reizigers onder de 15 jaar) bij binnenkomst over land.",
+        "sourceUrl": "https://taxation-customs.ec.europa.eu/customs-4/travellers_en",
+        "lastVerified": "2026-08-31",
+        "confidence": "official",
+        "verificationNote": null
+      }
     },
     {
       "code": "IT",
@@ -1343,7 +1673,51 @@
         "note": "Op de aangegeven wegen moet je of winterbanden hebben, of sneeuwkettingen aan boord. In Valle d'Aosta en delen van Zuid-Tirol is de regeling strenger en begint hij eerder. Let op de borden bij de opritten van de autostrade.",
         "confidence": "verified"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "it.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "it.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,0‰ voor beginnende bestuurders (eerste 3 jaar) en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "it.onderweg.roadside",
+          "number": "803116",
+          "org": "ACI (Automobile Club d'Italia)",
+          "note": "Vanuit een buitenlandse mobiele telefoon: 800 116 800.",
+          "sourceUrl": "https://www.aci.it/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Verlichting verplicht buiten de bebouwde kom, ook overdag, het hele jaar.",
+        "exitVehicleRule": "Veiligheidsvest verplicht zodra je 's nachts of bij slecht zicht buiten de auto staat op de rijbaan of berm.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Data e ora" },
+          { "nl": "Plaats", "local": "Luogo" },
+          { "nl": "Gewonden (ja/nee)", "local": "Feriti (sì/no)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Compagnia assicurativa" },
+          { "nl": "Polisnummer", "local": "Numero di polizza" },
+          { "nl": "Kenteken", "local": "Targa" },
+          { "nl": "Rijbewijsnummer", "local": "Numero patente" },
+          { "nl": "Handtekening", "local": "Firma" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Ho avuto un incidente", "phonetic": "oh ah-VOO-toh oon in-chee-DEN-teh" },
+          { "key": "gewond", "local": "Nessuno è ferito", "phonetic": "nes-SOO-noh eh feh-REE-toh" },
+          { "key": "pech", "local": "Ho un guasto", "phonetic": "oh oon goo-AS-toh" },
+          { "key": "startNiet", "local": "La mia auto non si avvia", "phonetic": "lah MEE-ah OW-toh non see ah-VEE-ah" },
+          { "key": "garage", "local": "Dov'è l'officina più vicina?", "phonetic": "doh-VEH loh-fee-CHEE-nah pyoo vee-CHEE-nah" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "ES",
@@ -1508,7 +1882,50 @@
           "needsVerification": true,
           "confidence": "uncertain"
         }
-      ]
+      ],
+      "onderweg": {
+        "id": "es.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "es.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,3‰ voor beginnende bestuurders (eerste 2 jaar) en voor beroepschauffeurs; 0,0‰ onder de 18 jaar.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "es.onderweg.roadside",
+          "number": "900 112 222",
+          "org": "RACE",
+          "sourceUrl": "https://www.race.es/asistencia-en-carretera",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting wordt aangeraden op snelwegen, niet algemeen verplicht voor auto's.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voordat je uitstapt op de rijbaan of berm.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Fecha y hora" },
+          { "nl": "Plaats", "local": "Lugar" },
+          { "nl": "Gewonden (ja/nee)", "local": "Heridos (sí/no)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Compañía de seguros" },
+          { "nl": "Polisnummer", "local": "Número de póliza" },
+          { "nl": "Kenteken", "local": "Matrícula" },
+          { "nl": "Rijbewijsnummer", "local": "Número de carnet de conducir" },
+          { "nl": "Handtekening", "local": "Firma" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "He tenido un accidente", "phonetic": "eh teh-NEE-doh oon ak-see-DEN-teh" },
+          { "key": "gewond", "local": "Nadie está herido", "phonetic": "NAH-dyeh es-TAH eh-REE-doh" },
+          { "key": "pech", "local": "Tengo una avería", "phonetic": "TEN-goh OO-nah ah-veh-REE-ah" },
+          { "key": "startNiet", "local": "Mi coche no arranca", "phonetic": "mee KO-cheh no ah-RRAN-kah" },
+          { "key": "garage", "local": "¿Dónde está el taller más cercano?", "phonetic": "DON-deh es-TAH el tah-YER mas ther-KAH-noh" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "PT",
@@ -1655,7 +2072,50 @@
           "needsVerification": true,
           "confidence": "uncertain"
         }
-      ]
+      ],
+      "onderweg": {
+        "id": "pt.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "pt.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,2‰ voor beginnende bestuurders en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "pt.onderweg.roadside",
+          "number": "215 915 915",
+          "org": "ACP (Automóvel Club de Portugal)",
+          "sourceUrl": "https://www.acp.pt/servicos/assistencia/assistencia-em-viagem",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Niet algemeen verplicht overdag; wel verplicht in tunnels.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voordat je uitstapt buiten de bebouwde kom.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Data e hora" },
+          { "nl": "Plaats", "local": "Local" },
+          { "nl": "Gewonden (ja/nee)", "local": "Feridos (sim/não)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Companhia de seguros" },
+          { "nl": "Polisnummer", "local": "Número de apólice" },
+          { "nl": "Kenteken", "local": "Matrícula" },
+          { "nl": "Rijbewijsnummer", "local": "Número da carta de condução" },
+          { "nl": "Handtekening", "local": "Assinatura" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Tive um acidente", "phonetic": "TEE-vuh oom ah-see-DEN-tuh" },
+          { "key": "gewond", "local": "Ninguém está ferido", "phonetic": "neen-GEM shtah fuh-REE-doo" },
+          { "key": "pech", "local": "Tenho uma avaria", "phonetic": "TEN-yoo OO-muh ah-vah-REE-uh" },
+          { "key": "startNiet", "local": "O meu carro não arranca", "phonetic": "oo MEH-oo KAR-roo now ah-RRAN-kuh" },
+          { "key": "garage", "local": "Onde fica a oficina mais próxima?", "phonetic": "ON-duh FEE-kuh uh oh-fee-SEE-nuh mysh PRO-see-muh" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "HR",
@@ -1809,7 +2269,50 @@
           "needsVerification": true,
           "confidence": "uncertain"
         }
-      ]
+      ],
+      "onderweg": {
+        "id": "hr.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "hr.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,0‰ voor beginnende bestuurders (eerste 2 jaar) en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "hr.onderweg.roadside",
+          "number": "1987",
+          "org": "HAK (Hrvatski autoklub)",
+          "sourceUrl": "https://www.hak.hr/1987",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Verlichting verplicht overdag van eind oktober tot eind maart; daarbuiten aanbevolen.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voor de bestuurder bij pech of een ongeval.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum i vrijeme" },
+          { "nl": "Plaats", "local": "Mjesto" },
+          { "nl": "Gewonden (ja/nee)", "local": "Ozlijeđeni (da/ne)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Osiguravajuće društvo" },
+          { "nl": "Polisnummer", "local": "Broj police" },
+          { "nl": "Kenteken", "local": "Registarska oznaka" },
+          { "nl": "Rijbewijsnummer", "local": "Broj vozačke dozvole" },
+          { "nl": "Handtekening", "local": "Potpis" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Imao sam nesreću", "phonetic": "EE-mao sam NES-reh-choo" },
+          { "key": "gewond", "local": "Nitko nije ozlijeđen", "phonetic": "NEET-koh NEE-yeh oz-lee-YEH-jen" },
+          { "key": "pech", "local": "Imam kvar", "phonetic": "EE-mam kvar" },
+          { "key": "startNiet", "local": "Auto mi ne pali", "phonetic": "OW-toh mee neh PAH-lee" },
+          { "key": "garage", "local": "Gdje je najbliža radionica?", "phonetic": "gdyeh yeh NAY-blee-zha rah-dee-OH-nee-tsah" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "SI",
@@ -1939,7 +2442,50 @@
         "note": "Verplicht in die periode ongeacht het weer: winterbanden op alle vier de wielen met minimaal 3 mm profiel, of zomerbanden met minimaal 3 mm plus sneeuwkettingen aan boord.",
         "confidence": "official"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "si.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "si.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,0‰ voor beginnende bestuurders en voor beroepschauffeurs.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "si.onderweg.roadside",
+          "number": "1987",
+          "org": "AMZS (Avto-moto zveza Slovenije)",
+          "sourceUrl": "https://www.amzs.si/pomoc/pomoc-na-cesti-v-sloveniji/stevilka-1987",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting verplicht, het hele jaar.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voor iedereen die uit de auto stapt op de rijbaan of berm.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum in ura" },
+          { "nl": "Plaats", "local": "Kraj" },
+          { "nl": "Gewonden (ja/nee)", "local": "Poškodovani (da/ne)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Zavarovalnica" },
+          { "nl": "Polisnummer", "local": "Številka police" },
+          { "nl": "Kenteken", "local": "Registrska tablica" },
+          { "nl": "Rijbewijsnummer", "local": "Številka vozniškega dovoljenja" },
+          { "nl": "Handtekening", "local": "Podpis" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Imel sem nesrečo", "phonetic": "EE-mel sem NES-reh-cho" },
+          { "key": "gewond", "local": "Nihče ni poškodovan", "phonetic": "NEEH-cheh nee posh-ko-DOH-van" },
+          { "key": "pech", "local": "Imam okvaro", "phonetic": "EE-mam ok-VAH-ro" },
+          { "key": "startNiet", "local": "Avto mi ne vžge", "phonetic": "AV-to mee neh VUZH-geh" },
+          { "key": "garage", "local": "Kje je najbližja delavnica?", "phonetic": "kyeh yeh nai-BLEE-zhya deh-LAV-nee-tsa" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "CZ",
@@ -2060,7 +2606,50 @@
         "note": "Binnen die periode zijn winterbanden verplicht zodra er sneeuw, ijs of sneeuwmodder ligt, of zodra het blauwe winterbord staat. Minimaal 4 mm profiel.",
         "confidence": "official"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "cz.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "cz.onderweg.alcohol",
+          "limitPromille": 0.0,
+          "note": "Nultolerantie: 0,0‰ voor alle bestuurders, zonder apart, hoger toegestaan promillage.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "cz.onderweg.roadside",
+          "number": "1230",
+          "org": "ÚAMK",
+          "sourceUrl": "https://www.uamk.cz/sluzby-uamk/asistencni-sluzby",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting verplicht, het hele jaar.",
+        "exitVehicleRule": "Veiligheidsvest verplicht voor de bestuurder buiten de bebouwde kom.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum a čas" },
+          { "nl": "Plaats", "local": "Místo" },
+          { "nl": "Gewonden (ja/nee)", "local": "Zranění (ano/ne)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Pojišťovna" },
+          { "nl": "Polisnummer", "local": "Číslo pojistky" },
+          { "nl": "Kenteken", "local": "Registrační značka" },
+          { "nl": "Rijbewijsnummer", "local": "Číslo řidičského průkazu" },
+          { "nl": "Handtekening", "local": "Podpis" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Měl jsem nehodu", "phonetic": "mnyel ysem NEH-ho-doo" },
+          { "key": "gewond", "local": "Nikdo není zraněný", "phonetic": "NYIK-doh NEH-nee ZRAH-nyeh-nee" },
+          { "key": "pech", "local": "Mám poruchu", "phonetic": "mahm PO-roo-hoo" },
+          { "key": "startNiet", "local": "Auto mi nenastartuje", "phonetic": "OW-to mee NEH-na-star-too-yeh" },
+          { "key": "garage", "local": "Kde je nejbližší autoservis?", "phonetic": "gdeh yeh NAY-blish-shee OW-to-ser-vees" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "DK",
@@ -2201,7 +2790,50 @@
         "note": "Geen winterbandenplicht, maar in de wintermaanden zijn winterbanden praktisch onmisbaar. Spijkerbanden zijn toegestaan van 1 november tot en met 15 april, mits op alle vier de wielen.",
         "confidence": "official"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "dk.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "dk.onderweg.alcohol",
+          "limitPromille": 0.5,
+          "note": "0,2‰ voor beginnende bestuurders (eerste 3 jaar), sinds 1 juli 2025.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "dk.onderweg.roadside",
+          "number": "70 10 80 90",
+          "org": "SOS Dansk Autohjælp",
+          "sourceUrl": "https://www.dah.dk/tilkald-vejhjaelp/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting verplicht, het hele jaar.",
+        "exitVehicleRule": "Geen wettelijke hesjesplicht, wel aanbevolen.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Dato og klokkeslæt" },
+          { "nl": "Plaats", "local": "Sted" },
+          { "nl": "Gewonden (ja/nee)", "local": "Tilskadekomne (ja/nej)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Forsikringsselskab" },
+          { "nl": "Polisnummer", "local": "Policenummer" },
+          { "nl": "Kenteken", "local": "Nummerplade" },
+          { "nl": "Rijbewijsnummer", "local": "Kørekortnummer" },
+          { "nl": "Handtekening", "local": "Underskrift" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Jeg har været impliceret i en ulykke", "phonetic": "yai har vairt im-plee-say-ret ee en OO-luk-eh" },
+          { "key": "gewond", "local": "Ingen er kommet til skade", "phonetic": "ING-en air KOM-et til SKAH-the" },
+          { "key": "pech", "local": "Jeg har fået motorstop", "phonetic": "yai har foh-et MO-tor-stop" },
+          { "key": "startNiet", "local": "Min bil vil ikke starte", "phonetic": "meen beel vil ig-eh STAR-teh" },
+          { "key": "garage", "local": "Hvor er nærmeste værksted?", "phonetic": "vor air NAIR-mes-teh VAIRK-sted" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "SE",
@@ -2313,7 +2945,51 @@
         "note": "In die periode zijn winterbanden verplicht zodra er winterse omstandigheden zijn, en dit geldt uitdrukkelijk ook voor buitenlandse voertuigen. Minimaal 3 mm profiel. Spijkerbanden zijn toegestaan van 1 oktober tot en met 15 april, en daarbuiten alleen bij winters weer.",
         "confidence": "official"
       },
-      "needsVerification": false
+      "needsVerification": false,
+      "onderweg": {
+        "id": "se.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "se.onderweg.alcohol",
+          "limitPromille": 0.2,
+          "note": "0,2‰ geldt voor iedereen, ook ervaren bestuurders — een van de strengste limieten van Europa, zonder apart novice- of beroepsniveau.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "se.onderweg.roadside",
+          "number": "020-912 912",
+          "org": "Assistancekåren",
+          "note": "Landelijke pechhulp die iedereen helpt, ongeacht verzekeraar — Zweden kent geen ANWB-achtige club met eigen wegenwacht.",
+          "sourceUrl": "https://assistancekaren.se/kontakta-oss/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting verplicht, het hele jaar.",
+        "exitVehicleRule": "Geen wettelijke hesjesplicht, wel aanbevolen.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Datum och klockslag" },
+          { "nl": "Plaats", "local": "Plats" },
+          { "nl": "Gewonden (ja/nee)", "local": "Skadade (ja/nej)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Försäkringsbolag" },
+          { "nl": "Polisnummer", "local": "Försäkringsnummer" },
+          { "nl": "Kenteken", "local": "Registreringsnummer" },
+          { "nl": "Rijbewijsnummer", "local": "Körkortsnummer" },
+          { "nl": "Handtekening", "local": "Underskrift" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "Jag har varit med om en olycka", "phonetic": "yah har VAH-rit med om en OO-lyk-ah" },
+          { "key": "gewond", "local": "Ingen är skadad", "phonetic": "ING-en air SKAH-dad" },
+          { "key": "pech", "local": "Jag har fått motorstopp", "phonetic": "yah har fot MOH-tor-stop" },
+          { "key": "startNiet", "local": "Min bil startar inte", "phonetic": "min beel STAR-tar IN-teh" },
+          { "key": "garage", "local": "Var ligger närmaste verkstad?", "phonetic": "var LIG-er NAIR-mas-teh VERK-stahd" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      }
     },
     {
       "code": "GB",
@@ -2470,7 +3146,62 @@
           "needsVerification": true,
           "confidence": "uncertain"
         }
-      ]
+      ],
+      "onderweg": {
+        "id": "gb.onderweg",
+        "emergencyNumber": "112",
+        "alcohol": {
+          "id": "gb.onderweg.alcohol",
+          "limitPromille": 0.8,
+          "note": "0,8‰ (80 mg/100 ml) in Engeland, Wales en Noord-Ierland. Schotland hanteert een strengere limiet van 0,5‰ — let op bij een route die door Schotland loopt.",
+          "sourceUrl": "https://etsc.eu/issues/drink-driving/blood-alcohol-content-bac-drink-driving-limits-across-europe/",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "roadside": {
+          "id": "gb.onderweg.roadside",
+          "number": "0800 887766",
+          "org": "AA (The Automobile Association)",
+          "sourceUrl": "https://www.theaa.com/breakdown-cover/advice/broken-down-get-help",
+          "lastVerified": "2026-08-31",
+          "confidence": "verified"
+        },
+        "lightingRule": "Dagrijverlichting is niet verplicht overdag; wel verlichting verplicht bij slecht zicht of duisternis.",
+        "exitVehicleRule": "Geen wettelijke hesjesplicht, wel dringend aanbevolen door de politie.",
+        "languageNote": "Engels is hier de landstaal; deze zinnen dienen alleen als voorbeeld van het formaat dat je elders tegenkomt.",
+        "accidentFormFields": [
+          { "nl": "Datum en tijd", "local": "Date and time" },
+          { "nl": "Plaats", "local": "Location" },
+          { "nl": "Gewonden (ja/nee)", "local": "Injuries (yes/no)" },
+          { "nl": "Verzekeringsmaatschappij", "local": "Insurance company" },
+          { "nl": "Polisnummer", "local": "Policy number" },
+          { "nl": "Kenteken", "local": "Registration plate" },
+          { "nl": "Rijbewijsnummer", "local": "Driving licence number" },
+          { "nl": "Handtekening", "local": "Signature" }
+        ],
+        "phrases": [
+          { "key": "ongeval", "local": "I've had an accident", "phonetic": "I've had an accident" },
+          { "key": "gewond", "local": "No one is injured", "phonetic": "No one is injured" },
+          { "key": "pech", "local": "I've broken down", "phonetic": "I've broken down" },
+          { "key": "startNiet", "local": "My car won't start", "phonetic": "My car won't start" },
+          { "key": "garage", "local": "Where's the nearest garage?", "phonetic": "Where's the nearest garage?" }
+        ],
+        "sourceUrl": "https://www.rac.co.uk/drive/travel/legal/european-driving-law/",
+        "lastVerified": "2026-08-31",
+        "confidence": "uncertain",
+        "verificationNote": "Verlichtingsplicht, uitstapregels en de veldnamen van het schadeformulier zijn een algemene inschatting, niet per land geverifieerd; controleer voor vertrek."
+      },
+      "douane": {
+        "id": "gb.douane",
+        "note": "Deze grenzen gelden voor je terugkeer in de EU vanuit een land buiten de EU, zoals het Verenigd Koninkrijk — niet voor het reizen binnen de EU zelf, waar geen douanelimieten gelden.",
+        "alcohol": "Belastingvrij mee terug de EU in: 1 liter sterkedrank boven 22% (of 2 liter tussen 15% en 22%), plus 4 liter niet-mousserende wijn en 16 liter bier.",
+        "tabak": "200 sigaretten, of 100 cigarillo's, of 50 sigaren, of 250 gram rooktabak — of een evenredige mix daarvan.",
+        "overig": "Tot 430 euro aan overige goederen per volwassen reiziger (150 euro voor reizigers onder de 15 jaar) bij binnenkomst over land; via de Kanaaltunnel of de veerboot gelden dezelfde grenzen als over land.",
+        "sourceUrl": "https://taxation-customs.ec.europa.eu/customs-4/travellers_en",
+        "lastVerified": "2026-08-31",
+        "confidence": "official",
+        "verificationNote": null
+      }
     }
   ]
 }

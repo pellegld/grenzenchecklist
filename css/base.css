@@ -39,6 +39,11 @@
   /* Ook vast, zelfde reden: het wegdek van de reiservaring blijft altijd
      donker asfalt met een halfdoorzichtige rand, in beide thema's. */
   --asphalt:#2d3133; --asphalt-border:rgba(117,119,125,.35);
+  /* Vast, niet var(--error): die wordt in donkere modus een lichte zalmkleur
+     (tekst-op-donker), en een wit icoon daarop haalt geen contrast meer. De
+     incidentknop is een gevulde vlakke knop, dus vast donkerrood in beide
+     thema's, zoals --navy en --asphalt hierboven. */
+  --sos:#ba1a1a;
 
   --f-display:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --f-body:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;

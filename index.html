@@ -46,6 +46,7 @@
   <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 1 5.4-5.4l-3 3-2-2z"/></symbol>
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><line x1="3" y1="12" x2="21" y2="12"/></symbol>
   <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></symbol>
   <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19l-4 1z"/></symbol>
@@ -58,6 +59,15 @@
 </svg>
 
 <div id="loaderr" class="loaderr" hidden></div>
+
+<!-- Fase C: melding bij een landwissel in reismodus. Buiten de views, want hij
+     moet blijven staan ongeacht welke pagina open is. -->
+<div id="grensbanner-wrap" hidden></div>
+
+<!-- De incidentknop: altijd bereikbaar, op elke pagina, ook zonder actieve reis. -->
+<button type="button" class="sosbutton" id="btn-incident" aria-label="Nood onderweg" data-i18n-aria="incident.knopLabel">
+  <svg class="icon"><use href="#i-warning"></use></svg>
+</button>
 
 <!-- §21: met de tab-toets is de navigatie anders elke pagina opnieuw aflopen. -->
 <a class="skiplink" href="#hoofd" data-i18n="alg.naarInhoud">Naar de inhoud</a>
@@ -91,8 +101,9 @@
     <h2 id="meerkop" data-i18n="nav.meer">Meer</h2>
     <button type="button" class="meerrij" data-view="regels"><svg class="icon"><use href="#i-flag"></use></svg><span data-i18n="nav.regels">Regels per land</span></button>
     <button type="button" class="meerrij" data-view="document"><svg class="icon"><use href="#i-doc"></use></svg><span data-i18n="nav.document">Reisdocument</span></button>
+    <button type="button" class="meerrij" data-view="onderweg"><svg class="icon"><use href="#i-locate"></use></svg><span data-i18n="nav.onderweg">Onderweg</span></button>
     <button type="button" class="meerrij" data-view="reis"><svg class="icon"><use href="#i-journey"></use></svg><span data-i18n="nav.reis">Reiservaring</span></button>
-    <button type="button" class="meerrij" data-view="reizen"><svg class="icon"><use href="#i-car"></use></svg><span data-i18n="nav.reizen">Mijn reizen</span></button>
+    <button type="button" class="meerrij" data-view="reizen"><svg class="icon"><use href="#i-car"></use></svg><span data-i18n="nav.reizen">Mijn reizen</span><span class="navbadge navbadge-wijzigingen" hidden></span></button>
     <button type="button" class="meerrij" data-view="home"><svg class="icon"><use href="#i-info"></use></svg><span data-i18n="nav.home">Over deze app</span></button>
     <label class="switchrow">
       <span data-i18n="nav.donkereModus">Donkere modus</span>
@@ -132,9 +143,13 @@
     <button type="button" class="navitem" data-view="document">
       <svg class="icon"><use href="#i-doc"></use></svg> <span data-i18n="nav.document">Reisdocument</span>
     </button>
+    <button type="button" class="navitem" data-view="onderweg">
+      <svg class="icon"><use href="#i-locate"></use></svg> <span data-i18n="nav.onderweg">Onderweg</span>
+    </button>
     <div class="sidenav-scheiding"></div>
     <button type="button" class="navitem" data-view="reizen">
       <svg class="icon"><use href="#i-car"></use></svg> <span data-i18n="nav.reizen">Mijn reizen</span>
+      <span class="navbadge navbadge-wijzigingen" hidden></span>
     </button>
     <button type="button" class="navitem" data-view="reis">
       <svg class="icon"><use href="#i-journey"></use></svg> <span data-i18n="nav.reis">Reiservaring</span>
@@ -304,6 +319,11 @@
   <div id="document-wrap"></div>
 </section>
 
+<!-- ================= Onderweg (fase C) ================= -->
+<section class="view view-page" id="view-onderweg" hidden>
+  <div id="onderweg-wrap"></div>
+</section>
+
 <!-- ================= Mijn reizen ================= -->
 <section class="view view-page" id="view-reizen" hidden>
   <div id="reizen-wrap"></div>
@@ -330,6 +350,17 @@
   </div>
 </div>
 
+<!-- Incidentmodus (fase C): altijd bereikbaar via #btn-incident hierboven. -->
+<div class="melddialoog sosdialoog" id="incidentdialoog" hidden>
+  <div class="meldvenster sosvenster" role="dialog" aria-modal="true" aria-labelledby="incidentkop">
+    <div class="sosvenster-koprij">
+      <h2 id="incidentkop" data-i18n="incident.kop">Nood onderweg</h2>
+      <button type="button" class="icon-toggle" id="incident-sluit" aria-label="Sluiten" data-i18n-aria="alg.sluiten">&times;</button>
+    </div>
+    <div id="incident-inhoud"></div>
+  </div>
+</div>
+
 </div>
 
 <!-- Classic scripts, geen modules: die laden niet via file://, en de app moet
@@ -352,6 +383,11 @@
 <script src="js/costs.js"></script>         <!-- tol en de kostenpagina -->
 <script src="js/calendar.js"></script>      <!-- drukte per dag -->
 <script src="js/countries.js"></script>     <!-- landkaart-onderdelen en correctielink -->
+<script src="js/journey.js"></script>      <!-- reismodus (grensdetectie) en offline reispack -->
+<script src="js/incident.js"></script>     <!-- incidentmodus -->
+<script src="js/fuel.js"></script>         <!-- tankstrategie -->
+<script src="js/wijzigingen.js"></script>  <!-- de wijzigingsmonitor (fase D1) -->
+<script src="js/douane.js"></script>       <!-- terugreismodus: douane en boete-herkenning (fase D3) -->
 <script src="js/planner.js"></script>       <!-- de plaatsvelden en de routeberekening -->
 <script src="js/home.js"></script>          <!-- homepage -->
 <script src="js/wizard.js"></script>        <!-- de reiswizard in vier stappen -->
@@ -360,6 +396,7 @@
 <script src="js/pages.js"></script>         <!-- regels, reizen, reiservaring -->
 <script src="js/document.js"></script>      <!-- reisdocument en print -->
 <script src="js/map.js"></script>           <!-- routeschets -->
+<script src="js/share.js"></script>         <!-- de reis in een URL -->
 <script src="js/app.js"></script>           <!-- orkestratie en start — moet als laatste -->
 </body>
 </html>

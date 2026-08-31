@@ -269,19 +269,16 @@ function renderDashboardStats(){
 
   var afstand = getal(Math.round(res.total));
   var duur = fmtDuur(tripDuur(TRIP));
-  var tol = tolTotaalRetour(TRIP);
-  var tolWaarde = tol
-    ? '&euro;' + euroTekst(tol.bedrag) +
-      (tol.zeker ? "" : ' <small>' + esc(i18n("planner.ofMeer")) + '</small>')
-    : "—";
+  var kostenWaarde = kostenTotaalHTML(kostenOverzicht(TRIP)) ||
+                     esc(i18n("kosten.nietTeBepalen"));
 
   el.innerHTML =
     '<div class="statcard"><span class="slbl">' + iconUse("ruler") + esc(i18n("planner.afstand")) + '</span>' +
       '<span class="sval">' + afstand + ' <small>' + esc(i18n("planner.km")) + '</small></span></div>' +
     '<div class="statcard"><span class="slbl">' + iconUse("clock") + esc(i18n("planner.reistijd")) + '</span>' +
       '<span class="sval">' + (duur || "—") + '</span></div>' +
-    '<div class="statcard wide"><span class="slbl">' + iconUse("payments") + esc(i18n("planner.verwachteTol")) + '</span>' +
-      '<span class="sval">' + tolWaarde + '</span></div>';
+    '<div class="statcard wide"><span class="slbl">' + iconUse("payments") + esc(i18n("planner.geschatteKosten")) + '</span>' +
+      '<span class="sval">' + kostenWaarde + '</span></div>';
 }
 
 function renderLandenLijst(){

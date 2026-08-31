@@ -33,12 +33,14 @@ function dashboardKopHTML(trip){
            : (landen.length > 1 ? BY_CODE[landen[landen.length - 1]].name : "");
 
   return '<header class="dashkop">' +
+    deelMeldingHTML() +
     '<div class="dashvlaggen">' + vlaggen + "</div>" +
     "<h1>" + esc(van) + (naar ? " → " + esc(naar) : "") + "</h1>" +
     '<p class="dashmeta">' + esc(reisPeriodeTekst(trip)) + "</p>" +
     '<p class="dashmeta">' + esc(voertuigSamenvatting(trip)) +
       ' <button type="button" class="tekstknop" data-view="wizard" data-wiz-naar="3">' +
       esc(i18n("dashboard.wijzig")) + "</button></p>" +
+    '<p class="dashdeel">' + deelKnopHTML() + "</p>" +
   "</header>";
 }
 
@@ -175,7 +177,12 @@ function boetekansHTML(trip){
 function dashboardCijfersHTML(trip){
   var afstand = tripAfstandKm(trip);
   var duur = fmtDuur(tripDuur(trip));
-  var tol = tolTotaalRetour(trip);
+  /* Hetzelfde bedrag als op de kostenpagina, uit dezelfde bron. Deze cel liet
+     eerder alleen tol zien terwijl hij "kosten" heette en naar de kostenpagina
+     doorklikte; wie daar een hoger getal aantrof, moest raden welke van de twee
+     loog. Nu staat er één schatting, hier en daar. */
+  var kosten = kostenOverzicht(trip);
+  var kostenWaarde = kostenTotaalHTML(kosten);
 
   function cel(icoon, label, waarde, view){
     return '<button type="button" class="cijfercel" data-view="' + view + '">' +
@@ -187,9 +194,12 @@ function dashboardCijfersHTML(trip){
     cel("ruler", i18n("planner.afstand"),
         afstand ? getal(Math.round(afstand)) + ' <small>' + esc(i18n("planner.km")) + "</small>" : "—", "kaart") +
     cel("clock", i18n("planner.reistijd"), duur || "—", "kaart") +
-    cel("payments", i18n("planner.verwachteTol"),
-        tol ? "&euro;" + euroTekst(tol.bedrag) +
-          (tol.zeker ? "" : ' <small>' + esc(i18n("planner.ofMeer")) + "</small>") : "—", "kosten") +
+    /* Een streepje zou hier "nul" of "onbekend" kunnen betekenen, en op een
+       route waar wel degelijk een vignet en een sticker op wachten is dat het
+       verkeerde antwoord. De kostenpagina legt uit waarom er niets te tellen
+       valt; deze cel zegt in één woord dat er iets uit te leggen is. */
+    cel("payments", i18n("planner.geschatteKosten"),
+        kostenWaarde || esc(i18n("kosten.nietTeBepalen")), "kosten") +
   "</section>";
 }
 

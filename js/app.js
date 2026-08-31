@@ -19,11 +19,12 @@ var RENDERS = {
     renderLandenLijst();
     renderMilieuzones();
     renderHandmatigeKeuze();
-    renderRouteSchets(TRIP && TRIP.route ? TRIP.route.coordinates : null);
+    renderKaart();
   },
   kosten:    renderKosten,
   regels:    renderLandenInfo,
   document:  renderDocument,
+  onderweg:  renderOnderweg,
   reizen:    renderMijnReizen,
   reis:      renderReisErvaring
 };
@@ -133,6 +134,13 @@ function wire(){
     if(e.key !== "Escape") return;
     sluitMeer();
     sluitMelding();
+    sluitIncident();
+  });
+
+  /* De grensbanner (fase C) is dynamisch ingevoegd buiten de views, dus zijn
+     sluitknop hangt op document-niveau, net als de correctielink hierboven. */
+  document.addEventListener("click", function(e){
+    if(e.target.closest("#grensbanner-sluit")) verbergGrensbanner();
   });
 
   /* §21: een rij die als knop werkt, moet ook met het toetsenbord werken. De
@@ -153,7 +161,20 @@ function wire(){
     var cb = e.target.closest("input[data-tick]");
     if(!cb || !TRIP) return;
     var k = cb.getAttribute("data-tick");
-    if(cb.checked) TRIP.ticked[k] = 1; else delete TRIP.ticked[k];
+    var vig = /^task:vig:(.+)$/.exec(k);
+    if(cb.checked){
+      TRIP.ticked[k] = 1;
+      /* Fase D2: bij een vignet met een harde looptijd (AT, CH) meteen vragen
+         wanneer het gekocht is, zodat een volgende reis met dezelfde auto het
+         niet opnieuw hoeft te melden. */
+      if(vig) vignetVraagBijAfvinken(vig[1]);
+    } else {
+      delete TRIP.ticked[k];
+      /* Uitvinken is een expliciet "nee, dit klopt niet" — dan hoort het
+         onthouden vignet ook te verdwijnen, anders staat de actie bij de
+         eerstvolgende render vanzelf weer als afgevinkt (het geheugen wint). */
+      if(vig) wisVignetGeldigheid(vig[1]);
+    }
     bewaarTrip();
     if(VIEW === "acties") naAfvinken(k, cb.checked);
     else render();
@@ -270,6 +291,16 @@ function wire(){
       nieuweTrip("wizard");
       return;
     }
+    /* Fase D1: "Gezien" op de wijzigingenkaart zet het ijkpunt van die ene reis
+       vooruit, en alleen van die reis — de andere reizen in de lijst mogen hun
+       eigen ongeziene wijzigingen houden. */
+    var gezien = e.target.closest("[data-wijzigingen-gezien]");
+    if(gezien){
+      markeerGecontroleerd(tripById(gezien.getAttribute("data-wijzigingen-gezien")));
+      verversWijzigingenBadge();
+      renderMijnReizen();
+      return;
+    }
     var actieBtn = e.target.closest("[data-actie]");
     if(actieBtn){
       var kaart = actieBtn.closest(".tripcard");
@@ -284,6 +315,8 @@ function wire(){
   /* ---------------- reisdocument ---------------- */
   document.getElementById("view-document").addEventListener("click", function(e){
     if(e.target.closest("#btn-print")) window.print();
+    var deel = e.target.closest("#btn-deel");
+    if(deel){ deelReis(deel); return; }
   });
 
   /* ---------------- kaartpagina: profielvelden ---------------- */
@@ -330,18 +363,17 @@ function wire(){
     }
   });
 
-  document.getElementById("map-zoom-in").addEventListener("click", function(){
-    MAP_ZOOM = Math.min(3, MAP_ZOOM * 1.25); applyMapZoom();
-  });
-  document.getElementById("map-zoom-out").addEventListener("click", function(){
-    MAP_ZOOM = Math.max(0.6, MAP_ZOOM / 1.25); applyMapZoom();
-  });
-  document.getElementById("map-locate").addEventListener("click", function(){
-    MAP_ZOOM = 1; applyMapZoom();
-  });
+  document.getElementById("map-zoom-in").addEventListener("click", function(){ kaartZoom(1.25); });
+  document.getElementById("map-zoom-out").addEventListener("click", function(){ kaartZoom(1 / 1.25); });
+  document.getElementById("map-locate").addEventListener("click", kaartHerstel);
   document.getElementById("map-layers").addEventListener("click", function(){
     document.querySelector(".panel-map").classList.toggle("alt");
   });
+  wireKaart();
+  wireKosten();
+  wireDocument();
+  wireOnderweg();
+  wireIncident();
 
   document.getElementById("view-reis").addEventListener("click", function(e){
     if(e.target.closest("#btn-reis-naar-planner")){ switchView("wizard"); return; }
@@ -393,6 +425,11 @@ function boot(d){
 
   toepassenThema();
   laadTrips();
+  journeyInitHuidigLand();
+
+  laadData("fuelprices.json").then(function(f){ FUELPRICES = f; if(VIEW === "kosten") render(); }).catch(function(){});
+  laadChangelog();
+  if(journeyEnabled()) journeyStart().then(render);
 
   var sel = document.getElementById("home");
   sel.innerHTML = DATA.countries.map(function(c){
@@ -400,10 +437,17 @@ function boot(d){
   }).join("");
   verversFormulier();
 
+  /* Een gedeelde reis in de adresbalk gaat voor: wie zo'n link opent komt
+     daarvoor, niet voor de reis die hij zelf open had staan. Hij komt er als
+     nieuwe reis bij (§12) — er wordt niets van jou overschreven. */
+  var gedeeld = leesDeelLink();
+  var kwamVanLink = gedeeld ? importeerGedeeldeReis(gedeeld) : false;
+
   /* Waar je binnenkomt: een expliciete hash wint, daarna je eigen reis, en
      anders de homepage. Iemand die de app al gebruikt heeft, wil niet elke keer
      opnieuw langs de verkooptekst. */
   var hashView = (location.hash || "").replace("#", "");
+  if(kwamVanLink) hashView = "dashboard";
   if(VIEW_ORDER.indexOf(hashView) !== -1) VIEW = hashView;
   else VIEW = tripIsKlaar(TRIP) ? "dashboard" : "home";
 
@@ -436,7 +480,10 @@ function boot(d){
     laadGeoData().then(function(){
       herbereken(TRIP);
       render();
+      herstelVerschraaldeRoute(TRIP);
     }).catch(function(){});
+  } else {
+    herstelVerschraaldeRoute(TRIP);
   }
 
   /* De planner heeft netwerk nodig en kan cities.json niet via file:// laden.

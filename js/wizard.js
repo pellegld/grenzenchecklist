@@ -227,8 +227,10 @@ function startAnalyse(){
   renderWizard(true);
 
   function stap(k, staat, aantal){
+    /* i18nAantal en niet i18n: "1 blokkades" hoort niet in een app die de rest
+       van de zin wél nakijkt. */
     WIZ_ANALYSE[k] = { staat:staat, uitkomst: (staat === "klaar" && aantal !== undefined)
-      ? i18n("wizard.uitkomst." + k, { n:aantal }) : "" };
+      ? i18nAantal("wizard.uitkomst." + k, aantal) : "" };
     tekenAnalyse();
   }
 

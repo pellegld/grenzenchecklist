@@ -26,6 +26,11 @@ js/actions.js            de actielijst: prioriteit, deadline, reden en herkomst
 js/costs.js              tol en de kostenpagina
 js/calendar.js           drukte per dag
 js/countries.js          de correctielink per feit
+js/journey.js            reismodus (grensdetectie) en het offline reispack
+js/incident.js           de incidentmodus: nood onderweg
+js/fuel.js               tankstrategie uit het wekelijkse Oil Bulletin
+js/wijzigingen.js        de wijzigingsmonitor: veranderde regels sinds je vorige controle
+js/douane.js             terugreismodus: EU-douanelimieten en het herkennen van een echte boete
 js/planner.js            de plaatsvelden en de routeberekening
 js/home.js               de homepage
 js/wizard.js             de reiswizard in vier stappen
@@ -33,7 +38,8 @@ js/dashboard.js          het reisdashboard
 js/acties.js             de actiepagina
 js/pages.js              regels per land, mijn reizen, reiservaring
 js/document.js           het reisdocument
-js/map.js                routeschets als SVG
+js/map.js                de route als kaart, met aanklikbare markers
+js/share.js              de deelbare reis: een trip gecodeerd in de URL
 js/app.js                orkestratie, events en start
 fonts.css                @font-face voor de zelf gehoste fonts
 fonts/                   woff2-subsets
@@ -42,6 +48,7 @@ cities.json              689 Europese plaatsen voor de routeplanner
 borders.json             landsgrenzen voor de landdetectie
 zones.json               47 milieuzones en toegangsverboden op stadsniveau
 drukte.json              drukteprognoses per dag en per periode
+fuelprices.json          brandstofprijzen per land, wekelijks (EU Oil Bulletin)
 sw.js                    service worker voor offline gebruik
 build/build.mjs          genereert statische pagina's, meta/version.json en de sw-assetlijst
 meta/changelog.json      inhoudelijke wijzigingen in de regeldata
@@ -342,10 +349,10 @@ een pagina die er echt is; een navigatie-item zonder pagina is erger dan geen it
 | **Home** | wat het product is, en één knop. Met het voorbeeld Brussel → Salzburg als **statische illustratie** — die draagt dat label ook in de kaart zelf |
 | **Reis** | het dashboard: waar ga je heen, hoe ver ben je, wat moet je eerst regelen, wat riskeer je, en waar de informatie vandaan komt |
 | **Acties** | één actielijst, gegroepeerd naar wat eerst moet; met deadline, herkomst en bron per actie |
-| **Kaart** | de routeschets als SVG, met de plaatsvelden, de landenlijst, de milieuzones en het voertuigprofiel ernaast |
-| **Kosten** | het tol-kasboekje: één regel per post in routevolgorde, met het retourtotaal, plus een lijst van wat er *niet* in zit |
+| **Kaart** | de route als SVG, met landen, milieuzones en tolpunten als aanklikbare markers; zoomen, slepen, en een popup per marker met de bron erbij |
+| **Kosten** | vier categorieën — tol, vignetten, milieuzones, brandstof — met per post *bevestigd / indicatief / onbekend / niet meegerekend*, en een lijst van wat er niet in het totaal zit |
 | **Regels** | per land eerst de conclusie (mag ik rijden, moet ik iets regelen), daaronder de details uitklapbaar |
-| **Document** | één printbare pagina om mee te nemen, opgebouwd uit dezelfde bouwers als de rest |
+| **Document** | één printbare pagina om mee te nemen: acties met deadlines, de zonewaarschuwingen per land, de kosten met hun zekerheid, de bronnen voluit en de vertrouwensbalk |
 | **Meer** (mobiel) | Regels, Document, Reiservaring, Mijn reizen en de donkere modus |
 
 ### Het dashboard
@@ -862,6 +869,235 @@ Dit corrigeert twee hardnekkige misverstanden die in de meeste checklists blijve
 - **Het Spaanse V16-baken geldt niet voor jou.** Sinds 1 januari 2026 verplicht voor Spaans
   geregistreerde voertuigen, maar buitenlandse kentekens zijn uitdrukkelijk uitgezonderd en
   mogen de gewone gevarendriehoek blijven gebruiken.
+
+---
+
+## De kaart
+
+Geen kaartprovider, geen tegels, geen tokens. De app tekent de kaart zelf, uit `borders.json` —
+34 landen, 26.046 punten — dat al gedownload was voor de landdetectie. Een tegelbibliotheek
+erbij zetten zou drie dingen kosten die deze app niet wil uitgeven: een externe verbinding per
+kaartweergave, een afhankelijkheid met een eigen versiebeleid, en het offline werken.
+
+Wat er staat: de landen op je route, de routelijn, en markers voor het begin, het eind, de
+tolpunten en de milieuzones. Elke marker is een knop — tab-bereikbaar, Enter of spatie opent de
+popup, Escape sluit hem en zet de focus terug. In de popup staat wat het is, wat het kost, de
+waarschuwing als er een is, het `confidence`-label, de officiële bron en de correctielink voor
+precies dat feit.
+
+De kaart laadt lazy: `borders.json` is 349 KB en komt pas binnen als er een route is om tegen te
+toetsen. Een bezoeker die alleen de homepage leest, downloadt hem niet.
+
+### Drie dingen die pas bij het testen bleken
+
+**Een CSS-transitie kan een transform onzichtbaar maken.** Zoomen en slepen deden niets. De
+inline transform stond er, de berekende waarde bleef `matrix(1,0,0,1,0,0)`. Oorzaak: een
+`transition: transform .18s ease` op hetzelfde element hield de berekende waarde op de
+beginwaarde vast, en schaduwde daarmee zowel het presentatie-attribuut als de inline stijl. De
+transitie is weg; de transform staat nu als gewoon SVG-attribuut op een `<g>` binnenin.
+
+**Een aanraakvlak van 44 pixels kan een ander doel opeten.** Een marker is elf viewBox-eenheden
+groot, en op een telefoon is de kaart zo ver uitgeschaald dat dat nog geen twaalf schermpixels
+zijn — met een vinger niet te raken. Elke marker kreeg daarom een onzichtbare cirkel van 44
+schermpixels. Waarna twee van de vier markers helemáál niet meer aan te klikken waren: op een
+telefoon is 44 pixels bijna zestig viewBox-eenheden, en dat vlak lag over de stip van de buurman.
+De vlakken liggen nu in een eigen laag ónder alle stippen. Precies mikken werkt daarmee altijd,
+en de ruimte eromheen valt naar de dichtstbijzijnde marker.
+
+**Markers op hetzelfde punt bestaan maar één keer.** Bij een rit naar Milaan vielen de
+bestemming en de twee milieuzones van de stad op precies hetzelfde punt. Alleen de bovenste was
+te openen. Ze liggen nu in een kransje om het plaatspunt heen — de plaatsmarker blijft staan waar
+hij hoort, de rest wijkt uit. Dat verschuift een zone met een kilometer of twintig op een schets
+die duizend kilometer breed is; deze kaart belooft die precisie niet, en een marker die drie
+kilometer preciezer staat maar niet te openen is, vertelt niets.
+
+Groeperen op een rasterhokje leek daarvoor goed genoeg en was het niet: het vertrekpunt in
+Brussel en de Brusselse milieuzone lagen drie tiende van een eenheid uit elkaar en vielen net aan
+weerszijden van een hokgrens. Het gaat nu op werkelijke afstand.
+
+### De knoppen liggen op de kaart
+
+De zoomknoppen staan rechtsonder óver de SVG heen. Op een breed scherm valt dat niet op; op een
+telefoon kwam bij Brussel → Salzburg de eindmarker er precies onder te liggen. De tekening wijkt
+nu uit: de projectie meet hoeveel ruimte die knoppen innemen en houdt die vrij, met een
+bovengrens van een kwart van het beeld — liever een marker die net onder een knop uitkomt dan een
+kaart die in een hoekje is samengeperst. De legenda linksonder krijgt geen ruimte maar
+`pointer-events: none`: dat is een bijschrift, geen bediening, en een marker die er half achter
+valt blijft aan te klikken.
+
+---
+
+## Wat de reis kost
+
+Vier categorieën: **tol, vignetten, milieuzones, brandstof**. Bij elke post staat wat we van het
+bedrag weten, en dat is het eigenlijke onderwerp van deze pagina. Een totaal zonder die
+aanduiding is een gok met een euroteken ervoor.
+
+| | betekenis | telt mee |
+|---|---|---|
+| **bevestigd** | een eurobedrag dat als getal in de data staat en gecontroleerd is | ja |
+| **indicatief** | een tarief per kilometer, een bedrag dat in de bron met "circa" staat, of jouw verbruik maal jouw prijs | ja, als bandbreedte waar die er is |
+| **onbekend** | de post geldt voor jou, maar er staat geen bedrag in de bron dat we durven optellen | nee — en zet "of meer" achter het totaal |
+| **niet meegerekend** | een keuze (de autotrein) of iets dat van gedrag afhangt | nee, en geen "of meer": het is geen kost die je overkomt |
+
+Bedragen komen alleen uit velden die over geld gaan: `priceEur`, `tollRoads.perKm` en de
+brontekst van `howToGet`. Nadrukkelijk **niet** uit `note`. Daar staan de uitzonderingen en de
+boetes, en een boete van 750 euro die als vignetprijs in het totaal belandt is precies de
+schijnprecisie die §10 verbiedt.
+
+Afstandgebonden posten — kilometertol, tolpunten, brandstof — tellen dubbel: je rijdt heen en
+terug. Een vignet of een sticker koop je één keer.
+
+**Vignetten staan altijd op "onbekend"**, en dat is geen luiheid. Wat een vignet kost hangt af van
+de termijn die je kiest, en welke termijn jij nodig hebt volgt niet uit een vertrek- en een
+retourdatum alleen — die staffels staan niet in de data. Wat de bron wél noemt komt erbij te
+staan, zodat je zelf ziet in welke orde van grootte je zit.
+
+**Brandstof rekent alleen met jouw getallen.** Twee optionele velden, verbruik in liter per 100 km
+en de prijs per liter. Zonder allebei rekent de app niets uit en zegt dat: een gemiddeld verbruik
+verzinnen zou van deze post de minst betrouwbare van de vier maken, en tegelijk de grootste. Mét
+allebei is het een rechttoe rechtaan vermenigvuldiging, en de hele som staat erbij. Toch
+"indicatief": het echte verbruik hangt af van bagage, bergen en tegenwind.
+
+Hetzelfde bedrag staat op het dashboard en in de routepaneel-samenvatting. Die cel liet eerder
+alleen tol zien terwijl hij "kosten" heette en naar de kostenpagina doorklikte; wie daar een
+hoger getal aantrof moest raden welke van de twee loog.
+
+---
+
+## De deelbare reis
+
+Geen account, geen server, geen link die na een week dood is: de hele reis zit in de URL, als
+URL-veilige base64 van een compact JSON-object. Zo'n link is rond de 300 tekens.
+
+Wat meegaat is wat je hebt ingevuld — vertrek, bestemming, data, voertuig, landen en je vinkjes.
+Wat niet meegaat is de routegeometrie: die is duizenden coördinaten groot en volledig af te
+leiden uit de twee plaatsen. De ontvanger laat hem opnieuw berekenen; lukt dat niet, dan blijft
+de meegestuurde landenlijst over en werkt de checklist gewoon — dezelfde terugval als bij een
+uitgevallen routeprovider.
+
+Delen gaat via `navigator.share()` waar dat bestaat, anders via het klembord, en anders via een
+tekstvak waaruit je met de hand kopieert. Dat is dezelfde dialoog als bij een correctiemelding,
+want het probleem is hetzelfde.
+
+**Een gedeelde reis komt er altijd bíj.** Hem over de actieve reis heen zetten zou betekenen dat
+één klik op een link in een groepsapp het werk van iemand anders wist — en die reis staat alleen
+in zijn eigen browser, dus dat is onherstelbaar. De ontvanger krijgt één regel te zien dat er een
+reis is bijgekomen en dat de zijne ongemoeid is gebleven. De link wordt daarna uit de adresbalk
+gepoetst; zonder dat maakt elke herlaadbeurt er nóg een reis bij.
+
+Alles wat uit zo'n link komt is invoer van buiten, ook als de link van een vriend is. Elk veld
+wordt op vorm gecontroleerd voordat het in een reis belandt: landcodes tegen de data, datums
+tegen een patroon, getallen tegen een bereik, teksten op lengte.
+
+---
+
+## Twee bugs die de kaart zichtbaar maakte
+
+Allebei bestonden ze al langer en allebei waren ze onzichtbaar tot er markers op een kaart
+kwamen te staan.
+
+**De route werd bij elke opslag opnieuw gedund, en verschraalde tot een rechte lijn.** De
+geometrie ging onvoorwaardelijk door "elk derde punt" voordat hij de opslag in ging — en dat werd
+toegepast op wat er al opgeslagen stónd. Elke keer dat je de reis opende en er iets aan
+veranderde ging er opnieuw twee derde af:
+
+```text
+10394 → 3466 → 1156 → 386 → 130 → 44 → 16 → 6 → 3 → 2
+```
+
+Na een stuk of negen keer opslaan was de route een kaarsrechte lijn tussen vertrek en bestemming.
+Onderweg daarnaartoe verdwenen eerst de milieuzones en de tolpunten die de app langs die lijn
+zoekt: je zag na een herlaadbeurt minder dan ervoor, zonder dat er iets veranderd was en zonder
+dat er ooit een fout verscheen. Precies het soort verval dat je niet merkt zolang je naar één
+sessie kijkt.
+
+Er is nu een budget van 1200 punten: daaronder gaat alles ongeschonden mee — en daarmee stopt
+het stapelen, want een route die al binnen het budget past wordt nooit meer aangeraakt — en
+daarboven wordt één keer gelijkmatig gedund. Het is hetzelfde getal als waarop `js/geo.js`
+bemonstert: fijner opslaan dan waarop gerekend wordt heeft geen zin, grover opslaan kost
+antwoorden.
+
+Dat repareert niet wat al weg is. Een reis die vóór deze wijziging een paar keer is opgeslagen
+staat voor altijd op een handvol punten, en die zijn niet terug te rekenen. `routeIsVerschraald()`
+herkent ze aan hun grofheid — minder dan één punt per tien kilometer is geen vereenvoudiging meer
+maar een ander pad — en laat de route één keer stil opnieuw berekenen bij het openen. Lukt dat
+niet, dan houd je wat je had; er komt geen melding, want dit is de app die een oude fout van
+zichzelf opruimt en niet iets waar jij een besluit over hoeft te nemen.
+
+**De afstand tot de route werd tot de hoekpunten gemeten, niet tot de lijn.** Dat maakte de
+schade hierboven veel groter dan nodig: zodra de hoekpunten ver uit elkaar liggen wordt een
+milieuzone die pal op de lijn ligt maar tussen twee hoekpunten in, niet meer gezien. Frankfurt
+verdween zo van de kaart terwijl de route er dwars doorheen loopt. Er wordt nu per segment
+loodrecht geprojecteerd, vlak gerekend met een cosinuscorrectie. De uitkomst hangt daarmee niet
+langer af van hoe fijn de lijn toevallig getekend is — niet door het uitdunnen hierboven, en ook
+niet door een provider die een sterk vereenvoudigde geometrie teruggeeft.
+
+---
+
+## Naamgeving van een reis
+
+Een reis heet "Brussel → Salzburg" tot je hem zelf een naam geeft. Dat werd één keer afgeleid en
+daarna nooit meer: bouwde je dezelfde reis om naar een andere bestemming, dan stond in de kop van
+je reisdocument nog steeds de vorige. `metadata.naamAutomatisch` houdt bij wie de naam gekozen
+heeft. Een naam die je zelf getypt hebt blijft staan; een naam die de app bedacht heeft beweegt
+mee. Voor reizen van vóór dit veld geldt: een naam die eruitziet als een afgeleide naam is er ook
+een.
+
+---
+
+## De terugkeerlus
+
+Wie zijn reis al plande, krijgt zonder account een reden om terug te komen. Drie losse
+onderdelen, alle drie puur lokaal.
+
+### De wijzigingsmonitor
+
+Elke opgeslagen reis draagt sinds deze fase een `laatstGecontroleerd`-tijdstip
+(`js/trip.js`). Bij het openen van de app vergelijkt `js/wijzigingen.js` voor elke reis de landen
+in `trip.countries` tegen `meta/changelog.json` sinds dat tijdstip. Is er een match, dan
+verschijnt op *Mijn reizen* een kaart met precies de velden uit de changelog zelf — land,
+onderwerp, oude waarde, nieuwe waarde, datum, bron — want die vorm was al de juiste, zie
+V2_AUDIT.md §4. Een badge bij *Mijn reizen* in de zijbalk en het Meer-paneel telt mee zolang er
+iets ongeziens is; "Gezien" zet het ijkpunt van precies die ene reis vooruit, de andere reizen in
+de lijst behouden hun eigen stand.
+
+Er komt geen aparte opslag voor de reizenlijst bij: die staat al in `STORE_TRIPS`. Het
+e-mailadres voor een latere melding staat als `notifyEmail` gereserveerd op de reis, maar er wordt
+nog nergens naartoe gemaild — dat is fase G-werk.
+
+### Vignetgeheugen
+
+`tollVignette` krijgt een `validity`-blok, maar alleen bij Oostenrijk en Zwitserland: dat zijn de
+twee landen waar de brontekst zelf een harde looptijd geeft (bij Oostenrijk drie vaste
+termijnen vanaf aankoop, bij Zwitserland één jaarvignet dat loopt van 1 december tot en met 31
+januari van het jaar erna). Slovenië en Tsjechië hebben ook een vignet, maar de brontekst geeft er
+geen exacte dagen bij — daar blijft de actie gewoon openstaand, zoals altijd; een looptijd
+verzinnen die niet in de data staat is erger dan geen geheugen.
+
+Vink je zo'n vignetactie af, dan vraagt de app (met `prompt()`, net als `hernoemTrip()` dat al
+deed) de aankoop- of registratiedatum, en bij Oostenrijk welke van de drie looptijden. Daaruit
+volgt een vervaldatum, die in `STORE_VIGNETTEN` komt — één vlakke opslag per landcode, niet per
+reis en niet per kenteken, want een kentekennummer staat nergens in het voertuigprofiel. Een
+nieuwe reis met hetzelfde land en een vertrekdatum binnen die geldigheid toont de actie meteen als
+geregeld, met de reden erbij: *"je vignet voor Autobahnvignette is nog geldig tot 31 januari
+2027"*. Vink je de actie weer uit, dan verdwijnt het onthouden vignet ook — anders staat de actie
+bij de eerstvolgende render vanzelf weer aangevinkt.
+
+### Terugreismodus
+
+Op de Onderweg-pagina staan twee nieuwe kaarten. De eerste toont de EU-douanelimieten
+(alcohol, tabak, overige goederen) voor wie van buiten de EU terugkeert — van de zestien landen
+zijn dat er twee, Zwitserland en het Verenigd Koninkrijk, met een eigen `douane`-blok in
+`countries.json` per land (zelfde vorm als de rest van de data: `id`, `sourceUrl`,
+`lastVerified`, `confidence`). Blijft de route binnen de EU, dan zegt de kaart dat met zoveel
+woorden in plaats van leeg te blijven. Dezelfde tekst staat verkort in het reisdocument, zodat hij
+ook op papier meegaat.
+
+De tweede kaart is statische voorlichting over phishing-boetes uit het buitenland — geen
+landspecifieke claims, dus geen bron of `confidence` nodig: nooit betalen via een link in een
+e-mail, een echte boete komt via de officiële nationale inningsdienst, en bij twijfel de officiële
+website van het land zelf controleren.
 
 ---
 
@@ -1475,6 +1711,13 @@ Hier is bewust géén stellige uitspraak gedaan:
 - `vehicleNotes` voor aanhanger en camper dekken de meest voorkomende afwijkingen (snelheid,
   vignetcategorie, aantal driehoeken), niet alles: gewichtsgrenzen, rijbewijscategorieën en
   afmetingen blijven jouw verantwoordelijkheid.
+- **Het kostentotaal is per definitie onvolledig.** Er staat alleen in wat als bedrag in de data
+  te vinden is; vignetprijzen en de meeste stickers staan er niet als getal in. Daarom "of meer"
+  achter het totaal en een lijst eronder van wat er buiten valt. Een reis waarvan de app zegt dat
+  er niets op te tellen valt, is geen gratis reis.
+- **De kaart is een schets, geen kaart om op te navigeren.** Markers die op hetzelfde punt vallen
+  worden een kransje uit elkaar gelegd — een verschuiving van zo'n twintig kilometer op de schaal
+  van het beeld — zodat je ze allemaal kunt openen.
 
 ### Beperkingen van de routeplanner
 

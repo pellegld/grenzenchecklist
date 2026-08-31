@@ -108,13 +108,40 @@ function analyseRoute(coords){
    Straatsburg is in 2026 soepeler dan Parijs. Zodra we een route hebben kunnen
    we per stad kijken welke zone je werkelijk raakt. */
 
-/* Kortste afstand van een punt tot de routelijn, in km. Vergelijkt tegen de
-   bemonsterde route, niet tegen elk geometriepunt — dat scheelt werk en de
-   afwijking blijft ruim onder de zoneradius. */
+/* Kortste afstand van een punt tot de routelijn, in km.
+
+   Tot de líjn, niet tot de hoekpunten. Dat verschil bleek te groot om te
+   negeren: een routeprovider levert een vereenvoudigde geometrie, en op een rit
+   Brussel – Salzburg kwamen er 44 punten terug voor 931 kilometer. Dan liggen
+   de hoekpunten zestig kilometer uit elkaar, en een milieuzone met een straal
+   van twintig kilometer die pal op de lijn ligt maar tussen twee hoekpunten in,
+   werd niet gezien. De zone van Frankfurt verdween zo van de kaart terwijl de
+   route er dwars doorheen loopt.
+
+   Per segment wordt het punt loodrecht op het lijnstuk geprojecteerd — vlak
+   gerekend, met een cosinuscorrectie voor de breedtegraad. Over een stuk van
+   enkele tientallen kilometers is de fout van die benadering ruim onder de
+   marge waarmee hier gewerkt wordt (zoneradii van tien tot dertig kilometer),
+   en de uitkomst hangt niet langer af van hoe fijn de provider zijn lijn
+   toevallig heeft getekend. */
 function afstandTotRoute(lat, lon, punten){
-  var best = Infinity;
-  for(var i = 0; i < punten.length; i++){
-    var d = haversine(lat, lon, punten[i][1], punten[i][0]);
+  if(!punten.length) return Infinity;
+  var cos = Math.cos(lat * Math.PI / 180);
+  var best = haversine(lat, lon, punten[0][1], punten[0][0]);
+
+  for(var i = 1; i < punten.length; i++){
+    var ax = punten[i - 1][0] * cos, ay = punten[i - 1][1];
+    var bx = punten[i][0] * cos,     by = punten[i][1];
+    var px = lon * cos,              py = lat;
+
+    var dx = bx - ax, dy = by - ay;
+    var lengte2 = dx * dx + dy * dy;
+    var t = lengte2 ? ((px - ax) * dx + (py - ay) * dy) / lengte2 : 0;
+    t = Math.max(0, Math.min(1, t));
+
+    /* Terug naar echte graden om met haversine te kunnen meten. */
+    var qx = (ax + t * dx) / cos, qy = ay + t * dy;
+    var d = haversine(lat, lon, qy, qx);
     if(d < best) best = d;
   }
   return best;

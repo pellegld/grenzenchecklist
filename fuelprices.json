@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "priceDate": "2026-08-24",
+    "source": "Wekelijks Oil Bulletin, Europese Commissie",
+    "sourceUrl": "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en",
+    "disclaimer": "Pompprijzen inclusief belastingen, in euro per liter. De 14 EU-landen komen rechtstreeks uit het wekelijkse Oil Bulletin van de Europese Commissie (prijspeil 24 augustus 2026). Zwitserland en het Verenigd Koninkrijk zitten niet in dat bulletin: hun prijzen zijn nationale pompprijzen in eigen valuta, omgerekend naar euro met de wisselkoers van eind augustus 2026 (CHF: 24 augustus, GBP: 29 augustus). Prijzen schommelen wekelijks — dit is een momentopname, geen garantie voor de prijs die je onderweg treft.",
+    "chfEurRate": 1.067,
+    "gbpEurRate": 1.1687
+  },
+  "prices": {
+    "NL": { "petrol": 2.353, "diesel": 2.415 },
+    "BE": { "petrol": 1.900, "diesel": 2.257 },
+    "DE": { "petrol": 2.245, "diesel": 2.286 },
+    "FR": { "petrol": 2.063, "diesel": 2.231 },
+    "LU": { "petrol": 1.727, "diesel": 1.963 },
+    "AT": { "petrol": 1.784, "diesel": 2.050 },
+    "CH": { "petrol": 2.166, "diesel": 2.433, "note": "Omgerekend uit CHF 2,03 (benzine) / CHF 2,28 (diesel), bron GlobalPetrolPrices, 24 augustus 2026." },
+    "IT": { "petrol": 2.003, "diesel": 2.115 },
+    "ES": { "petrol": 1.724, "diesel": 1.861 },
+    "PT": { "petrol": 1.986, "diesel": 2.066 },
+    "HR": { "petrol": 1.693, "diesel": 1.932 },
+    "SI": { "petrol": 1.562, "diesel": 1.813 },
+    "CZ": { "petrol": 1.739, "diesel": 1.899 },
+    "DK": { "petrol": 2.459, "diesel": 2.277 },
+    "SE": { "petrol": 1.435, "diesel": 1.817 },
+    "GB": { "petrol": 1.895, "diesel": 2.150, "note": "Omgerekend uit 162,1 pence (benzine) / 184,0 pence (diesel), bron Fuel Finder UK / RAC, 29 augustus 2026." }
+  }
+}

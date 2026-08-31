@@ -209,6 +209,7 @@ const SW_MAPPEN = ["css", "js", "fonts", "images/Landbanner"];
 const SW_LOSSE = [
   "./", "./index.html", "./fonts.css",
   "./countries.json", "./cities.json", "./borders.json", "./zones.json", "./drukte.json",
+  "./fuelprices.json", "./meta/changelog.json",
 ];
 
 async function bestandenIn(map) {

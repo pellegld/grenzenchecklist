@@ -148,15 +148,6 @@ function actieHTML(actie){
   "</li>";
 }
 
-/* De uitleg komt uit `howToGet` of `note` en is soms een hele alinea. Twee
-   zinnen is genoeg om te weten wat je moet doen; de rest staat op de
-   regelpagina en bij de bron. */
-function eersteZinnen(t, aantal){
-  var zinnen = String(t).match(/[^.!?]+[.!?]+/g);
-  if(!zinnen) return String(t);
-  return zinnen.slice(0, aantal || 2).join("").trim();
-}
-
 function groepHTML(groep){
   var sleutel = groep.sleutel;
   var id = "groep-" + sleutel;
