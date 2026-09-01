@@ -13,7 +13,6 @@ css/print.css            print / PDF
 js/i18n.js               vertalingen (nl, en) en de taalkeuze
 js/config.js             sleutels, drempels, geladen referentiedata, zichtbare pagina
 js/storage.js            localStorage die nooit gooit, donkere modus
-js/poort.js              de tijdelijke toegangspoort (wachtwoordschermpje)
 js/util.js               escapen, formatteren, vlaggen, iconen
 js/data.js               regeldata laden, met terugval
 js/routeProvider.js      route- en geocodediensten achter één interface
@@ -56,7 +55,6 @@ meta/changelog.json      inhoudelijke wijzigingen in de regeldata
 meta/version.json        afgeleide: versies en aantallen per databestand
 worker/                  Cloudflare Worker: de proxy, met cache en snelheidsbegrenzer
 functions/api/           dezelfde proxy als Pages Function (dunne wikkel om worker/src/)
-netlify/functions/       check-password.js: serverside wachtwoordcontrole voor de toegangspoort
 tools/build-geodata.ps1  genereert cities.json en borders.json opnieuw
 tools/build-fonts.ps1    haalt de fontsubsets opnieuw op
 V2_AUDIT.md              audit van de codebase en de architectuurkeuzes eronder
@@ -264,35 +262,6 @@ verouderde verplichtingen tonen is het ergste wat deze app kan doen.
 Let op: `fetch(..., {cache:"no-store"})` wordt niet door elke browser gehonoreerd — in tests bleek
 een ingebouwde webview gewoon uit de HTTP-cache te serveren. De service worker is de betrouwbare
 laag voor versheid, niet die vlag.
-
----
-
-## Tijdelijke toegangspoort
-
-Een slotscherm vóór de app, zolang de site niet publiek hoeft te zijn. Geen account: één
-gedeeld wachtwoord, ingesteld als omgevingsvariabele **`SITE_PASSWORD`** in Netlify (Site
-settings → Environment variables). **Zonder die variabele blijft de poort dicht voor
-iedereen**, inclusief jezelf — er zit met opzet geen wachtwoord in de repo dat als terugval
-dient.
-
-Het wachtwoord zelf komt nooit in de browser terecht. `js/poort.js` stuurt alleen een gok naar
-`netlify/functions/check-password.js`, een Netlify Function die hem serverside (constant-time)
-vergelijkt met `process.env.SITE_PASSWORD` en alleen ja of nee teruggeeft — devtools, view
-source en het netwerktabblad laten nergens de echte waarde zien.
-
-**Wat dit niet is: beveiliging van de site zelf.** Dit blijft een statische site zonder
-server-side routing. Wie de URL van `index.html` of `countries.json` rechtstreeks raadt, kan
-die gewoon ophalen — de poort houdt alleen tegen dat je *er via de normale weg inkomt zonder
-het wachtwoord te kennen*, niet dat de bestanden ergens onvindbaar staan. Voor een tijdelijke
-drempel tegen toevallige bezoekers en zoekmachines is dat genoeg; voor iets gevoeligers zou de
-data zelf achter een geauthenticeerde API moeten staan.
-
-Een bijwerking van de serverside check: **zonder netwerk kan niemand ontgrendelen**, ook niet
-met het juiste wachtwoord — er is dan geen functie om tegen te controleren. Dat botst met de
-offline-belofte van de rest van de app, maar hoort bij een echte wachtwoordcontrole; zie ook
-zonder deze poort werkt de app zelf gewoon volledig offline zodra hij één keer ontgrendeld is
-geweest (`js/poort.js` onthoudt de ontgrendeling in `localStorage`, dus dat hoeft maar één keer
-per apparaat).
 
 ---
 

@@ -35,11 +35,6 @@ var STORE_PACK         = "grenschecklist.pack.v1";          /* { laatstVernieuwd
    kentekennummer staat nergens in het voertuigprofiel). */
 var STORE_VIGNETTEN = "grenschecklist.vignetten.v1";   /* { CODE: { gekocht, geldigTot, optieDagen } } */
 
-/* De tijdelijke toegangspoort (geen fase, gewoon een tijdelijke maatregel).
-   Draagt alleen "ontgrendeld: ja/nee" — het wachtwoord zelf staat nergens in
-   de client, zie netlify/functions/check-password.js. */
-var STORE_POORT = "grenschecklist.poort.v1";
-
 /* De app markeert data ouder dan dit als verouderd. tools/verify-data.mjs
    waarschuwt eerder (180 dagen): de controle hoort aan de bel te trekken vóór
    een gebruiker het ziet. */

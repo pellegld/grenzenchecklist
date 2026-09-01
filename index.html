@@ -8,12 +8,6 @@
   var t = localStorage.getItem("grenschecklist.theme.v1");
   if(t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
 }catch(e){}</script>
-<!-- Tijdelijke toegangspoort: vóór de eerste render al weten of deze browser
-     al ontgrendeld was, zodat een teruggekeerde bezoeker geen flits van het
-     slotscherm ziet. Zelfde patroon als het thema-scriptje hierboven. -->
-<script>try{
-  if(localStorage.getItem("grenschecklist.poort.v1") === "1") document.documentElement.setAttribute("data-poort-open", "1");
-}catch(e){}</script>
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
@@ -22,21 +16,6 @@
 <title>Grenschecklist — Routeplanner</title>
 </head>
 <body>
-
-<!-- De tijdelijke toegangspoort. Staat vóór alles, dekt alles af (css/base.css)
-     en is standaard zichtbaar — zonder JS blijft de site dus dicht, met JS
-     (js/poort.js) verdwijnt hij pas na een geverifieerd wachtwoord of als
-     data-poort-open al vaststond (zie het scriptje in <head>). -->
-<div id="poortwrap" class="poortwrap">
-  <form id="poortform" class="poortkaart" autocomplete="off">
-    <h1 data-i18n="poort.titel">Grenschecklist</h1>
-    <p data-i18n="poort.uitleg">Deze app is tijdelijk alleen toegankelijk met een wachtwoord.</p>
-    <label for="poort-wachtwoord" data-i18n="poort.label">Wachtwoord</label>
-    <input type="password" id="poort-wachtwoord" name="wachtwoord" autocomplete="current-password" required>
-    <button type="submit" data-i18n="poort.knop">Ontgrendelen</button>
-    <p id="poort-fout" class="poort-fout" role="alert" hidden></p>
-  </form>
-</div>
 
 <svg style="display:none" aria-hidden="true">
   <symbol id="i-add" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
@@ -85,18 +64,15 @@
      moet blijven staan ongeacht welke pagina open is. -->
 <div id="grensbanner-wrap" hidden></div>
 
-<!-- De incidentknop: altijd bereikbaar, op elke pagina, ook zonder actieve reis.
-     Staat buiten #app (zie js/incident.js), dus krijgt zijn eigen inert totdat
-     de poort open is — anders blijft hij met het toetsenbord bereikbaar terwijl
-     hij achter het slotscherm verstopt zit. -->
-<button type="button" class="sosbutton" id="btn-incident" aria-label="Nood onderweg" data-i18n-aria="incident.knopLabel" inert>
+<!-- De incidentknop: altijd bereikbaar, op elke pagina, ook zonder actieve reis. -->
+<button type="button" class="sosbutton" id="btn-incident" aria-label="Nood onderweg" data-i18n-aria="incident.knopLabel">
   <svg class="icon"><use href="#i-warning"></use></svg>
 </button>
 
 <!-- §21: met de tab-toets is de navigatie anders elke pagina opnieuw aflopen. -->
 <a class="skiplink" href="#hoofd" data-i18n="alg.naarInhoud">Naar de inhoud</a>
 
-<div id="app" inert aria-hidden="true">
+<div id="app">
 
 <nav class="topbar">
   <button type="button" class="brand" data-view="home" data-i18n="app.naam">Grenschecklist</button>
@@ -394,7 +370,6 @@
 <script src="js/i18n.js"></script>          <!-- vertalingen; wordt door alles gelezen -->
 <script src="js/config.js"></script>        <!-- sleutels, drempels, geladen data -->
 <script src="js/storage.js"></script>       <!-- localStorage en thema -->
-<script src="js/poort.js"></script>         <!-- tijdelijke toegangspoort -->
 <script src="js/util.js"></script>          <!-- escapen, formatteren, vlaggen, iconen -->
 <script src="js/data.js"></script>          <!-- regeldata laden, met terugval -->
 <script src="js/routeProvider.js"></script> <!-- route- en geocodediensten achter een interface -->
