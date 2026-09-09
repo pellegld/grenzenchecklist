@@ -63,6 +63,10 @@ function grensTekstPlat(info){
   if(info.sl) regels.push(i18n("onderweg.meldingSnelheid", {
     kom: info.sl.builtUp || "—", buiten: info.sl.rural || "—", snelweg: info.sl.motorway || "—" }));
   if(info.ow && info.ow.alcohol) regels.push(i18n("onderweg.meldingAlcohol", { promille: getal(info.ow.alcohol.limitPromille) }));
+  /* De verlichtingsplicht hoorde hier ook in: de banner had hem wel en de
+     systeemmelding niet, terwijl juist de melding het ding is dat je leest
+     zónder de app open te hebben. */
+  if(info.ow && info.ow.lightingRule) regels.push(info.ow.lightingRule);
   if(info.vign) regels.push(info.vign.geregeld
     ? i18n("onderweg.meldingVignetGeregeld", { naam: info.vign.naam })
     : i18n("onderweg.meldingVignetNietGeregeld", { naam: info.vign.naam }));
@@ -219,6 +223,23 @@ function journeyStart(){
     JOURNEY_FIX_GEHAD = false;
     JOURNEY_BANNER_VEROUDERD = false;
     JOURNEY_WATCH_ID = navigator.geolocation.watchPosition(journeyOpPositie, function(err){
+      /* Een geweigerde toestemming is iets anders dan een fix die even niet
+         lukt. Een timeout of een onbekende positie gaat over: dan blijft
+         reismodus staan en probeert hij het gewoon opnieuw. Toestemming gaat
+         niet over zolang je hem niet in je browser terugzet, en dan is een
+         schakelaar die "aan" zegt terwijl er niets bijgehouden wordt een
+         leugen. Die zetten we uit, met de reden erbij. */
+      if(err && err.code === 1){          /* PERMISSION_DENIED */
+        journeyStop();
+        journeyZetEnabled(false);
+        /* Het vinkje met de hand terugzetten in plaats van renderOnderweg():
+           dat hertekent de kaart en veegt de statusregel weg die hieronder juist
+           uitlegt waarom de schakelaar omging. */
+        var vink = document.getElementById("journey-toggle");
+        if(vink) vink.checked = false;
+        journeyStatus(i18n("onderweg.gpsGeweigerd"));
+        return;
+      }
       journeyStatus(i18n("onderweg.gpsFout", { reden: err && err.message ? err.message : "" }));
     }, { enableHighAccuracy: false, maximumAge: 120000, timeout: 20000 });
   });
