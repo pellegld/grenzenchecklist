@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Vul je brandstof en euronorm in en zie meteen of je met jouw auto de milieuzone van Madrid (ZBE Madrid) in mag. Deelbaar via de link.">
+<link rel="canonical" href="https://JOUW-DOMEIN-HIER.example/mag-ik/madrid/">
+<link rel="alternate" hreflang="nl" href="https://JOUW-DOMEIN-HIER.example/mag-ik/madrid/">
+<link rel="alternate" hreflang="en" href="https://JOUW-DOMEIN-HIER.example/en/can-i-drive-to/madrid/">
+<link rel="alternate" hreflang="x-default" href="https://JOUW-DOMEIN-HIER.example/mag-ik/madrid/">
+<link rel="alternate" type="application/atom+xml" title="Grenschecklist — wijzigingen" href="../../feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Grenschecklist">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:title" content="Mag ik met mijn auto naar Madrid?">
+<meta property="og:description" content="Vul je brandstof en euronorm in en zie meteen of je met jouw auto de milieuzone van Madrid (ZBE Madrid) in mag. Deelbaar via de link.">
+<meta property="og:url" content="https://JOUW-DOMEIN-HIER.example/mag-ik/madrid/">
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../../css/base.css">
+<link rel="stylesheet" href="../../css/components.css">
+<link rel="stylesheet" href="../../css/pages.css">
+<link rel="stylesheet" href="../../css/print.css">
+<title>Mag ik met mijn auto naar Madrid? — Grenschecklist</title>
+</head>
+<body>
+<a class="skiplink" href="#hoofd">Naar de inhoud</a>
+<main class="view-page" id="hoofd">
+<p class="hint"><a href="../../">&larr; Grenschecklist</a></p>
+<h1>Mag ik met mijn auto naar Madrid?</h1>
+
+
+<p class="lead">Minimaal het B-label: diesel vanaf Euro 4, benzine vanaf Euro 3.</p>
+
+<form method="get" id="check-form" class="wizveld raster">
+  <label class="field"><span>Brandstof</span>
+    <select name="fuel" id="f-fuel"><option value="petrol">Benzine</option><option value="diesel">Diesel</option><option value="lpg">LPG</option><option value="cng">CNG (aardgas)</option><option value="ev">Elektrisch of waterstof</option></select>
+  </label>
+  <label class="field"><span>Euronorm</span>
+    <select name="euro" id="f-euro"><option value="">Weet ik niet</option><option value="6">Euro 6 (vanaf ± 2015)</option><option value="5">Euro 5 (± 2011–2014)</option><option value="4">Euro 4 (± 2006–2010)</option><option value="3">Euro 3 (± 2001–2005)</option><option value="2">Euro 2 (± 1997–2000)</option><option value="1">Euro 1 of ouder</option></select>
+  </label>
+  <label class="field"><span>Kentekenland</span>
+    <select name="plate" id="f-plate"><option value="BE">België</option><option value="NL">Nederland</option><option value="DE">Duitsland</option><option value="FR">Frankrijk</option><option value="LU">Luxemburg</option><option value="AT">Oostenrijk</option><option value="CH">Zwitserland</option><option value="IT">Italië</option><option value="ES">Spanje</option><option value="PT">Portugal</option><option value="HR">Kroatië</option><option value="SI">Slovenië</option><option value="CZ">Tsjechië</option><option value="DK">Denemarken</option><option value="SE">Zweden</option><option value="GB">Verenigd Koninkrijk</option></select>
+  </label>
+  <button type="submit" class="btn primary">Check</button>
+</form>
+<div id="check-result" hidden></div>
+<noscript><p class="hint">Deze check heeft JavaScript nodig. Zonder JavaScript vind je de vaste drempels hierboven en op de <a href="../../milieuzone-madrid/">milieuzonepagina van Madrid</a>.</p></noscript>
+<script>
+var ZONE = {"city":"Madrid","name":"ZBE Madrid","threshold":{"diesel":4,"petrol":3},"rule":"Minimaal het B-label: diesel vanaf Euro 4, benzine vanaf Euro 3.","note":"Binnen de ZBE ligt de strengere Zona de Especial Proteccion rond het centrum. Buitenlandse kentekens kunnen geen distintivo krijgen en moeten zich per stad aanmelden."};
+
+</script>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/util.js"></script>
+<script src="../../js/vehicle.js"></script>
+<script src="../../js/geo.js"></script>
+<script>
+(function(){
+  "use strict";
+  if(typeof CHECK_LANG !== "undefined") TAAL = CHECK_LANG;
+  function paramsUit(){
+    var q = new URLSearchParams(location.search);
+    return { fuel: q.get("fuel"), euro: q.get("euro"), plate: q.get("plate") };
+  }
+  function toon(){
+    var q = paramsUit();
+    if(!q.fuel) return;
+    var f = document.getElementById("f-fuel"); if(f && q.fuel) f.value = q.fuel;
+    var e = document.getElementById("f-euro"); if(e && q.euro !== null) e.value = q.euro;
+    var pl = document.getElementById("f-plate"); if(pl && q.plate) pl.value = q.plate;
+
+    var trip = { vehicle: { fuel: q.fuel, euro: q.euro ? Number(q.euro) : null, plateCountry: q.plate || "NL" } };
+    var v = zoneStadVerdict(ZONE, trip);
+    var el = document.getElementById("check-result");
+    var brandstofLabel = {"petrol":"benzine","diesel":"diesel","lpg":"lpg","cng":"cng","ev":"elektrisch"}[q.fuel] || q.fuel;
+    var euroLabel = q.euro ? "Euro " + q.euro : "onbekende euronorm";
+    el.hidden = false;
+    el.innerHTML =
+      '<div class="oordeel o-' + (v.level === "bad" ? "nee" : v.level === "ok" ? "ja" : v.level === "todo" ? "mits" : "check") + '">' +
+      '<span class="teken" aria-hidden="true">' + { ok:"&#10003;", bad:"&#10007;", todo:"!", unknown:"?" }[v.level] + '</span>' +
+      '<b>' + esc(v.text) + '</b></div>' +
+      '<p class="hint">' + "Antwoord gebaseerd op:" + ' ' + esc(brandstofLabel) + ', ' + esc(euroLabel) +
+      (q.plate ? ", " + "kenteken uit" + " " + esc(q.plate) : "") + '.</p>';
+  }
+  document.addEventListener("DOMContentLoaded", toon);
+})();
+</script>
+<h2>Bronnen</h2>
+<ul class="bronnenlijst"><li><a href="https://www.madrid.es/" target="_blank" rel="noopener">Officiële bron <span aria-hidden="true">&rarr;</span></a></li></ul>
+<p class="hint">Laatst gecontroleerd op 19 augustus 2026. Regels veranderen; controleer de officiële bron vlak voor vertrek.</p>
+
+<p><a class="btn primary" href="../../#wizard">Check wat jij voor je eigen route moet regelen →</a></p>
+</main>
+</body>
+</html>

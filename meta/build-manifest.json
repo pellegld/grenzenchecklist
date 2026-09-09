@@ -1,0 +1,1472 @@
+{
+  "gegenereerd": "2026-09-02",
+  "siteUrl": "https://JOUW-DOMEIN-HIER.example",
+  "paginas": [
+    {
+      "slug": "autorijden-belgie",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-belgium",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-belgie",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-belgium",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-belgie",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-belgium",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-nederland",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-netherlands",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-nederland",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-netherlands",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-nederland",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-netherlands",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-duitsland",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-germany",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-duitsland",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-germany",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-duitsland",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-germany",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-frankrijk",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-france",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-frankrijk",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-france",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-frankrijk",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-france",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-luxemburg",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-luxembourg",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-oostenrijk",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-austria",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "vignet-oostenrijk",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/vignette-austria",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-oostenrijk",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-austria",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-oostenrijk",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-austria",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-zwitserland",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-switzerland",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "vignet-zwitserland",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/vignette-switzerland",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-zwitserland",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-switzerland",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-italie",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-italy",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-italie",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-italy",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-italie",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-italy",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-spanje",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-spain",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-spanje",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-spain",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-spanje",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-spain",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-portugal",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-portugal",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-portugal",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-portugal",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-portugal",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-portugal",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-kroatie",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-croatia",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-kroatie",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-croatia",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-slovenie",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-slovenia",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "vignet-slovenie",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/vignette-slovenia",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-tsjechie",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-czechia",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "vignet-tsjechie",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/vignette-czechia",
+      "soort": "vignet",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-denemarken",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-denmark",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-denemarken",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-denmark",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-denemarken",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-denmark",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-zweden",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-sweden",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-zweden",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-sweden",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "autorijden-verenigd-koninkrijk",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/driving-united-kingdom",
+      "soort": "autorijden",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzones-verenigd-koninkrijk",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zones-united-kingdom",
+      "soort": "milieuzones",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "tol-verenigd-koninkrijk",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/toll-united-kingdom",
+      "soort": "tol",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-parijs",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-paris",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/parijs",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/paris",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-grenoble",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-grenoble",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/grenoble",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/grenoble",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-straatsburg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-strasbourg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/straatsburg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/strasbourg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-lyon",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-lyon",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/lyon",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/lyon",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-marseille",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-marseille",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/marseille",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/marseille",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-toulouse",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-toulouse",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/toulouse",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/toulouse",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-nice",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-nice",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/nice",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/nice",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-montpellier",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-montpellier",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/montpellier",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/montpellier",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-rouen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-rouen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/rouen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/rouen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-reims",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-reims",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/reims",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/reims",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-saint-etienne",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-saint-etienne",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/saint-etienne",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/saint-etienne",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-brussel",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-brussels",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/brussel",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/brussels",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-antwerpen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-antwerp",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/antwerpen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/antwerp",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-gent",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-ghent",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/gent",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/ghent",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-amsterdam",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-amsterdam",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/amsterdam",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/amsterdam",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-utrecht",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-utrecht",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/utrecht",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/utrecht",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-den-haag",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-the-hague",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/den-haag",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/the-hague",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-arnhem",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-arnhem",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/arnhem",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/arnhem",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-berlijn",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-berlin",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/berlijn",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/berlin",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-hamburg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-hamburg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/hamburg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/hamburg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-keulen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-cologne",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/keulen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/cologne",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-dusseldorf",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-dusseldorf",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/dusseldorf",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/dusseldorf",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-frankfurt-am-main",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-frankfurt",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/frankfurt-am-main",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/frankfurt",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-stuttgart",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-stuttgart",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/stuttgart",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/stuttgart",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-munchen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-munich",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/munchen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/munich",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-freiburg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-freiburg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/freiburg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/freiburg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-karlsruhe",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-karlsruhe",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/karlsruhe",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/karlsruhe",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-heidelberg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-heidelberg",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/heidelberg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/heidelberg",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-ruhrgebied-essen-duisburg-bochum",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-ruhr-area-essen-duisburg-bochum",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/ruhrgebied-essen-duisburg-bochum",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/ruhr-area-essen-duisburg-bochum",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-milaan",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-milan",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/milaan",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/milan",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-milaan-area-c",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-milan-area-c",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/milaan-area-c",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/milan-area-c",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-rome",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-rome",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/rome",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/rome",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-florence",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-florence",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/florence",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/florence",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-bologna",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-bologna",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/bologna",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/bologna",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-turijn",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-turin",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/turijn",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/turin",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-verona",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-verona",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/verona",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/verona",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-pisa",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-pisa",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/pisa",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/pisa",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-madrid",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-madrid",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/madrid",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/madrid",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-barcelona",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-barcelona",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/barcelona",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/barcelona",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-londen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-london",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/londen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/london",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-birmingham",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-birmingham",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/birmingham",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/birmingham",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-bristol",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-bristol",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/bristol",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/bristol",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-bath",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-bath",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/bath",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/bath",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-lissabon",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-lisbon",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/lissabon",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/lisbon",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-praag",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-prague",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/praag",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/prague",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-stockholm",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-stockholm",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/stockholm",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/stockholm",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "milieuzone-kopenhagen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/environmental-zone-copenhagen",
+      "soort": "milieuzone-stad",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "mag-ik/kopenhagen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "en/can-i-drive-to/copenhagen",
+      "soort": "mag-ik",
+      "lastVerified": "2026-08-19"
+    },
+    {
+      "slug": "wijzigingen",
+      "soort": "wijzigingen",
+      "lastVerified": null
+    },
+    {
+      "slug": "en/changes",
+      "soort": "wijzigingen",
+      "lastVerified": null
+    }
+  ],
+  "overgeslagen": [
+    {
+      "wat": "vignet-belgie",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-nederland",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-duitsland",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-frankrijk",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-luxemburg",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "milieuzones-luxemburg",
+      "reden": "geen landelijke milieuzoneplicht"
+    },
+    {
+      "wat": "tol-luxemburg",
+      "reden": "geen tolwegen of tolpunten"
+    },
+    {
+      "wat": "milieuzones-zwitserland",
+      "reden": "geen landelijke milieuzoneplicht"
+    },
+    {
+      "wat": "vignet-italie",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-spanje",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-portugal",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-kroatie",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "milieuzones-kroatie",
+      "reden": "geen landelijke milieuzoneplicht"
+    },
+    {
+      "wat": "milieuzones-slovenie",
+      "reden": "geen landelijke milieuzoneplicht"
+    },
+    {
+      "wat": "tol-slovenie",
+      "reden": "geen tolwegen of tolpunten"
+    },
+    {
+      "wat": "milieuzones-tsjechie",
+      "reden": "geen landelijke milieuzoneplicht"
+    },
+    {
+      "wat": "tol-tsjechie",
+      "reden": "geen tolwegen of tolpunten"
+    },
+    {
+      "wat": "vignet-denemarken",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "vignet-zweden",
+      "reden": "geen verplicht vignet"
+    },
+    {
+      "wat": "tol-zweden",
+      "reden": "geen tolwegen of tolpunten"
+    },
+    {
+      "wat": "vignet-verenigd-koninkrijk",
+      "reden": "geen verplicht vignet"
+    }
+  ]
+}

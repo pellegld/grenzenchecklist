@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Grenschecklist — wijzigingen</title>
+  <subtitle>Inhoudelijke wijzigingen in de regeldata: land, onderwerp, oude en nieuwe waarde, bron.</subtitle>
+  <link href="https://JOUW-DOMEIN-HIER.example/feed.xml" rel="self"/>
+  <link href="https://JOUW-DOMEIN-HIER.example/wijzigingen/"/>
+  <id>https://JOUW-DOMEIN-HIER.example/feed.xml</id>
+  <updated>2026-08-29T00:00:00Z</updated>
+
+</feed>

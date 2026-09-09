@@ -9,43 +9,75 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v25";
+var CACHE = "grenschecklist-v28";
 /* ASSETS wordt gegenereerd door build/build.mjs (npm run build:sw). Voeg je met
    de hand een bestand toe, draai die dan; anders staat het nieuwe bestand wel op
    de server maar niet in de offline cache, en dat merk je pas zonder bereik.
    BEGIN-ASSETS (niet met de hand bewerken tussen de twee markeringen) */
 var ASSETS = [
-  "./", "./index.html", "./fonts.css",
-  "./css/base.css", "./css/components.css", "./css/pages.css", "./css/print.css",
-  "./js/i18n.js", "./js/config.js", "./js/storage.js", "./js/util.js", "./js/data.js",
-  "./js/routeProvider.js", "./js/geo.js", "./js/trip.js", "./js/vehicle.js", "./js/trips.js",
-  "./js/checklist.js", "./js/facts.js", "./js/actions.js", "./js/costs.js", "./js/calendar.js",
-  "./js/countries.js", "./js/journey.js", "./js/incident.js", "./js/fuel.js",
-  "./js/wijzigingen.js", "./js/douane.js",
-  "./js/planner.js", "./js/home.js", "./js/wizard.js", "./js/dashboard.js",
-  "./js/acties.js", "./js/pages.js", "./js/document.js", "./js/map.js",
-  "./js/share.js", "./js/app.js",
-  "./countries.json", "./cities.json", "./borders.json", "./zones.json", "./drukte.json",
-  "./fuelprices.json", "./meta/changelog.json",
-  // Zelf gehost, zodat de app offline werkt en er niets naar Google gaat.
-  // Variabele assen: één bestand per subset dekt alle gewichten.
-  "./fonts/geist-400-latin.woff2",  "./fonts/geist-400-latin-ext.woff2",
-  "./fonts/inter-400-latin.woff2",  "./fonts/inter-400-latin-ext.woff2",
-  // Bannerfoto's per land voor de Landeninformatie-pagina.
-  "./images/Landbanner/Nederland.png",
-  "./images/Landbanner/Frankrijk.png",
-  "./images/Landbanner/UK.png",
-  "./images/Landbanner/Duitsland.png",
-  "./images/Landbanner/Oostenrijk.png",
-  "./images/Landbanner/Italie.png",
-  "./images/Landbanner/Spanje.png",
-  "./images/Landbanner/Portugal.png",
-  "./images/Landbanner/Kroatie.png",
-  "./images/Landbanner/Slovenie.png",
-  "./images/Landbanner/Tsjechie.png",
+  "./",
+  "./index.html",
+  "./fonts.css",
+  "./countries.json",
+  "./cities.json",
+  "./borders.json",
+  "./zones.json",
+  "./drukte.json",
+  "./fuelprices.json",
+  "./meta/changelog.json",
+  "./css/base.css",
+  "./css/components.css",
+  "./css/pages.css",
+  "./css/print.css",
+  "./js/acties.js",
+  "./js/actions.js",
+  "./js/app.js",
+  "./js/calendar.js",
+  "./js/checklist.js",
+  "./js/config.js",
+  "./js/costs.js",
+  "./js/countries.js",
+  "./js/dashboard.js",
+  "./js/data.js",
+  "./js/document.js",
+  "./js/douane.js",
+  "./js/facts.js",
+  "./js/fuel.js",
+  "./js/geo.js",
+  "./js/home.js",
+  "./js/i18n.js",
+  "./js/incident.js",
+  "./js/journey.js",
+  "./js/map.js",
+  "./js/pages.js",
+  "./js/planner.js",
+  "./js/routeProvider.js",
+  "./js/share.js",
+  "./js/storage.js",
+  "./js/trip.js",
+  "./js/trips.js",
+  "./js/util.js",
+  "./js/vehicle.js",
+  "./js/wijzigingen.js",
+  "./js/wizard.js",
+  "./fonts/geist-400-latin-ext.woff2",
+  "./fonts/geist-400-latin.woff2",
+  "./fonts/inter-400-latin-ext.woff2",
+  "./fonts/inter-400-latin.woff2",
   "./images/Landbanner/Denemarken.png",
-  "./images/Landbanner/Zweden.png",
-  "./images/Landbanner/Luxemburg.png"
+  "./images/Landbanner/Duitsland.png",
+  "./images/Landbanner/Frankrijk.png",
+  "./images/Landbanner/Italie.png",
+  "./images/Landbanner/Kroatie.png",
+  "./images/Landbanner/Luxemburg.png",
+  "./images/Landbanner/Nederland.png",
+  "./images/Landbanner/Oostenrijk.png",
+  "./images/Landbanner/Portugal.png",
+  "./images/Landbanner/Slovenie.png",
+  "./images/Landbanner/Spanje.png",
+  "./images/Landbanner/Tsjechie.png",
+  "./images/Landbanner/UK.png",
+  "./images/Landbanner/Zweden.png"
 ];
 /* EIND-ASSETS */
 
@@ -78,6 +110,15 @@ self.addEventListener("activate", function(e){
   );
 });
 
+// Gegenereerde contentpagina's (fase E1/E2/E3): build/build.mjs schrijft deze
+// buiten de app-shell, met opzet niet in ASSETS hierboven. Ze staan hier apart
+// omdat ze een kortere effectieve cachetermijn horen te hebben dan de app-shell
+// — na een databuild (een vignetprijs die verandert, een nieuwe changelogregel)
+// moet de eerstvolgende online bezoeker meteen de nieuwe versie zien, niet de
+// gecachte versie van vóór de build met een achtergrondverversing die hij toch
+// niet afwacht.
+var CONTENT_PATH_RE = /^\/(autorijden-|vignet-|milieuzones-|milieuzone-|tol-|mag-ik\/|wijzigingen\/?$)|^\/(sitemap\.xml|robots\.txt|feed\.xml)$/;
+
 self.addEventListener("fetch", function(e){
   var req = e.request;
 
@@ -91,6 +132,26 @@ self.addEventListener("fetch", function(e){
   // antwoord houdbaar is. Die afweging hier overrulen levert alleen verwarring op.
   if(u.pathname.indexOf("/api/") !== -1) return;
 
+  // Contentpagina's: netwerk eerst, cache alleen als terugval zonder bereik.
+  // Geen stale-while-revalidate — die toont bewust eerst de oude versie, en
+  // dat is precies wat een net gepubliceerde correctie hier niet moet doen.
+  if(CONTENT_PATH_RE.test(u.pathname)){
+    e.respondWith(
+      fetch(req).then(function(res){
+        if(res && res.ok){
+          caches.open(CACHE).then(function(cache){ cache.put(req, res.clone()); });
+        }
+        return res;
+      }).catch(function(){
+        return caches.open(CACHE).then(function(cache){
+          return cache.match(req).then(function(hit){ return hit || Response.error(); });
+        });
+      })
+    );
+    return;
+  }
+
+  // App-shell en databestanden: stale-while-revalidate, zoals altijd.
   e.respondWith(
     caches.open(CACHE).then(function(cache){
       return cache.match(req).then(function(hit){

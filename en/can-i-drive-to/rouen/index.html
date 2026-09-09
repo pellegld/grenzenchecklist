@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Enter your fuel type and emission standard to see instantly whether your car is allowed into the Rouen (ZFE Metropole Rouen Normandie) environmental zone. Shareable via the link.">
+<link rel="canonical" href="https://JOUW-DOMEIN-HIER.example/en/can-i-drive-to/rouen/">
+<link rel="alternate" hreflang="nl" href="https://JOUW-DOMEIN-HIER.example/mag-ik/rouen/">
+<link rel="alternate" hreflang="en" href="https://JOUW-DOMEIN-HIER.example/en/can-i-drive-to/rouen/">
+<link rel="alternate" hreflang="x-default" href="https://JOUW-DOMEIN-HIER.example/mag-ik/rouen/">
+<link rel="alternate" type="application/atom+xml" title="Grenschecklist — wijzigingen" href="../../../feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Grenschecklist">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="Can I drive to Rouen with my car?">
+<meta property="og:description" content="Enter your fuel type and emission standard to see instantly whether your car is allowed into the Rouen (ZFE Metropole Rouen Normandie) environmental zone. Shareable via the link.">
+<meta property="og:url" content="https://JOUW-DOMEIN-HIER.example/en/can-i-drive-to/rouen/">
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../../../css/base.css">
+<link rel="stylesheet" href="../../../css/components.css">
+<link rel="stylesheet" href="../../../css/pages.css">
+<link rel="stylesheet" href="../../../css/print.css">
+<title>Can I drive to Rouen with my car? — Grenschecklist</title>
+</head>
+<body>
+<a class="skiplink" href="#hoofd">Skip to content</a>
+<main class="view-page" id="hoofd">
+<p class="hint"><a href="../../../">&larr; Grenschecklist</a></p>
+<h1>Can I drive to Rouen with my car?</h1>
+<p class="hint">The detailed rule text on this page is only available in Dutch — the labels above are translated so you can find and share the right page.</p>
+
+<p class="lead">Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.</p>
+
+<form method="get" id="check-form" class="wizveld raster">
+  <label class="field"><span>Fuel</span>
+    <select name="fuel" id="f-fuel"><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="lpg">LPG</option><option value="cng">CNG (natural gas)</option><option value="ev">Electric or hydrogen</option></select>
+  </label>
+  <label class="field"><span>Emission standard</span>
+    <select name="euro" id="f-euro"><option value="">I don't know</option><option value="6">Euro 6 (from ± 2015)</option><option value="5">Euro 5 (± 2011–2014)</option><option value="4">Euro 4 (± 2006–2010)</option><option value="3">Euro 3 (± 2001–2005)</option><option value="2">Euro 2 (± 1997–2000)</option><option value="1">Euro 1 or older</option></select>
+  </label>
+  <label class="field"><span>Country of registration</span>
+    <select name="plate" id="f-plate"><option value="BE">Belgium</option><option value="NL">Netherlands</option><option value="DE">Germany</option><option value="FR">France</option><option value="LU">Luxembourg</option><option value="AT">Austria</option><option value="CH">Switzerland</option><option value="IT">Italy</option><option value="ES">Spain</option><option value="PT">Portugal</option><option value="HR">Croatia</option><option value="SI">Slovenia</option><option value="CZ">Czechia</option><option value="DK">Denmark</option><option value="SE">Sweden</option><option value="GB">United Kingdom</option></select>
+  </label>
+  <button type="submit" class="btn primary">Check</button>
+</form>
+<div id="check-result" hidden></div>
+<noscript><p class="hint">This check needs JavaScript. Without JavaScript, you'll find the fixed thresholds above and on the <a href="../../../en/environmental-zone-rouen/">Rouen environmental-zone page</a>.</p></noscript>
+<script>
+var ZONE = {"city":"Rouen","name":"ZFE Metropole Rouen Normandie","threshold":{"diesel":4,"petrol":2},"rule":"Crit'Air 4, 5 en niet-geclassificeerd zijn geweerd.","note":"Het exacte niveau kon ik niet hard bevestigen."};
+var CHECK_LANG = "en";
+</script>
+<script src="../../../js/i18n.js"></script>
+<script src="../../../js/util.js"></script>
+<script src="../../../js/vehicle.js"></script>
+<script src="../../../js/geo.js"></script>
+<script>
+(function(){
+  "use strict";
+  if(typeof CHECK_LANG !== "undefined") TAAL = CHECK_LANG;
+  function paramsUit(){
+    var q = new URLSearchParams(location.search);
+    return { fuel: q.get("fuel"), euro: q.get("euro"), plate: q.get("plate") };
+  }
+  function toon(){
+    var q = paramsUit();
+    if(!q.fuel) return;
+    var f = document.getElementById("f-fuel"); if(f && q.fuel) f.value = q.fuel;
+    var e = document.getElementById("f-euro"); if(e && q.euro !== null) e.value = q.euro;
+    var pl = document.getElementById("f-plate"); if(pl && q.plate) pl.value = q.plate;
+
+    var trip = { vehicle: { fuel: q.fuel, euro: q.euro ? Number(q.euro) : null, plateCountry: q.plate || "NL" } };
+    var v = zoneStadVerdict(ZONE, trip);
+    var el = document.getElementById("check-result");
+    var brandstofLabel = {"petrol":"petrol","diesel":"diesel","lpg":"lpg","cng":"cng","ev":"electric"}[q.fuel] || q.fuel;
+    var euroLabel = q.euro ? "Euro " + q.euro : "unknown emission standard";
+    el.hidden = false;
+    el.innerHTML =
+      '<div class="oordeel o-' + (v.level === "bad" ? "nee" : v.level === "ok" ? "ja" : v.level === "todo" ? "mits" : "check") + '">' +
+      '<span class="teken" aria-hidden="true">' + { ok:"&#10003;", bad:"&#10007;", todo:"!", unknown:"?" }[v.level] + '</span>' +
+      '<b>' + esc(v.text) + '</b></div>' +
+      '<p class="hint">' + "Answer based on:" + ' ' + esc(brandstofLabel) + ', ' + esc(euroLabel) +
+      (q.plate ? ", " + "registered in" + " " + esc(q.plate) : "") + '.</p>';
+  }
+  document.addEventListener("DOMContentLoaded", toon);
+})();
+</script>
+<h2>Sources</h2>
+<ul class="bronnenlijst"><li><a href="https://www.metropole-rouen-normandie.fr/" target="_blank" rel="noopener">Official source <span aria-hidden="true">&rarr;</span></a></li></ul>
+<p class="hint">Last checked on August 19, 2026. Rules change; check the official source shortly before you leave.</p>
+
+<p><a class="btn primary" href="../../../#wizard">Check what you need to arrange for your own route →</a></p>
+</main>
+</body>
+</html>
