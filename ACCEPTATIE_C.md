@@ -380,13 +380,25 @@ werk.
 
 ## 6. Kleinere dingen, voor de volledigheid
 
-* De systeemmelding laat de **verlichtingsplicht** weg. `grensTekstPlat()` neemt snelheid,
-  alcohol, vignet en uitrusting mee, maar niet `lightingRule`; de banner toont hem wel.
-  C1-1 noemt verlichtingsplicht met zoveel woorden. Eén regel in
-  [js/journey.js](js/journey.js:52).
-* Bij een **geweigerde locatietoestemming** blijft de schakelaar aan staan terwijl er niets
-  bijgehouden wordt. De statusregel legt het uit, dus het is geen "falende toggle" in de
-  zin van C1-4, maar het is wel een schakelaar die aan staat zonder dat er iets aan is.
+* ~~De systeemmelding laat de **verlichtingsplicht** weg.~~ **Gerepareerd.**
+  `grensTekstPlat()` nam snelheid, alcohol, vignet en uitrusting mee maar niet
+  `lightingRule`; de banner toonde hem wel, terwijl de melding juist het ding is dat je
+  leest zonder de app open te hebben. C1-1 noemt verlichtingsplicht met zoveel woorden, en
+  is daarmee nu ook letterlijk waar. De melding bij binnenkomst in Oostenrijk draagt
+  "Dagrijverlichting verplicht, het hele jaar, ook overdag."
+* ~~Bij een **geweigerde locatietoestemming** blijft de schakelaar aan staan.~~
+  **Gerepareerd**, en met een onderscheid dat er eerst niet was: de foutafhandeling kijkt
+  nu naar de aard van de fout. Een timeout of een onbekende positie gaat over — reismodus
+  blijft staan en probeert het opnieuw. Toestemming gaat niet over zolang je hem niet in je
+  browser terugzet, en daar gaat reismodus dus uit, met de reden in de statusregel. Een
+  schakelaar die "aan" zegt terwijl er niets bijgehouden wordt, is een leugen; een
+  schakelaar die uitgaat met een uitleg erbij niet.
+
+  ```
+  code 1  toestemming geweigerd   uit · watch opgeruimd · vinkje uit · opslag false
+  code 2  positie onbekend        blijft aan, watch actief
+  code 3  timeout                 blijft aan, watch actief
+  ```
 * **Zonder `fuelprices.json`** verdwijnt de tankkaart niet, maar toont hij
   "Brandstofprijzen konden niet geladen worden." C5-4 zegt "zonder tankkaart". Ik heb dit
   niet als mankement geteld — uitleggen waarom iets er niet is, is beter dan het geruisloos
@@ -398,9 +410,12 @@ werk.
 
 ## 7. Wat er nu moet gebeuren
 
-De vijf mankementen uit §4 zijn gerepareerd en nagelopen (9 september 2026). `sw.js` staat
-daarvoor op `grenschecklist-v28`; zonder die bump krijgt een toestel dat de app al eens
-opende de oude bestanden te zien. Wat overblijft is geen code:
+De vijf mankementen uit §4 zijn gerepareerd en nagelopen (9 september 2026), en de twee
+kleine dingen uit §6 erna. `sw.js` staat daarvoor op `grenschecklist-v29`; zonder die bump
+krijgt een toestel dat de app al eens opende de oude bestanden te zien.
+
+Daarmee gaat **zeventien van de achttien** tests door. De enige die nog omvalt is C2-1, en
+die valt om door een keuze die nog niet gemaakt is. Wat overblijft is geen code:
 
 1. **Beslis over de noodknop** (§2). Dit is een keuze tussen twee criteria, geen bug. Tien
    minuten nadenken, één regel code. Zolang die beslissing uitblijft is C2-1 de enige test
@@ -411,5 +426,12 @@ opende de oude bestanden te zien. Wat overblijft is geen code:
    willen."* De drie sessies uit `docs/GEBRUIKERSTEST_B.md` zijn ook hier het goedkoopste
    antwoord: vraag die drie mensen of ze foto's van hun groene kaart in een app zouden
    zetten. Als het antwoord nee is, heb je C3 net gratis geschrapt.
-3. **De kleinere dingen uit §6** liggen er nog. Ze zijn geen van alle een acceptatietest,
-   en ze zijn stuk voor stuk een paar regels; ze wachten omdat ze niets blokkeren.
+
+En dan het punt dat boven beide staat, omdat het ze allebei beantwoordt: **de drie
+testsessies**. Ze zijn niet alleen wat criterium B afmaakt. Ze zeggen ook of iemand die
+noodknop op de homepage mist (§2) en of iemand foto's van zijn groene kaart in deze app zou
+zetten (§3). Dat zijn de twee dingen waar fase C nu op staat te wachten, en ze kosten samen
+drie kwartier van drie mensen.
+
+Zolang die sessies niet gebeurd zijn, is bijbouwen aan fase C bouwen op aannames die je in
+een middag had kunnen controleren.
