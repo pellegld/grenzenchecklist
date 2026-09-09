@@ -53,6 +53,16 @@ sw.js                    service worker voor offline gebruik
 build/build.mjs          genereert statische pagina's, meta/version.json en de sw-assetlijst
 meta/changelog.json      inhoudelijke wijzigingen in de regeldata
 meta/version.json        afgeleide: versies en aantallen per databestand
+meta/build-manifest.json afgeleide: welke contentpagina's gebouwd zijn en welke overgeslagen
+autorijden-<land>/       gegenereerd — alle regels, uitrusting, milieuzones en tol per land
+vignet-<land>/           gegenereerd — alleen bij een verplicht vignet
+milieuzones-<land>/      gegenereerd — alleen bij een landelijke milieuzoneplicht
+tol-<land>/              gegenereerd — alleen bij tolwegen of tolpunten
+milieuzone-<stad>/       gegenereerd — één per zone uit zones.json
+mag-ik/<stad>/           gegenereerd — interactieve check, deelbaar via URL-parameters
+en/                      gegenereerd — Engelse structuur van elke pagina hierboven, data blijft NL
+wijzigingen/             gegenereerd — publieke changelog uit meta/changelog.json
+sitemap.xml, robots.txt, feed.xml   gegenereerd door build:pages
 worker/                  Cloudflare Worker: de proxy, met cache en snelheidsbegrenzer
 functions/api/           dezelfde proxy als Pages Function (dunne wikkel om worker/src/)
 tools/build-geodata.ps1  genereert cities.json en borders.json opnieuw
@@ -76,15 +86,42 @@ Er is er één, en de app heeft hem niet nodig:
 
 ```bash
 npm run build:sw     # ververst de ASSETS-lijst in sw.js en bumpt de cachenaam
-npm run build:pages  # genereert statische pagina's uit countries.json
+npm run build:pages  # genereert de contentpagina's, sitemap.xml, robots.txt en feed.xml
+npm run build        # allebei, plus meta/version.json
 ```
 
 `build:sw` bestaat omdat de offline-cachelijst met de hand bijhouden een keer misgaat: een
 nieuw bestand staat dan wel op de server maar niet in de cache, en dat merk je pas zonder
-bereik. `build:pages` genereert nu nog niets — `PAGINAS` in `build/build.mjs` is leeg. De
-pipeline staat er alvast zodat de SEO-pagina's uit §27 van de masterprompt straks uit
-dezelfde `countries.json` komen als de app, in plaats van met de hand geschreven te worden
-en binnen een jaar uit de pas te lopen.
+bereik.
+
+`build:pages` is fase E van de roadmap: vindbaarheid. Hij leest `countries.json` en
+`zones.json` en schrijft per land en per stad een statische, JS-loze contentpagina —
+`/autorijden-<land>`, `/vignet-<land>` (alleen bij een verplicht vignet), `/milieuzones-<land>`
+(alleen bij een landelijke plicht), `/tol-<land>` (alleen bij tolwegen of tolpunten) en
+`/milieuzone-<stad>` per zone uit `zones.json` — plus per zone een interactieve check-pagina
+op `/mag-ik/<stad>` die exact dezelfde `zoneStadVerdict()` uit `js/geo.js` aanroept als de
+app zelf. Elke pagina draagt `lastVerified`, de officiële bron, JSON-LD (FAQPage of Article)
+en een CTA naar de wizard. Daarnaast schrijft hij `/wijzigingen` en `feed.xml` uit
+`meta/changelog.json`, en `sitemap.xml`/`robots.txt` met `lastmod` uit `lastVerified`. Een
+land of een zone zonder relevante data levert bewust geen pagina op — dat staat in de
+consolelog onder "overgeslagen". `SITE_URL` is een placeholder totdat je hem als
+omgevingsvariabele zet; zonder dat wijzen canonical, Open Graph, de sitemap en de feed naar
+een duidelijk nep-domein in plaats van naar een geraden URL.
+
+Elke contentpagina bestaat twee keer: Nederlands op `/<slug>/`, Engels op `/en/<slug>/`, met
+wederzijdse `hreflang`-tags. Vertaald is alleen de **structuur** — titels, koppen,
+vraag-labels, formulieren, land- en stadsnamen. De regeldata zelf (`note`, `rule`,
+`howToGet`, `fineIndication`, de quirks) blijft Nederlands, met dezelfde eerlijke disclaimer
+die de app al toont in Engelse modus (`js/i18n.js`, `taal.dataNotitie`): een machinaal
+verkeerd vertaald boetebedrag of euronorm is gevaarlijker dan een Nederlandse zin. Op de
+Engelse `/en/can-i-drive-to/<stad>`-pagina staat het antwoord zelf wél in het Engels — die
+komt uit dezelfde `zoneStadVerdict()`, met de globale `TAAL` op `"en"` gezet vóór de aanroep,
+en leest de EN-vertalingen die al in `js/i18n.js` stonden.
+
+De pipeline bestaat zodat de SEO-pagina's uit §27 van de masterprompt uit dezelfde
+`countries.json` komen als de app, in plaats van met de hand geschreven te worden en binnen
+een jaar uit de pas te lopen: wijzig je een vignetprijs, dan verandert de bijbehorende
+pagina bij de volgende build vanzelf mee.
 
 ## Vormgeving
 

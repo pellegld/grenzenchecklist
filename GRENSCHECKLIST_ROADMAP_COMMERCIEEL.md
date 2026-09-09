@@ -1,43 +1,43 @@
 # GRENSCHECKLIST — Roadmap naar een verkoopbaar product
 
-Aanvulling op `GRNSCHECKLIST_V2_MASTERPROMPT.txt`. Die prompt beschrijft *wat* V2 moet worden.
+Aanvulling op `GRNSCHECKLIST\_V2\_MASTERPROMPT.txt`. Die prompt beschrijft *wat* V2 moet worden.
 Dit document beschrijft *in welke volgorde* je het bouwt, wat er ontbreekt om er geld mee te
 verdienen, en geeft per fase een prompt die je rechtstreeks in Claude Code kunt plakken.
 
 Elke fase heeft een **acceptatiecriterium**. Ga pas door als dat gehaald is. Doe je dat niet,
 dan bouw je features bovenop een fundament dat omvalt zodra er echte gebruikers zijn.
 
----
+\---
 
 ## Overzicht
 
-| fase | naam | duur (indicatie) | waarom |
-|---|---|---|---|
-| A | Fundament & blockers | 1–2 weken | zonder dit gaat de launch stuk |
-| B | V2-UX (bestaande masterprompt) | 2–4 weken | van checklist naar reisassistent |
-| C | Onderweg-modus | 2–3 weken | hier ontstaat "onmisbaar" |
-| D | Terugkeerlus | 1–2 weken | hier ontstaat terugkerend gebruik |
-| E | Vindbaarheid | 1–2 weken | hier komen de gebruikers vandaan |
-| F | Verdienmodel | 1–2 weken | hier komt het geld vandaan |
-| G | App store (Capacitor) | 1 week | alleen ná bewezen webverkeer |
-| H | Kwaliteit, juridisch, launch | doorlopend | |
+|fase|naam|duur (indicatie)|waarom|
+|-|-|-|-|
+|A|Fundament \& blockers|1–2 weken|zonder dit gaat de launch stuk|
+|B|V2-UX (bestaande masterprompt)|2–4 weken|van checklist naar reisassistent|
+|C|Onderweg-modus|2–3 weken|hier ontstaat "onmisbaar"|
+|D|Terugkeerlus|1–2 weken|hier ontstaat terugkerend gebruik|
+|E|Vindbaarheid|1–2 weken|hier komen de gebruikers vandaan|
+|F|Verdienmodel|1–2 weken|hier komt het geld vandaan|
+|G|App store (Capacitor)|1 week|alleen ná bewezen webverkeer|
+|H|Kwaliteit, juridisch, launch|doorlopend||
 
 Werk per fase in een aparte git-branch. Commit klein. Na elke fase: console errors nakijken,
 mobiel testen, offline testen, en de vorige fase opnieuw doorlopen om regressies te vangen.
 
----
+\---
 
-# FASE A — FUNDAMENT & BLOCKERS
+# FASE A — FUNDAMENT \& BLOCKERS
 
 Dit is de saaiste fase en de belangrijkste. Bouw hier geen enkele nieuwe gebruikersfunctie.
 
 ## A1 — Audit
 
-Zit al in de masterprompt (§31, FASE 0). Laat Claude Code `V2_AUDIT.md` maken vóór alles.
+Zit al in de masterprompt (§31, FASE 0). Laat Claude Code `V2\_AUDIT.md` maken vóór alles.
 Voeg aan de audit-opdracht twee vragen toe die er nu niet in staan:
 
-- welke bestanden bevatten hardgecodeerde Nederlandse tekst, en hoeveel strings zijn dat ongeveer;
-- welke functies gaan er impliciet van uit dat er netwerk is.
+* welke bestanden bevatten hardgecodeerde Nederlandse tekst, en hoeveel strings zijn dat ongeveer;
+* welke functies gaan er impliciet van uit dat er netwerk is.
 
 ## A2 — Repo-structuur + build step
 
@@ -57,26 +57,26 @@ geen uptime-garantie en zijn beperkt tot ongeveer 1 request/seconde.
 Bouw:
 
 1. `js/routeProvider.js` met een neutrale interface: `getRoute(from, to, opts)`,
-   `geocode(query)`, `reverseGeocode(lat, lon)`.
+`geocode(query)`, `reverseGeocode(lat, lon)`.
 2. Een dunne serverless proxy (Cloudflare Workers of Netlify/Vercel Functions) waar de
-   API-sleutel achter blijft, met caching op route-hash en een rate limit per IP.
+API-sleutel achter blijft, met caching op route-hash en een rate limit per IP.
 3. Minstens twee implementaties achter dezelfde interface, plus een fallback-keten:
-   primaire provider → tweede provider → handmatige landenkeuze.
+primaire provider → tweede provider → handmatige landenkeuze.
 
 Providers om te vergelijken (**check zelf de actuele tarieven, die wijzigen**):
 
-- **GraphHopper Directions API** — vergelijkingssites noemen betaalde plannen vanaf ongeveer
-  $59/maand; expliciet commercieel gebruik toegestaan, OSM-gebaseerd. Waarschijnlijk je
-  beste startpunt.
-- **openrouteservice** — gulle gratis laag, maar let goed op de licentievoorwaarden voor
-  commercieel gebruik.
-- **Mapbox Directions** — ruime gratis laag per maand, duurder daarboven.
-- **Zelf gehoste OSRM** op een VPS met alleen het Europese OSM-extract — eenmalig werk,
-  daarna vaste lage kosten en geen rate limit. Financieel het aantrekkelijkst zodra je
-  volume hebt; overweeg dit vanaf fase F.
+* **GraphHopper Directions API** — vergelijkingssites noemen betaalde plannen vanaf ongeveer
+$59/maand; expliciet commercieel gebruik toegestaan, OSM-gebaseerd. Waarschijnlijk je
+beste startpunt.
+* **openrouteservice** — gulle gratis laag, maar let goed op de licentievoorwaarden voor
+commercieel gebruik.
+* **Mapbox Directions** — ruime gratis laag per maand, duurder daarboven.
+* **Zelf gehoste OSRM** op een VPS met alleen het Europese OSM-extract — eenmalig werk,
+daarna vaste lage kosten en geen rate limit. Financieel het aantrekkelijkst zodra je
+volume hebt; overweeg dit vanaf fase F.
 
 Geocoding kun je grotendeels vermijden: je `cities.json` met 689 plaatsen dekt het meeste al
-lokaal. Breid die uit naar ~3000 plaatsen in plaats van vaker een geocoder aan te roepen.
+lokaal. Breid die uit naar \~3000 plaatsen in plaats van vaker een geocoder aan te roepen.
 
 **Acceptatiecriterium A3:** je kunt in één configuratieregel van provider wisselen zonder dat
 wizard, kaart of state-laag verandert. Als je de primaire provider uitschakelt, valt de app
@@ -87,16 +87,16 @@ netjes terug op de handmatige landenkeuze zonder foutmelding in de console.
 Je regeldata moet kunnen wijzigen zonder dat je de app opnieuw uitrolt. Dat is meteen de
 basis voor je latere B2B-API.
 
-- Zet `countries.json`, `zones.json`, `drukte.json` achter een versioned endpoint
-  (`/api/v1/data/countries.json`) met ETag en lange cache.
-- De app haalt bij opstarten op, valt terug op de meegeleverde kopie in de service worker.
-- Elk feit krijgt een stabiel `id` en een `confidence`-veld (`official` / `verified` /
-  `uncertain` / `unavailable`), zoals §13 van de masterprompt beschrijft.
-- Schrijf `tools/verify-data.js`: rapporteert alles met `lastVerified` ouder dan 180 dagen,
-  alles met `needsVerification: true`, en alle dode `sourceUrl`'s (HTTP-check). Laat dit
-  maandelijks draaien.
-- Houd `meta/changelog.json` bij: welk feit, oude waarde, nieuwe waarde, datum, bron. Dit
-  voedt straks zowel je wijzigingsmonitor (fase D) als een publieke changelog-pagina (fase E).
+* Zet `countries.json`, `zones.json`, `drukte.json` achter een versioned endpoint
+(`/api/v1/data/countries.json`) met ETag en lange cache.
+* De app haalt bij opstarten op, valt terug op de meegeleverde kopie in de service worker.
+* Elk feit krijgt een stabiel `id` en een `confidence`-veld (`official` / `verified` /
+`uncertain` / `unavailable`), zoals §13 van de masterprompt beschrijft.
+* Schrijf `tools/verify-data.js`: rapporteert alles met `lastVerified` ouder dan 180 dagen,
+alles met `needsVerification: true`, en alle dode `sourceUrl`'s (HTTP-check). Laat dit
+maandelijks draaien.
+* Houd `meta/changelog.json` bij: welk feit, oude waarde, nieuwe waarde, datum, bron. Dit
+voedt straks zowel je wijzigingsmonitor (fase D) als een publieke changelog-pagina (fase E).
 
 **Acceptatiecriterium A4:** je kunt een vignetprijs wijzigen door één JSON-bestand te uploaden,
 zonder deploy, en de app toont de nieuwe waarde binnen een minuut.
@@ -110,8 +110,8 @@ aangeeft. DE en FR volgen zodra er verkeer is — dat zijn samen verreweg de gro
 ### Prompt voor fase A
 
 ```
-Werk in de repo GRENSCHECKLIST. Lees eerst V2_AUDIT.md, README.md en
-GRNSCHECKLIST_V2_MASTERPROMPT.txt volledig.
+Werk in de repo GRENSCHECKLIST. Lees eerst V2\_AUDIT.md, README.md en
+GRNSCHECKLIST\_V2\_MASTERPROMPT.txt volledig.
 
 Deze fase bouwt GEEN nieuwe gebruikersfuncties. Doel is uitsluitend het fundament.
 
@@ -141,7 +141,7 @@ Behoud alle bestaande functionaliteit. Werk incrementeel, commit per onderdeel.
 Test na elk onderdeel: console errors, mobiel, offline, print.
 ```
 
----
+\---
 
 # FASE B — V2-UX
 
@@ -166,7 +166,7 @@ grootste concurrentievoordeel en op dit moment is het onzichtbaar.
 nooit zag kan zonder uitleg binnen twee minuten een persoonlijke checklist krijgen op een
 telefoon. Test dit met drie echte mensen, niet met jezelf.
 
----
+\---
 
 # FASE C — ONDERWEG-MODUS
 
@@ -191,15 +191,15 @@ fase G.
 
 Eén grote, altijd bereikbare knop: **pech of ongeval**. Toont voor het land waar je nú bent:
 
-- alarmnummer (112 plus het lokale pechnummer);
-- wat de wet vereist vóórdat je uitstapt — hesje aan bínnen de auto in Spanje en Italië,
-  gevarendriehoek op X meter, verlichting;
-- Europees schadeformulier met de veldnamen in de lokale taal ernaast;
-- vijf zinnen fonetisch: *ik heb een ongeval gehad · niemand is gewond · ik heb pech ·
-  mijn auto start niet · waar is de dichtstbijzijnde garage*;
-- de contactgegevens van je eigen verzekering en pechhulp (die je één keer invult);
-- de vraag die mensen vergeten: *heb je foto's van beide voertuigen, de positie en de
-  kentekenplaten?*
+* alarmnummer (112 plus het lokale pechnummer);
+* wat de wet vereist vóórdat je uitstapt — hesje aan bínnen de auto in Spanje en Italië,
+gevarendriehoek op X meter, verlichting;
+* Europees schadeformulier met de veldnamen in de lokale taal ernaast;
+* vijf zinnen fonetisch: *ik heb een ongeval gehad · niemand is gewond · ik heb pech ·
+mijn auto start niet · waar is de dichtstbijzijnde garage*;
+* de contactgegevens van je eigen verzekering en pechhulp (die je één keer invult);
+* de vraag die mensen vergeten: *heb je foto's van beide voertuigen, de positie en de
+kentekenplaten?*
 
 ## C3 — Documentenkluis met vervaldatumcheck
 
@@ -247,9 +247,109 @@ en zonder account. Gebruik de bestaande borders.json en point-in-polygon-logica.
    geschatte besparing. Markeer als indicatief, met datum van de prijsdata.
 
 Test elk onderdeel met vliegtuigmodus aan.
+
+
+
+ACCEPTATIECRITERIA FASE C
+
+
+
+C1 — Reismodus
+
+
+
+Test: zet reismodus aan, override je locatie in devtools naar een punt in België, wacht op de eerste fix, override daarna naar een punt in Frankrijk. Er verschijnt een banner (en een notificatie als je die toestond) met de juiste snelheidslimiet, alcohollimiet, verlichtingsplicht en vignetstatus voor Frankrijk — niet voor België. Bij de eerste fix verschijnt géén melding.
+
+
+
+Test: wissel binnen een minuut twee keer van land. De throttle moet voorkomen dat classifyPoint op elke tick draait; je ziet hooguit één classificatie per \~60 seconden.
+
+
+
+Test: zet reismodus uit en herlaad de app. De toggle staat nog steeds uit, er draait geen watchPosition meer, en de banner is weg.
+
+
+
+Test: open de app in een browser waar je locatietoestemming weigert. Er verschijnt een duidelijke melding, geen falende toggle en geen console-error.
+
+
+
+Test: schakel weg van de app en kom terug. De banner moet de actuele situatie tonen in plaats van te doen alsof er continu is meegekeken — dit is de iOS-correctie uit de prompt.
+
+
+
+C2 — Incidentmodus
+
+
+
+Test: de incidentknop is zichtbaar en bruikbaar op minstens drie verschillende pagina's (Home, Kosten, Kaart), en ook wanneer er helemaal geen reis is aangemaakt.
+
+
+
+Test: open de modal zonder GPS. De landkeuze staat op het eerste land van je reis (of is leeg selecteerbaar), en je kunt handmatig een ander land kiezen waarna alle velden meeveranderen.
+
+
+
+Test: de tel:-links openen daadwerkelijk de telefoon-app op een mobiel apparaat. Test dit op een echt toestel, niet alleen in devtools.
+
+
+
+Test: vul je verzekeringsgegevens in, sluit de modal, herlaad de app, open de modal opnieuw. De gegevens staan er nog.
+
+
+
+Test: de twee geverifieerde velden — alcohollimiet en pechhulpnummer — tonen confidence: verified, de rest van het blok toont uncertain met de correctielink erbij.
+
+
+
+C4 — Offline reispack
+
+
+
+Test: de kaart toont een grootte via navigator.storage.estimate(). Open de app via file:// of in een browser zonder die API: er staat een terugvaltekst, geen leeg vak en geen error.
+
+
+
+Test: klik op ververs, en controleer in het Network-tabblad dat de vijf JSON-bestanden werkelijk het netwerk raken (niet uit de HTTP-cache komen). "Laatst ververst" wordt bijgewerkt.
+
+
+
+C5 — Tankstrategie
+
+
+
+Test: een reis met berekende route en een dieselvoertuig toont een concreet tankadvies met besparing, plus de priceDate van de brandstofdata.
+
+
+
+Test: dezelfde reis met een handmatige landenlijst (geen berekende route) toont alleen de prijstabel, geen afstandsgewogen advies.
+
+
+
+Test: een EV-voertuig levert geen tankadvies op, met een korte uitleg in plaats van een leeg blok.
+
+
+
+Test: verwijder fuelprices.json of maak het endpoint onbereikbaar. De Kostenpagina werkt gewoon door, zonder tankkaart en zonder console-error.
+
+
+
+Overkoepelend — offline en regressie
+
+
+
+Test: zet devtools op offline, herlaad de app volledig. De Onderweg-pagina en de incidentmodal moeten blijven werken, inclusief alle landdata. Alleen een verse GPS-fix mag ontbreken; de UI mag nergens breken.
+
+
+
+Test: loop de bestaande pagina's uit fase B nog één keer door — Reis, Acties, Kaart, Kosten, Regels, Document, Mijn reizen, Reiservaring — plus print/PDF. Fase C voegt toe, het mag niets veranderen aan wat er stond.
+
+
+
+
 ```
 
----
+\---
 
 # FASE D — TERUGKEERLUS
 
@@ -270,10 +370,10 @@ dezelfde checklist opnieuw moeten aflopen, en dat is precies waarom ze terugkome
 ## D3 — Terugreis- en na-reismodus
 
 Douanelimieten voor de terugweg, en: *"Boetes uit Frankrijk komen doorgaans na 4–8 weken. Zo
-herken je een echte: [kenmerken]. Betaal nooit via een link in een e-mail."* Nepboetes uit het
+herken je een echte: \[kenmerken]. Betaal nooit via een link in een e-mail."* Nepboetes uit het
 buitenland zijn een plaag; dit is goedkope, hoge goodwill.
 
----
+\---
 
 # FASE E — VINDBAARHEID
 
@@ -304,14 +404,14 @@ Google houden hier allebei van.
 
 ## E4 — Distributie buiten Google
 
-- Seizoenspitch aan Belgische en Nederlandse media in mei/juni en november/december. Je hebt
-  een verhaal dat ze willen: *"21 van de 47 Europese milieuzones zijn zo onduidelijk
-  gedocumenteerd dat je niet kunt weten of je erin mag."*
-- Facebookgroepen rond camperreizen en caravanvakanties (enorm en actief), Wintersport.nl,
-  camperforums.
-- Touring, VAB, ANWB, ADAC — niet als concurrent maar als partner.
+* Seizoenspitch aan Belgische en Nederlandse media in mei/juni en november/december. Je hebt
+een verhaal dat ze willen: *"21 van de 47 Europese milieuzones zijn zo onduidelijk
+gedocumenteerd dat je niet kunt weten of je erin mag."*
+* Facebookgroepen rond camperreizen en caravanvakanties (enorm en actief), Wintersport.nl,
+camperforums.
+* Touring, VAB, ANWB, ADAC — niet als concurrent maar als partner.
 
----
+\---
 
 # FASE F — VERDIENMODEL
 
@@ -321,10 +421,10 @@ Bouw het als data, niet als hardgecodeerde links: `partners.json` met per produc
 per land de partner, de link en het commissiemodel. Regels die je jezelf oplegt en in de code
 afdwingt:
 
-- alleen tonen bij een actie die de checklist zelf al genereerde;
-- de officiële, gratis bron staat er altijd naast en even prominent;
-- elke affiliate-link is als zodanig gemarkeerd;
-- de volgorde wordt nooit door commissie bepaald.
+* alleen tonen bij een actie die de checklist zelf al genereerde;
+* de officiële, gratis bron staat er altijd naast en even prominent;
+* elke affiliate-link is als zodanig gemarkeerd;
+* de volgorde wordt nooit door commissie bepaald.
 
 Categorieën: vignetten (Autopay, tolltickets, vintrica), pechhulp en reisverzekering, veerboten
 en autoslaaptreinen, uitrustingssets, eSIM.
@@ -339,24 +439,25 @@ wijzigingsmonitor, camper/caravanmodule, documentkluis-sync, uitgebreid offline 
 
 Je data-endpoint uit fase A4 is al de API. Voeg toe:
 
-- een `<iframe>`-widget met een `?theme=`-parameter voor huisstijl;
-- API-sleutels met quota;
-- een `/zakelijk`-pagina met één duidelijk aanbod.
+* een `<iframe>`-widget met een `?theme=`-parameter voor huisstijl;
+* API-sleutels met quota;
+* een `/zakelijk`-pagina met één duidelijk aanbod.
 
 Doelgroepen in volgorde van haalbaarheid: camperverhuurbemiddelaars, leasemaatschappijen,
 mobiliteitsclubs, autodealers, reisorganisaties.
 
----
+\---
 
 # FASE G — APP STORE (alleen ná bewezen webverkeer)
 
 Wikkel dezelfde codebase met **Capacitor**. Je schrijft niets opnieuw.
 
 Wat je ermee wint en anders niet krijgt:
-- betrouwbare achtergrondlocatie op iOS (nodig voor de grensmelding uit C1);
-- pushmeldingen voor de wijzigingsmonitor;
-- vindbaarheid in de App Store;
-- vertrouwen — mensen installeren voor een reis liever een app dan een bladwijzer.
+
+* betrouwbare achtergrondlocatie op iOS (nodig voor de grensmelding uit C1);
+* pushmeldingen voor de wijzigingsmonitor;
+* vindbaarheid in de App Store;
+* vertrouwen — mensen installeren voor een reis liever een app dan een bladwijzer.
 
 Kosten: Apple Developer €99/jaar, Google Play €25 eenmalig. Reken op een week werk plus een
 eerste review-ronde.
@@ -364,32 +465,33 @@ eerste review-ronde.
 Doe dit niet eerder. Een app store-app zonder gebruikers is een onderhoudslast met een
 jaarabonnement eraan vast.
 
----
+\---
 
 # FASE H — KWALITEIT, JURIDISCH, LAUNCH
 
-- **Juridisch:** duidelijke disclaimer (informatief, geen juridisch advies, controleer altijd de
-  officiële bron), voorwaarden, privacyverklaring. Je hebt geen accounts en geen tracking-cookies
-  nodig, dus geen cookiebanner — gebruik cookieloze analytics (Plausible of self-hosted Umami).
-- **Analytics:** alleen geaggregeerde events zoals §26 van de masterprompt. Nooit kentekens.
-- **Tests:** schrijf minstens unit-tests voor de landdetectie, de emissie-oordeelsfunctie en
-  de tolberekening. Dat zijn de drie plekken waar een stille fout iemand een boete oplevert.
-- **Foutscenario's expliciet testen:** provider down, geen netwerk, ongeldige invoer,
-  route buiten Europa, route volledig binnen één land, veerbootroute.
-- **Monitoring:** uptime-check op je proxy en je data-endpoint.
+* **Juridisch:** duidelijke disclaimer (informatief, geen juridisch advies, controleer altijd de
+officiële bron), voorwaarden, privacyverklaring. Je hebt geen accounts en geen tracking-cookies
+nodig, dus geen cookiebanner — gebruik cookieloze analytics (Plausible of self-hosted Umami).
+* **Analytics:** alleen geaggregeerde events zoals §26 van de masterprompt. Nooit kentekens.
+* **Tests:** schrijf minstens unit-tests voor de landdetectie, de emissie-oordeelsfunctie en
+de tolberekening. Dat zijn de drie plekken waar een stille fout iemand een boete oplevert.
+* **Foutscenario's expliciet testen:** provider down, geen netwerk, ongeldige invoer,
+route buiten Europa, route volledig binnen één land, veerbootroute.
+* **Monitoring:** uptime-check op je proxy en je data-endpoint.
 
----
+\---
 
 # Wat ik de eerste 30 dagen zou doen
 
 1. Fase A volledig. Niets anders. Vooral A3 en A4.
 2. `verify-data.js` draaien en de 21 onzekere zones terugbrengen naar hooguit vijf. Je data
-   is je product; twee dagen bronnenwerk is hier meer waard dan twee weken features.
+is je product; twee dagen bronnenwerk is hier meer waard dan twee weken features.
 3. Domeinnaam en naam definitief kiezen vóór je in SEO investeert. "Grenschecklist" werkt in
-   het Nederlands maar sluit Duitsland, Frankrijk en het VK uit — samen je grootste markt.
-   Overweeg een neutrale merknaam met `grenschecklist.be` als Nederlandstalige ingang.
+het Nederlands maar sluit Duitsland, Frankrijk en het VK uit — samen je grootste markt.
+Overweeg een neutrale merknaam met `grenschecklist.be` als Nederlandstalige ingang.
 4. Fase B afmaken en live zetten als PWA. Gratis, geen account.
 5. Vijf echte mensen laten proberen zonder uitleg terwijl je meekijkt. Niets is zo goedkoop
-   en zo pijnlijk nuttig.
+en zo pijnlijk nuttig.
 
 Pas daarna fase C. Zonder gebruikers weet je niet welke onderweg-functie ze echt willen.
+

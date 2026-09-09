@@ -130,6 +130,22 @@ project. §17A staat toe die voorlopig Nederlands te laten, mits de UI dat eerli
 Ook: `toLocaleString("nl-NL")` staat hard in vier functies, en `fmtDate()` heeft een
 hardgecodeerde Nederlandse maandnamenlijst.
 
+**Waar die strings terechtkwamen.** Bij elkaar ongeveer 200 Nederlandse zinnen, en ze stonden
+allemaal in dat ene `index.html`. Na de splitsing is de telling anders: er zijn 671 sleutels,
+in twee talen, en ze staan alle 671 in `js/i18n.js` (§5 heeft de kaart). In de componenten
+staan er nul — de statische markup verwijst met `data-i18n`, `data-i18n-placeholder`,
+`data-i18n-aria` en `data-i18n-title` naar een sleutel, en de renderfuncties roepen `i18n()`
+aan. Wat je in de JS-bestanden nog wél tegenkomt is Nederlands in commentaar, in element-id's
+(`btn-meer`, `dark-toggle`) en in interne foutmeldingen die nooit een scherm halen
+(`new Error("geen countries-array")`); dat is geen UI-tekst en hoeft niet mee.
+
+Nederlands blijft staan in de **data**: `note`, `rule`, `howToGet`, `fineIndication` en de
+quirks in `countries.json` en `zones.json`, plus `meta.disclaimer` in `fuelprices.json`. De
+eerste groep dekt de app af met de notitie bij de taalkeuze ("de regelteksten per land zijn
+alleen in het Nederlands beschikbaar"); de tweede is geen regeltekst per land, en daarom kiest
+`tankDisclaimer()` in een andere taal de vertaalde zin uit `i18n.js` — tenzij het databestand
+zelf een vertaling meelevert (`disclaimer_en`).
+
 ### 2.3 Data-onderhoud
 
 Elk land heeft `lastVerified` en losse `needsVerification`-vlaggen op subobjecten. Maar:
@@ -231,3 +247,130 @@ onzekerheidsniveau draagt het.
 
 Wat er dán nog gebouwd moet worden — een indienformulier, moderatie, stemmen, een publieke
 wijzigingspagina — staat in fase D/E van de roadmap en hoort daar.
+
+---
+
+## 5. Waar staat wat na de splitsing — en wat fase B raakt
+
+De hoofdstukken hierboven beschrijven de app van vóór de splitsing, toen alles in
+`index.html` stond. Dat is de nulmeting en die blijft staan. Maar een audit die niet zegt
+wélk bestand je straks openslaat, laat het duurste werk aan de lezer over. Daarom deze kaart:
+één regel per bestand, en in de laatste kolom of fase B (V2-UX) eraan komt.
+
+`index.html` is sinds de splitsing een shell: markup, de navigatie, de lege view-containers en
+onderaan de scripttags in laadvolgorde. Geen logica, geen `<style>`.
+
+### De laag eronder — data, staat en diensten
+
+| bestand | wat het doet | fase B |
+|---|---|---|
+| `js/i18n.js` | alle zichtbare tekst, `{ nl, en }`, plus `i18n()`/`i18nAantal()`/`zetTaal()` | **ja, altijd** — elke nieuwe zin is hier een sleutel |
+| `js/config.js` | opslagsleutels, drempels (`STALE_DAYS`), de geladen referentiedata, `VIEW_ORDER` | ja, bij een nieuwe pagina |
+| `js/storage.js` | `localStorage`-wrappers en het thema | nee |
+| `js/util.js` | `esc()`, datum- en bedragopmaak, vlaggen, icoonverwijzingen | zijdelings |
+| `js/data.js` | regeldata laden: endpoint → bundel → `localStorage` → bestandskiezer | nee |
+| `js/routeProvider.js` | `getRoute`/`geocode`/`reverseGeocode` achter één interface, met providerketen | nee |
+| `js/geo.js` | landen, zones en tolpunten uit de routegeometrie (point-in-polygon) | nee |
+| `js/trip.js` | het trip-object: de bron van waarheid van één reis | ja, bij elk nieuw veld |
+| `js/trips.js` | de lijst opgeslagen reizen, `laadGeoData()` | zijdelings |
+| `js/vehicle.js` | voertuigprofiel en het milieuzone-oordeel (`zoneVerdict`) | zijdelings |
+| `js/checklist.js` | uitrustingsgroepen en regeltaken | ja |
+| `js/facts.js` | feiten, vertrouwensniveau en boetekans | **ja** — vertrouwensbalk en boetekans-totaal |
+| `js/actions.js` | de actielijst: prioriteit, deadline, herkomst (`waarom.*`) | **ja** — deadlines en "waarom zie ik dit" |
+| `js/costs.js` | tol en de kostenberekening | **ja** — kostenpagina |
+| `js/calendar.js` | drukte per dag; dormant, wacht op een kalenderpagina | nee (fase 5) |
+| `js/countries.js` | landkaart-onderdelen en de correctielink | zijdelings |
+
+### De laag erboven — pagina's
+
+| bestand | pagina | fase B |
+|---|---|---|
+| `js/app.js` | orkestratie, `switchView()`, `render()`, opstarten | **ja** |
+| `js/home.js` | homepage | **ja** |
+| `js/wizard.js` | de reiswizard in vier stappen | **ja** |
+| `js/planner.js` | de plaatsvelden, `berekenRoute()`, de handmatige landenkeuze | **ja** |
+| `js/dashboard.js` | het reisdashboard | **ja** |
+| `js/acties.js` | de actiepagina | **ja** |
+| `js/map.js` | de routeschets (SVG, geen kaarttegels) | **ja** |
+| `js/pages.js` | regels per land, mijn reizen, reiservaring | **ja** |
+| `js/document.js` | het reisdocument en print | **ja** |
+| `js/share.js` | de reis in een URL | **ja** — deelbare reis |
+| `js/journey.js` | reismodus (grensdetectie) en offline reispack | nee (fase C) |
+| `js/incident.js` | incidentmodus | nee (fase C) |
+| `js/fuel.js` | tankstrategie | nee (fase C5) |
+| `js/wijzigingen.js` | de wijzigingsmonitor | nee (fase D) |
+| `js/douane.js` | terugreismodus: douane en boete-herkenning | nee (fase D) |
+
+### CSS, buiten de app
+
+`css/base.css` (variabelen, typografie, thema), `css/components.css` (knoppen, kaarten,
+chips), `css/pages.css` (de paginalayouts — verreweg het grootste bestand en het bestand dat
+fase B het hardst raakt), `css/print.css` (het reisdocument op papier; dit was de regressie
+uit §1 en staat er weer).
+
+Buiten de app, en door fase B **niet** geraakt: `build/build.mjs` (statische pagina's, sitemap,
+feed, de `ASSETS`-lijst in `sw.js`), `tools/verify-data.mjs` (de datacontrole),
+`worker/src/*` en `functions/api/*` (route-, geocode- en dataproxy), en de databestanden zelf.
+
+**Samengevat, wat fase B openslaat:** alle acht paginabestanden plus `app.js`, daaronder
+`facts.js`, `actions.js`, `costs.js`, `checklist.js` en `trip.js`, en bij élke zin `i18n.js`
+in twee talen. Wat het níét openslaat: de dienstenlaag (`routeProvider.js`, `data.js`, de
+worker) en de bouwstraat. Dat is precies waarom fase A eerst kwam.
+
+---
+
+## 6. Welke functies stilzwijgend aannemen dat er netwerk is
+
+De vraag achter deze vraag is: waar breekt de app als je hem meeneemt naar een parkeerplaats
+zonder dekking? Alles wat het netwerk raakt zit in drie bestanden — `js/data.js`,
+`js/routeProvider.js` en `js/journey.js` — plus de plekken die daaruit putten. Hieronder per
+functie, met de aanname erbij.
+
+**Neemt niets aan, meldt wat het deed**
+
+* `laadData(naam)` / `loadData()` — `js/data.js`. Vier trappen: endpoint, gebundelde kopie,
+  `localStorage`, bestandskiezer. Welke trap het werd staat in `DATA_HERKOMST`, en draaien op
+  een `localStorage`-kopie zet `FROM_CACHE` aan, wat `meldCachekopie()` zichtbaar maakt. Dit
+  is hoe de rest het ook zou moeten doen.
+* `RouteProvider.getRoute/geocode/reverseGeocode` — `js/routeProvider.js`. De keten probeert
+  elke implementatie; faalt de laatste, dan draagt de fout `.handmatig`, en dat is het signaal
+  voor de handmatige landenkeuze. Geen verzonnen route, geen oude route.
+* `laadChangelog()` — `js/wijzigingen.js`. Vangt stil af: geen changelog is niets te melden.
+* `loadJSON("cities.json")` — `js/app.js`. Vangt af; lukt het niet, dan blijven de
+  plaatsvelden verborgen en is handmatig kiezen de gewone weg. Op `file://` wordt het niet
+  eens geprobeerd.
+* `vulPack()` — `js/journey.js`. Fetcht met `cache:"reload"` en vangt stil af; het reispack is
+  een opdracht om te cachen, geen belofte dat het lukt.
+* De reismodus zelf (`startReismodus`, `journeyOpPositie`) gebruikt `navigator.geolocation`,
+  geen netwerk. Ontbreekt GPS, dan zegt hij dat. Dit is de enige functie die per ontwerp
+  offline hóórt te werken, en dat doet hij ook.
+
+**Neemt het wél aan**
+
+* `laadGeoData()` — `js/trips.js`. Hier zit de enige echte: `loadJSON("borders.json")` heeft
+  geen `.catch()`, terwijl `zones.json` er direct naast er wél een heeft, mét een
+  commentaarregel die uitlegt waarom ("geen zones melden is beter dan de app laten vallen").
+  Bij borders is dat vergeten. Faalt dat ene bestand, dan valt de hele `Promise.all` om,
+  verwerpt `berekenRoute()` met de ruwe browserfout, en toont de wizard "Failed to fetch"
+  letterlijk in zijn algemene foutmelding. De uitweg is er (die melding biedt ook handmatig
+  doorgaan), maar de tekst is er een van de browser en niet van de app. Eén regel werk, en het
+  hoort bij de robuustheid van fase B, niet bij het fundament.
+* `loadJSON()` zelf fetcht met `cache:"force-cache"`. Dat is goed voor snelheid, maar het
+  betekent ook dat een tweede poging na een mislukking niet vanzelf opnieuw het netwerk raakt.
+* `proxyBeschikbaar()` — `js/routeProvider.js`. Het antwoord wordt in `PROXY_CHECK` onthouden
+  voor de hele sessie. Klop je één keer aan terwijl je geen bereik hebt, dan blijft de proxy
+  die sessie "afwezig", ook als het bereik terugkomt. Bewust (niet bij elke route opnieuw
+  kloppen), maar het is een aanname met een houdbaarheidsdatum.
+* `DATA_ENDPOINT_ER` — `js/data.js`. Hetzelfde patroon één laag hoger: één mislukte poging
+  zet het endpoint voor de rest van de sessie op afwezig, en de andere databestanden slaan hem
+  daarna over. Bedoeld gedrag, met dezelfde kanttekening.
+
+**Wat er niet in staat, en dat is het punt**
+
+De checklist, het voertuigoordeel, de zones, de tolschatting, het reisdocument, de kaartschets
+en de opgeslagen reizen doen geen enkele netwerkaanroep. Ze rekenen op `DATA`, `BORDERS`,
+`ZONES` en het trip-object, en die staan alle vier al in het geheugen tegen de tijd dat er een
+pagina getekend wordt. Zet de server uit en herlaad: de service worker levert de app, de
+gebundelde kopieën leveren de data, en elke pagina rendert. Alleen een nieuwe route berekenen
+en een nieuwe plaatsnaam opzoeken kan niet — en dat zijn precies de twee dingen die achter
+`RouteProvider` staan, met de handmatige landenkeuze eronder.
