@@ -31,6 +31,9 @@ var RENDERS = {
 
 function render(){
   renderProfile();
+  /* Ook hier, niet alleen in switchView: de kaartpagina kan een route berekenen
+     zonder van view te wisselen, en dan hoort de noodknop erbij te komen. */
+  verversSosKnop();
   var fn = RENDERS[VIEW];
   if(fn) fn();
 }
@@ -52,6 +55,7 @@ function switchView(naam, geenHash){
     knoppen[i].classList.toggle("active", is && knoppen[i].closest(".sidenav, .bottomnav") !== null);
   }
   sluitMeer();
+  verversSosKnop();
   if(!geenHash && location.hash !== "#" + naam) location.hash = naam;
   window.scrollTo(0, 0);
   var sec = document.getElementById("view-" + naam);
@@ -89,7 +93,7 @@ function verversFormulier(){
   zet("depart", TRIP.departureDate || "");
   zet("fuel", TRIP.vehicle.fuel);
   zet("euro", TRIP.vehicle.euro === null ? "" : String(TRIP.vehicle.euro));
-  zet("vtype", TRIP.vehicle.type);
+  zet("vtype", voertuigTypeVoorKeuze(TRIP.vehicle.type));
   zet("from", TRIP.origin ? TRIP.origin.naam : "");
   zet("to", TRIP.destination ? TRIP.destination.naam : "");
 }
@@ -227,6 +231,18 @@ function wire(){
     else return;
     bewaarTrip();
     verversFormulier();
+    /* De vertrekdatum bepaalt of stap 2 door mag (wizKlaarVoorVolgende), dus de
+       knop moet meteen meebewegen en niet pas bij de volgende render. */
+    wizardVerderKnop();
+  });
+  /* Niet elke mobiele browser stuurt "change" bij het kiezen van een datum even
+     snel als "input". Alleen voor dit ene veld, want op de getalvelden zou het
+     bij iedere aanslag opslaan. */
+  wiz.addEventListener("input", function(e){
+    if(!TRIP || e.target.id !== "wiz-depart") return;
+    TRIP.departureDate = e.target.value || null;
+    bewaarTrip();
+    wizardVerderKnop();
   });
 
   /* ---------------- homepage ---------------- */

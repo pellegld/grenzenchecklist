@@ -70,7 +70,15 @@ function legeTrip(){
     origin: null,
     destination: null,
 
-    departureDate: vandaagISO(),
+    /* Bewust leeg. Een voorgevulde datum van vandaag lijkt behulpzaam, maar
+       niemand rijdt de grens over op de dag dat hij deze app ontdekt: wie
+       doorklikt zonder te kijken kreeg dan een checklist waarin élke actie "had
+       al geregeld moeten zijn" — alles rood, en daarmee niets meer het eerst.
+       De deadlinemotor deugde; de standaardwaarde maakte hem onbruikbaar.
+       Alles wat de datum leest verdraagt null (deadlineVoor geeft dan geen
+       deadline, seasonActive geen winterperiode, voertuigSamenvatting laat de
+       regel weg), dus stap 2 van de wizard mag hem gewoon vragen. */
+    departureDate: null,
     returnDate: null,
 
     /* plateCountry is het kentekenland: dat bepaalt of een uitrustingseis voor
@@ -215,7 +223,7 @@ function leesTrip(raw){
 
   t.origin = oud ? plaatsUitRij(raw.fromCity) : (raw.origin || null);
   t.destination = oud ? plaatsUitRij(raw.toCity) : (raw.destination || null);
-  t.departureDate = (oud ? raw.depart : raw.departureDate) || vandaagISO();
+  t.departureDate = (oud ? raw.depart : raw.departureDate) || null;
   t.returnDate = (oud ? null : raw.returnDate) || null;
 
   var v = (oud ? raw.veh : raw.vehicle) || {};

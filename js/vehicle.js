@@ -22,6 +22,23 @@
 function voertuigDataType(veh){
   return veh.type === "caravan" ? "aanhanger" : veh.type;
 }
+
+/* Dezelfde afbeelding, maar voor de keuzelijsten. De wizard bood ooit "Auto met
+   caravan" én "Met aanhanger of caravan" aan: twee waarden die tot dezelfde
+   regels leidden en waartussen niemand kon kiezen. De lijst biedt nu alleen nog
+   "aanhanger" aan; een reis van vóór die wijziging — of een deellink van iemand
+   met een oude app — draagt nog "caravan" en moet in het veld gewoon de goede
+   regel oplichten in plaats van terug te vallen op personenauto. */
+function voertuigTypeVoorKeuze(type){
+  return type === "caravan" ? "aanhanger" : type;
+}
+/* Drie brandstoffen vallen hier bewust terug op "petrol": hybride (zie
+   voertuigDataType hierboven), en sinds de LPG/CNG-uitbreiding ook lpg en cng.
+   Geen van drieën heeft een eigen euronorm-drempel in de data — die bestaat
+   domweg niet als apart gepubliceerd getal — dus een drempel verzinnen zou
+   schijnprecisie zijn. Benzine is de dichtstbijzijnde bekende drempel: LPG- en
+   CNG-motoren zijn vonkontstoken motoren zoals benzine, geen compressiemotoren
+   zoals diesel. */
 function brandstofVoorDrempel(veh){
   if(veh.fuel === "ev") return "ev";
   if(veh.fuel === "diesel") return "diesel";

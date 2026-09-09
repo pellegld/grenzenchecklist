@@ -431,7 +431,16 @@ button.brand{appearance:none;border:0;background:none;padding:0;cursor:pointer;t
 .wizbalk .nu{color:var(--on-surface)}
 .wizbalk .af .bol{background:var(--ok-container);border-color:var(--ok-line);color:var(--ok)}
 .wizbalk .later{opacity:.6}
-@media (max-width:559px){ .wizbalk .later .lbl,.wizbalk .af .lbl{display:none} }
+/* Op een smal scherm draagt alleen de actieve stap zijn naam. Met flex:1 1 0
+   kreeg die een kwart van de balk — 26 px daarvan gaat op aan de bol, en wat
+   overblijft toont "Waarh…". De bollen krijgen daarom hun eigen breedte en de
+   actieve stap de rest, zodat er een hele stapnaam staat in plaats van een
+   afgekapte. */
+@media (max-width:559px){
+  .wizbalk .later .lbl,.wizbalk .af .lbl{display:none}
+  .wizbalk li{flex:0 0 auto}
+  .wizbalk .nu{flex:1 1 auto;min-width:0}
+}
 
 .wizkaart{background:var(--surface-lowest);border:1px solid var(--outline-var);
   border-radius:var(--r-xl);box-shadow:var(--shadow-1);padding:var(--sp-md)}
@@ -731,8 +740,12 @@ html,body{overflow-x:hidden}
   .bnitem{min-height:56px}
   .btn{min-height:46px}
   .snelrij,.meerrij,.landrow{min-height:48px}
-  /* Ruimte onder de onderbalk, inclusief de veilige zone van een iPhone. */
+  /* Ruimte onder de onderbalk, inclusief de veilige zone van een iPhone. De
+     noodknop zweeft daar nog eens 52 px boven; zonder die extra ruimte ligt hij
+     op een telefoon over de laatste regel van de pagina — het jaartal van
+     "Regel dit uiterlijk 22 september 2026" viel eronder weg. */
   .view-page{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  body.met-sos .view-page{padding-bottom:calc(148px + env(safe-area-inset-bottom))}
 }
 
 /* ================================================================
@@ -870,12 +883,17 @@ html,body{overflow-x:hidden}
 
 /* ---------------- fase C: onderweg-modus ---------------- */
 
-/* De incidentknop: vast op elke pagina, ook zonder actieve reis. Boven de
-   onderbalk op mobiel, laag-rechts op desktop. */
+/* De incidentknop: vast op elke pagina waar een reis staat. Boven de onderbalk
+   op mobiel, laag-rechts op desktop. verversSosKnop() verbergt hem op de
+   homepage en in de wizard — daar is nog geen reis, geen land en geen
+   alarmnummer om te tonen. */
 .sosbutton{position:fixed;right:var(--sp-md);bottom:calc(84px + env(safe-area-inset-bottom));
   z-index:35;width:52px;height:52px;border-radius:var(--r-full);border:0;
   background:var(--sos);color:#fff;display:flex;align-items:center;justify-content:center;
   box-shadow:var(--shadow-2);cursor:pointer}
+/* display:flex hierboven wint van de [hidden]-regel van de browser; zonder deze
+   regel blijft de knop staan terwijl het attribuut wel gezet is. */
+.sosbutton[hidden]{display:none}
 .sosbutton:hover{filter:brightness(1.08)}
 .sosbutton .icon{width:24px;height:24px}
 @media (min-width:1024px){ .sosbutton{bottom:var(--sp-md)} }
@@ -914,6 +932,10 @@ html,body{overflow-x:hidden}
 .grensbanner-lijst{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
 .grensbanner-lijst li{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:var(--on-surface-var)}
 .grensbanner-lijst .icon{flex:0 0 auto;margin-top:1px;color:var(--on-surface-var)}
+/* Een banner die niet meer actueel is, mag er ook niet meer actueel uitzien:
+   de kop verliest zijn accentkleur en de reden staat bovenaan. */
+.grensbanner.is-verouderd .grensbanner-kop b{color:var(--on-surface-var)}
+.grensbanner-lijst .grensbanner-verouderd{font-style:italic}
 
 /* Onderweg-pagina: reismodus + offline reispack. */
 .reismodusrij{margin:var(--sp-sm) 0}

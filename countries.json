@@ -706,7 +706,10 @@
           "note": "De autotrein naar Folkestone, 35 minuten. Geen tol maar een boeking: vroeg boeken scheelt gemakkelijk een factor drie. De veerboot uit Calais of Duinkerken is het alternatief.",
           "sourceUrl": "https://www.leshuttle.com/nl/",
           "needsVerification": true,
-          "confidence": "uncertain"
+          "confidence": "uncertain",
+          "forbiddenFuels": ["lpg", "cng"],
+          "forbiddenFuelsNote": "LPG, LNG en CNG zijn verboden aan boord van de Shuttle, ook met een lege tank of een uitgeschakeld gassysteem — dit geldt zelfs als de auto op een andere brandstof rijdt maar een gasinstallatie heeft. Neem de veerboot vanuit Calais of Duinkerken.",
+          "forbiddenFuelsSourceUrl": "https://www.leshuttle.com/uk-en/legal-information/carriage-of-dangerous-and-hazardous-goods"
         }
       ],
       "tollVignette": {

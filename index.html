@@ -255,6 +255,8 @@
               <option value="petrol" data-i18n="profiel.benzine">Benzine</option>
               <option value="diesel" data-i18n="profiel.diesel">Diesel</option>
               <option value="hybride" data-i18n="profiel.hybride">Hybride</option>
+              <option value="lpg" data-i18n="profiel.lpg">LPG</option>
+              <option value="cng" data-i18n="profiel.cng">CNG (aardgas)</option>
               <option value="ev" data-i18n="profiel.ev">Elektrisch of waterstof</option>
             </select>
           </div>
@@ -273,9 +275,11 @@
           <div class="field">
             <label for="vtype" data-i18n="profiel.voertuig">Voertuig</label>
             <select id="vtype">
+              <!-- "caravan" stond hier ook, met een label dat net als "aanhanger"
+                   het woord caravan droeg en tot dezelfde regels leidde. Eén keuze
+                   dekt beide; voertuigTypeVoorKeuze() zet oude reizen om. -->
               <option value="auto" data-i18n="profiel.auto">Personenauto</option>
-              <option value="caravan" data-i18n="profiel.caravan">Auto + caravan</option>
-              <option value="aanhanger" data-i18n="profiel.aanhanger">Auto + aanhanger</option>
+              <option value="aanhanger" data-i18n="profiel.aanhanger">Auto met aanhanger of caravan</option>
               <option value="camper" data-i18n="profiel.camper">Camper</option>
             </select>
           </div>

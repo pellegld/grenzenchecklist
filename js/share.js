@@ -105,12 +105,14 @@ function tripUitPayload(raw){
 
   t.origin = plaatsLang(raw.o);
   t.destination = plaatsLang(raw.d);
-  t.departureDate = schoonDatum(raw.vd) || vandaagISO();
+  /* Geen datum in de link is geen datum in de reis. Er vandaag van maken zou de
+     ontvanger een deadline voorspiegelen die de afzender nooit heeft gezet. */
+  t.departureDate = schoonDatum(raw.vd) || null;
   t.returnDate = schoonDatum(raw.rd);
 
   t.vehicle = {
     plateCountry: BY_CODE[a[0]] ? a[0] : "NL",
-    fuel: schoonUitLijst(a[1], ["petrol", "diesel", "hybride", "ev"], "petrol"),
+    fuel: schoonUitLijst(a[1], ["petrol", "diesel", "hybride", "lpg", "cng", "ev"], "petrol"),
     euro: schoonGetal(a[2], 1, 6),
     type: schoonUitLijst(a[3], ["auto", "camper", "aanhanger", "caravan"], "auto"),
     gewichtKg: schoonGetal(a[4], 1, 100000),

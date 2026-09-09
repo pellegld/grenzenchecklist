@@ -35,11 +35,14 @@ function wizardGa(stap){
   window.scrollTo(0, 0);
 }
 
-/* Mag je door vanaf deze stap? Stap 1 is de enige die iets afdwingt: zonder
-   plaatsen valt er niets te berekenen. Datum en auto hebben werkbare
-   standaardwaarden, en die tegenhouden zou alleen maar in de weg zitten. */
+/* Mag je door vanaf deze stap? Twee stappen dwingen iets af. Stap 1: zonder
+   plaatsen valt er niets te berekenen. Stap 2: zonder vertrekdatum kan de
+   deadlinemotor niets zeggen en gelden de winterbandenperiodes niet — de datum
+   voorvullen met vandaag maakte die stap overslaanbaar en de hele checklist te
+   laat. Stap 3 heeft wél werkbare standaardwaarden en houdt niemand tegen. */
 function wizKlaarVoorVolgende(stap){
   if(stap === 1) return !!(TRIP && TRIP.origin && TRIP.destination);
+  if(stap === 2) return !!(TRIP && TRIP.departureDate);
   return true;
 }
 
@@ -119,11 +122,18 @@ function wizAutoHTML(){
   var veh = TRIP.vehicle;
   var landen = DATA.countries.map(function(c){ return [c.code, c.name]; });
   var brandstof = [["petrol", i18n("profiel.benzine")], ["diesel", i18n("profiel.diesel")],
-                   ["hybride", i18n("profiel.hybride")], ["ev", i18n("profiel.ev")]];
+                   ["hybride", i18n("profiel.hybride")], ["lpg", i18n("profiel.lpg")],
+                   ["cng", i18n("profiel.cng")], ["ev", i18n("profiel.ev")]];
   var euro = [["", i18n("profiel.weetIkNiet")], ["6", i18n("profiel.euro6")], ["5", i18n("profiel.euro5")],
               ["4", i18n("profiel.euro4")], ["3", i18n("profiel.euro3")], ["2", i18n("profiel.euro2")],
               ["1", i18n("profiel.euro1")]];
-  var typen = [["auto", i18n("profiel.auto")], ["caravan", i18n("profiel.caravan")],
+  /* Drie keuzes, geen vier. "caravan" en "aanhanger" waren twee waarden die
+     allebei het woord caravan droegen en tot exact dezelfde regels leidden —
+     voertuigDataType() vertaalt caravan toch al naar aanhanger. Voor de
+     gebruiker was het een keuze zonder verschil, en wel een waar de gewichts-
+     en snelheidsregels aan hangen. "caravan" blijft geldig in opgeslagen reizen
+     en deellinks; voertuigTypeVoorKeuze() zet hem hier om. */
+  var typen = [["auto", i18n("profiel.auto")],
                ["aanhanger", i18n("profiel.aanhanger")], ["camper", i18n("profiel.camper")]];
 
   return (
@@ -136,7 +146,8 @@ function wizAutoHTML(){
                 i18n("wizard.auto.brandstofHint")) +
       keuzeVeld("wiz-euro", i18n("profiel.euronorm"), euro, veh.euro === null ? "" : veh.euro,
                 i18n("wizard.auto.euroHint")) +
-      keuzeVeld("wiz-vtype", i18n("profiel.voertuig"), typen, veh.type, "") +
+      keuzeVeld("wiz-vtype", i18n("profiel.voertuig"), typen,
+                voertuigTypeVoorKeuze(veh.type), "") +
     "</div>" +
     '<details class="wizoptioneel"><summary>' + esc(i18n("wizard.auto.optioneel")) + "</summary>" +
       '<div class="row2">' +
@@ -309,14 +320,20 @@ function renderWizard(forceer){
 }
 
 function wizardWaarWire(){
+  /* verversFormulier() erbij: de kaartpagina heeft eigen van/naar-velden die
+     buiten render() vallen. Zonder deze aanroep loopt iemand de wizard af, gaat
+     naar Kaart, en ziet twee lege zoekvelden bij een reis die er wel degelijk
+     is — pas na een herlaadbeurt klopte het weer. */
   wireCityField("wiz-from", "wiz-from-res", function(p){
     TRIP.origin = p;
     if(p) bewaarTrip();
+    verversFormulier();
     wizardVerderKnop();
   });
   wireCityField("wiz-to", "wiz-to-res", function(p){
     TRIP.destination = p;
     if(p) bewaarTrip();
+    verversFormulier();
     wizardVerderKnop();
   });
   /* Zonder cities.json (file://) is er geen autocomplete. Dan is handmatig

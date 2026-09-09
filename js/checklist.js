@@ -164,6 +164,24 @@ function buildTasks(trip){
     });
   });
 
+  /* LPG/CNG-verbod op een tolpunt: hergebruikt de bestaande routedetectie op
+     tolpunten (tripTolPunten, middelpunt + radiusKm tegen de routelijn) in
+     plaats van een eigen detectie te bouwen. Geldt ook voor een optioneel punt
+     (de Eurotunnel is een gekozen alternatief, geen verplichte doorgang) — wie
+     op gas rijdt kan die keuze domweg niet maken, en dat hoort net zo hard te
+     blokkeren als een milieuzone die dicht zit. */
+  tripTolPunten(trip).forEach(function(o){
+    var verboden = o.p.forbiddenFuels;
+    if(!verboden || verboden.indexOf(trip.vehicle.fuel) === -1) return;
+    var brandstofBlok = actie({ key:"blok:brandstof:" + o.p.id, c:o.c, soort:"brandstofverbod",
+      what:i18n("taak.brandstofverboden", {
+        tunnel:o.p.name, brandstof:i18n("profiel.brandstofKort." + trip.vehicle.fuel) }),
+      meta:o.p.forbiddenFuelsNote || "" },
+      { id:o.p.id + ".forbiddenFuels", sourceUrl:o.p.forbiddenFuelsSourceUrl || o.p.sourceUrl,
+        lastVerified:o.p.lastVerified, confidence:o.p.confidence }, o.c);
+    blockers.push(brandstofBlok);
+  });
+
   /* Twee acties die over landen heen gaan: ze hangen aan geen enkel los feit,
      dus ze dragen de landen die ze veroorzaakten in plaats van één factId. */
   if(flits.length){

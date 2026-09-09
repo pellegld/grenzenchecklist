@@ -174,22 +174,30 @@ function kostenTol(trip){
 }
 
 /* ---------------- vignetten ----------------
-   Altijd "onbekend", en dat is geen luiheid: een vignet kost wat past bij hoe
+   Meestal "onbekend", en dat is geen luiheid: een vignet kost wat past bij hoe
    lang je blijft, en welke termijn jij nodig hebt volgt niet uit een vertrek-
-   en een retourdatum alleen — de geldigheidsstaffels staan niet in de data. Wat
-   de bron wél noemt komt erbij te staan, zodat je zelf ziet in welke orde van
-   grootte je zit. */
+   en een retourdatum alleen. Noemt de bron toch een bandbreedte in euro's
+   (Oostenrijk, Slovenië), dan wordt die als "indicatief" meegeteld — dat is
+   preciezer dan "onbekend" zonder de exacte termijn te durven kiezen. */
 function kostenVignetten(trip){
   var posten = [];
   tripLanden(trip).forEach(function(code){
     var c = BY_CODE[code], v = c.tollVignette || {};
     if(!v.required) return;
-    var b = euroBedragen(v.howToGet);
+    /* Bij Oostenrijk en Slovenië staat de staffelprijs ("1 dag circa 9,60
+       euro, ...") alleen in `note`, niet in `howToGet` — howToGet beschrijft
+       daar alleen hoe je het vignet koopt. Veilig om note hier wél mee te
+       lezen: de boete staat apart in `fineIndication` en wordt nooit in note
+       vermengd met de prijs, dus dit blijft binnen de grens uit de opmerking
+       hierboven (nadrukkelijk niet uit note — dat gold voor het risico van een
+       boetebedrag, dat risico is hier nagelopen en afwezig). */
+    var b = euroBedragen([v.howToGet, v.note].filter(Boolean).join(" "));
     posten.push({
       c:c, naam:kortNaam(v.name, i18n("tol.vignetNaam")),
       detail: b ? i18n("kosten.bronNoemt", { bereik:bereikTekst(b) })
                 : i18n("kosten.vignetGeenBedrag"),
-      laag:0, hoog:0, zekerheid:"onbekend", bron:herkomstVan(v, c)
+      laag: b ? b.laag : 0, hoog: b ? b.hoog : 0,
+      zekerheid: b ? "indicatief" : "onbekend", bron:herkomstVan(v, c)
     });
   });
   return posten;

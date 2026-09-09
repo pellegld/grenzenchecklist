@@ -276,15 +276,25 @@ function regelActies(trip){
 
   T.blockers.forEach(function(t){
     var c = t.c;
-    var z = (c.environmentalZone || {});
-    var drempel = z.emissionThreshold || {};
-    var need = brandstofVoorDrempel(trip.vehicle) === "diesel" ? drempel.diesel : drempel.petrol;
-    var waarom = voegSamen(landReden(c, trip),
-      (need != null && trip.vehicle.euro != null)
-        ? i18n("waarom.euronorm", {
-            brandstof: i18n("profiel.brandstofKort." + brandstofVoorDrempel(trip.vehicle)),
-            euro: trip.vehicle.euro, need: need })
-        : null);
+    var waarom;
+    /* Een brandstofverbod op een tolpunt (LPG/CNG) heeft niets met de euronorm
+       te maken — dat is een aparte soort blokkade dan de milieuzone-verdicten
+       hieronder, en verdient dus ook een andere reden (§7: "waarom zie ik dit"
+       moet kloppen, niet alleen aanwezig zijn). */
+    if(t.soort === "brandstofverbod"){
+      waarom = voegSamen(landReden(c, trip), i18n("waarom.brandstofverboden", {
+        brandstof: i18n("profiel.brandstofKort." + trip.vehicle.fuel) }));
+    } else {
+      var z = (c.environmentalZone || {});
+      var drempel = z.emissionThreshold || {};
+      var need = brandstofVoorDrempel(trip.vehicle) === "diesel" ? drempel.diesel : drempel.petrol;
+      waarom = voegSamen(landReden(c, trip),
+        (need != null && trip.vehicle.euro != null)
+          ? i18n("waarom.euronorm", {
+              brandstof: i18n("profiel.brandstofKort." + brandstofVoorDrempel(trip.vehicle)),
+              euro: trip.vehicle.euro, need: need })
+          : null);
+    }
     uit.push(actieBasis({
       id: t.factId || ("blok." + c.code),
       tickKey: null,
