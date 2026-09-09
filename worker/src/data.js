@@ -30,8 +30,14 @@ import { herkomstOk } from "./lib/herkomst.js";
 
 /* Alleen de regeldata. borders.json en cities.json zijn geodata: die veranderen
  * alleen als je tools/build-geodata.ps1 draait, en dan hoort er sowieso een
- * deploy bij. */
-const BESTANDEN = new Set(["countries.json", "zones.json", "drukte.json"]);
+ * deploy bij.
+ *
+ * fuelprices.json hoort hier wel bij, en het sterkst van alle vier: pompprijzen
+ * veranderen wekelijks. De client vraagt dit bestand al aan het endpoint
+ * (DATA_BESTANDEN in js/data.js); stond het hier niet in de lijst, dan kreeg hij
+ * gegarandeerd een 404 en viel hij elke keer terug op de gebundelde kopie — de
+ * ene soort data waarvoor 'wijzigen zonder deploy' echt bedoeld was. */
+const BESTANDEN = new Set(["countries.json", "zones.json", "drukte.json", "fuelprices.json"]);
 
 const CACHE = "public, max-age=60, stale-while-revalidate=86400";
 
