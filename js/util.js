@@ -78,6 +78,19 @@ function iconUse(name){
   return '<svg class="icon sm"><use href="#i-' + name + '"></use></svg>';
 }
 
+/* Tweekleurige kop: het deel vóór het ¦-teken in inkt (.k1), het deel erna in
+   de zachte inkt (.k2) — de handeling en de aanvulling. Zonder teken één span,
+   zodat een ongemarkeerde of onvertaalde string gewoon werkt. i18n() zelf
+   haalt het teken weg, dus overal waar een kop als platte tekst wordt gebruikt
+   (document.title, aria-labels) staat er niets vreemds. */
+function kopHTML(sleutel, params){
+  var t = i18nRuw(sleutel, params);
+  var i = t.indexOf("¦");
+  if(i === -1) return '<span class="k1">' + esc(t) + "</span>";
+  return '<span class="k1">' + esc(t.slice(0, i).trim()) + "</span> " +
+    '<span class="k2">' + esc(t.slice(i + 1).trim()) + "</span>";
+}
+
 /* Aliases fold near-identical wordings from different countries onto one line in
    the combined checklist. Unknown items simply dedupe on their own text. */
 var ALIASES = [

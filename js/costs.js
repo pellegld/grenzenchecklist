@@ -432,7 +432,7 @@ function renderKosten(){
 
   var kop =
     '<section class="kostenkop">' +
-      "<h1>" + esc(i18n("kosten.kop")) + "</h1>" +
+      "<h1>" + kopHTML("kosten.kop") + "</h1>" +
       (totaal
         ? '<p class="kostenlabel">' + esc(i18n("kosten.geschat")) + "</p>" +
           '<p class="kostenbedrag">' + totaal + "</p>"

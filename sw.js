@@ -9,7 +9,7 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v29";
+var CACHE = "grenschecklist-v31";
 /* ASSETS wordt gegenereerd door build/build.mjs (npm run build:sw). Voeg je met
    de hand een bestand toe, draai die dan; anders staat het nieuwe bestand wel op
    de server maar niet in de offline cache, en dat merk je pas zonder bereik.
@@ -60,10 +60,16 @@ var ASSETS = [
   "./js/vehicle.js",
   "./js/wijzigingen.js",
   "./js/wizard.js",
-  "./fonts/geist-400-latin-ext.woff2",
-  "./fonts/geist-400-latin.woff2",
-  "./fonts/inter-400-latin-ext.woff2",
-  "./fonts/inter-400-latin.woff2",
+  "./fonts/barlow-400-latin-ext.woff2",
+  "./fonts/barlow-400-latin.woff2",
+  "./fonts/barlow-600-latin-ext.woff2",
+  "./fonts/barlow-600-latin.woff2",
+  "./fonts/barlow-700-latin-ext.woff2",
+  "./fonts/barlow-700-latin.woff2",
+  "./fonts/barlowcondensed-700-latin-ext.woff2",
+  "./fonts/barlowcondensed-700-latin.woff2",
+  "./fonts/barlowcondensed-800-latin-ext.woff2",
+  "./fonts/barlowcondensed-800-latin.woff2",
   "./images/Landbanner/Denemarken.png",
   "./images/Landbanner/Duitsland.png",
   "./images/Landbanner/Frankrijk.png",

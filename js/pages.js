@@ -279,14 +279,19 @@ function bronnenSectie(c){
 }
 
 function landDetailHTML(c){
+  /* De foto is een gewone <img> als fotokaart boven de kop (alt leeg: hij is
+     decor, de landnaam staat eronder). Zonder foto (BE, CH) een rustig vlak.
+     Geen url() in een custom property: die zou tegen css/ resolven. */
   var foto = LAND_PHOTOS[c.code];
-  var heroStyle = foto ? ' style="background-image:linear-gradient(to top,var(--navy) 0%,rgba(var(--navy-rgb),.75) 55%,rgba(var(--navy-rgb),.15) 100%),url(' + foto + ');background-size:auto,cover;background-position:center,center 35%"' : '';
+  var fotoHTML = foto
+    ? '<img class="landfoto" src="' + esc(foto) + '" alt="" loading="lazy" decoding="async">'
+    : '<div class="landfoto leeg" aria-hidden="true"></div>';
   var regio = LAND_REGIO[c.code];
   var verouderd = daysSince(c.lastVerified) > STALE_DAYS;
 
   return (
     '<div class="landherowrap">' +
-      '<div class="landhero"' + heroStyle + '><div class="regio">' + flagHTML(c) +
+      '<div class="landhero">' + fotoHTML + '<div class="regio">' + flagHTML(c) +
         "<span>" + esc(i18n("landen.europa")) +
         (regio ? " · " + esc(i18n("landen.regio." + regio)) : "") + "</span></div>" +
         "<h1>" + esc(c.name) + "</h1><p>" + esc(i18n("landen.intro")) + "</p></div>" +
@@ -361,7 +366,7 @@ function tripKaartHTML(trip){
     '<article class="tripcard" data-trip="' + esc(trip.id) + '">' +
     '<div class="tripbanner">' +
       (actief ? '<span class="tripbadge">' + iconUse("locate") + " " + esc(i18n("reizen.actief")) + "</span>" : "") +
-      iconUse("map").replace('class="icon sm"', 'class="icon"') + "</div>" +
+      (routelijnHTML(trip) || iconUse("map").replace('class="icon sm"', 'class="icon"')) + "</div>" +
     '<div class="tripbody">' +
       '<div class="triptop"><h3>' + esc(trip.naam) + "</h3>" +
         '<div class="tripactions">' +
@@ -391,7 +396,7 @@ function renderMijnReizen(){
   if(!wrap) return;
   var kaarten = TRIPS.map(function(t){ return tripKaartHTML(t); }).join("");
   wrap.innerHTML =
-    '<div class="reizenhead"><div><h2>' + esc(i18n("reizen.kop")) + "</h2>" +
+    '<div class="reizenhead"><div><h2>' + kopHTML("reizen.kop") + "</h2>" +
       "<p>" + esc(i18n("reizen.intro")) + "</p></div>" +
       '<button type="button" class="btn primary" id="btn-nieuwe-reis">' + iconUse("plus-pin") + " " +
         esc(i18n("reizen.nieuweReis")) + "</button>" +
@@ -477,7 +482,7 @@ function renderReisErvaring(){
     return reisNodeHTML(code, i, i === 0, i === landen.length - 1);
   }).join("");
   wrap.innerHTML =
-    '<div class="journeyhead"><h1>' + esc(i18n("reis.kop")) + "</h1>" +
+    '<div class="journeyhead"><h1>' + kopHTML("reis.kop") + "</h1>" +
     "<p>" + esc(i18n("reis.intro")) + "</p></div>" +
     '<div class="journeyroad-wrap">' +
       '<div class="journeyroad"><div class="journeyroad-progress" id="journey-progress"></div></div>' +

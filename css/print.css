@@ -1,131 +1,106 @@
 /* Print / PDF.
 
-   De vorige versie van de app had een printstylesheet; bij de Kinetic
-   Route-redesign is die verdwenen terwijl de HTML er nog wel op rekent (de
-   verborgen .printnamen in de checklist bestaan alleen voor dit bestand). Dit
-   herstelt dat, nog zonder het volledige reisdocument uit §11 van de
-   masterprompt — dat is fase 6.
-
    Uitgangspunt: zwart op wit, bediening weg, inhoud van de zichtbare pagina
    volledig uitgeklapt, en bron-URL's voluit achter de linktekst zodat een
    uitdraai ook zonder scherm bruikbaar is.
 
-   Het reisdocument uit §11 bouwt hierop voort en staat er niet naast: het is
-   een gewone view die deze regels erft, met hieronder alleen wat het document
-   extra nodig heeft. Het openklappen van de <details> gebeurt in js/document.js
-   op `beforeprint`, want dat werkt in engines waar CSS er niet bij komt. */
+   De bordvormen (cirkel, ring, driehoek, vierkant) drukken mee: ze zijn de
+   statusschaal en werken juist zonder kleur. Het openklappen van de <details>
+   gebeurt in js/document.js op `beforeprint`. */
 
 @media print {
-  /* Alles wat je op papier niet kunt aanraken, gaat eruit. */
   .topbar, .bottomnav, .meersheet, .sidebar, .panel-map, .mapctrl,
   .swapbtn, .landswitch, .tripactions, .tripgo, .infobtn,
   .wizbalk, .wizknoppen, .docacties, .snelkoppelingen, .cijfercel .clbl .icon,
   #btn-route, #btn-reset, #btn-nieuwe-reis, #btn-tripnew, #btn-plan, #btn-analyse,
-  #btn-reis-checklist, #btn-reis-naar-planner, .btn.primary,
+  #btn-reis-checklist, #btn-reis-naar-planner, .btn.primary, .btn, .tekstknop,
   .journeyroad-wrap > .journeyroad, .journeymarker,
-  .results, .langswitch,
-  .sosbutton, .sosdialoog, .grensbanner-wrap { display: none !important; }
+  .results, .langswitch, .skiplink, .melddialoog, .meldlink, .waarom>summary::before,
+  .sosbutton, .sosdialoog, .grensbanner-wrap, .kaartlegenda, .kaartpopup,
+  .dashdeel, .deelmelding, .kalnav button, .kalrichting { display: none !important; }
 
-  /* Kleurtokens terug naar papier. De donkere merkpanelen (navy, asfalt) zijn
-     op papier alleen maar inkt: die gaan ook naar wit. */
+  /* Kleurtokens terug naar papier: elke inkt zwart, elk vlak wit, randen grijs.
+     De bordkleuren worden zwart; de vormen blijven. */
   :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
-    --surface:#fff; --surface-dim:#fff; --surface-bright:#fff;
-    --surface-lowest:#fff; --surface-low:#fff; --surface-c:#fff;
-    --surface-high:#fff; --surface-highest:#ddd;
-    --on-surface:#000; --on-surface-var:#333;
-    --outline:#666; --outline-var:#bbb;
-    --primary:#000; --on-primary:#fff; --primary-container:#fff; --on-primary-container:#000;
-    --secondary:#000; --on-secondary:#fff; --secondary-container:#fff; --on-secondary-container:#000;
-    --error:#000; --error-container:#fff; --on-error-container:#000;
-    --amber:#000; --amber-container:#fff; --amber-line:#999; --amber-ink:#000;
-    --eco:#000;
-    --background:#fff; --topbar-bg:#fff; --map-alt:#fff;
-    --navy:#fff; --navy-rgb:255,255,255; --asphalt:#fff; --asphalt-border:#bbb;
-    --shadow-1:none; --shadow-2:none;
+    --paper:#fff; --paper-2:#f2f2f2; --paper-3:#e6e6e6; --paper-line:#bbb;
+    --ink:#000; --ink-2:#333; --ink-3:#555; --ink-rgb:0,0,0;
+    --wit:#fff; --bord-tekst:#000; --bord-tekst-2:#333;
+    --blauw:#000; --blauw-d:#000; --groen:#000; --groen-d:#000; --rood:#000; --rood-d:#000;
+    --geel:#000; --geel-d:#000; --oranje:#000;
+    --sos:#000; --asphalt:#fff; --asphalt-border:#bbb;
+    --map-bg:#fff; --map-bg-alt:#fff; --map-grid:#fff; --map-land:#fff; --map-land-route:#eee; --map-line:#999;
+    --focus:#000;
   }
 
   html, body { background:#fff; color:#000; font-size:10.5pt; }
 
-  /* De layout is op het scherm een vast raster met een zijbalk en een eigen
-     scrollcontainer per view. Op papier moet alles gewoon doorlopen. */
-  #app, .main, .view, .view-page, .panel-route {
+  #app, .main, .view, .view-page, .panel-route, #view-reis {
     display:block !important; position:static !important;
     height:auto !important; max-height:none !important; overflow:visible !important;
     margin:0 !important; padding:0 !important; width:auto !important;
+    order:0 !important; border:0 !important; box-shadow:none !important;
   }
-
-  /* Verborgen views blijven verborgen: je print wat je op het scherm ziet.
-     Anders krijg je vijf pagina's waarvan je er één wilde. */
   .view[hidden] { display:none !important; }
+  .progresscard { position:static !important; }
 
-  /* Details-elementen (voertuigprofiel, disclaimer) klappen open. */
   details { display:block; }
   details > summary { list-style:none; font-weight:700; }
   details > summary::-webkit-details-marker { display:none; }
+  details > summary::after { display:none !important; }
   details > *:not(summary) { display:revert !important; }
 
-  /* Bron-URL's voluit. Op papier is "Officiële website" zonder adres niets
-     waard, en juist de bronnen zijn de reden dat je dit meeneemt. */
   a[href^="http"]::after {
     content:" \00a0<" attr(href) ">";
-    font-size:.82em; font-family:var(--f-mono); word-break:break-all; color:#333;
+    font-size:.82em; word-break:break-all; color:#333;
   }
   a { color:#000; text-decoration:underline; }
 
-  /* Vlaggen zijn CSS-achtergronden en drukken standaard niet af; de checklist
-     houdt daarom een verborgen .printnamen met de landnamen voluit. */
   .vlaggen { display:none !important; }
   .printnamen { display:block !important; }
 
-  /* Kaders in plaats van vlakken, zodat de structuur zonder kleur leesbaar blijft. */
-  .bentocard, .landcard, .tripcard, .progresscard, .statcard, .milieukaart,
-  .blockerbar, .eqcard, .jcard, .dashkaart, .wizkaart, .reisdocument,
-  .voorbeeldkaart, .vertrouwensbalk, .boetekaart, .cijfercel, .docsectie {
-    border:1px solid #999 !important; box-shadow:none !important;
-    background:#fff !important; color:#000 !important;
+  /* Vlakken worden kaders; groene, blauwe en rode borden worden zwart-wit
+     met hun vorm en teken. */
+  .routelijn li, .statustellers li, .vbstatus li, .wizklaar, .tankadvies, .jcard.dest, .grensbanner,
+  .kaldag, .kalseg.active, .navitem.active, .bnitem.active {
+    background:#fff !important; color:#000 !important; box-shadow:none !important; border:1px solid #000 !important;
+  }
+  .kaldag.dr-zwart { background:#ddd !important; }
+  .kaldag.is-vertrek, .kaldag.is-retour { border-width:2px !important; }
+  .dashkaart.boetekaart, .actiekaart.s-blokkade, .wizfout, .oordeelkaart, .tripcard, .jcard,
+  .reisdocument, .brandstofkaart, .wijzigingenkaart, .kaldagkaart, .voorbeeldkaart, .cijfergrid, .statgrid,
+  .milieukaart, .handmatig, .onzeker, .verouderdbalk, .kostenbedrag {
+    border:1px solid #000 !important; box-shadow:none !important; background:#fff !important; color:#000 !important;
     break-inside:avoid; page-break-inside:avoid;
   }
-  .progressbar { border:1px solid #666; }
+  .progressbar { border:1px solid #000; }
   .progressbar > i { background:#666 !important; }
+  .bord, .statuschip .teken, .actiestatus .teken, .zeker .zteken, .actiemerk, .groepteken, .oordeel .teken,
+  .quirklijst .teken, .docwaarschuwingen .wteken { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  .actievink { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
 
-  /* Aangevinkt versus niet aangevinkt moet ook zonder kleur te zien zijn. */
-  .chkrow.done .ttl { text-decoration:line-through; }
-  input[type="checkbox"] { -webkit-appearance:none; appearance:none;
-    width:11pt; height:11pt; border:1pt solid #000; border-radius:2px; }
-  input[type="checkbox"]:checked::after { content:"\2713"; display:block;
-    text-align:center; line-height:11pt; font-size:9pt; }
+  .actiekaart.af .actietitel span { text-decoration:line-through; }
 
   h1, h2, h3 { break-after:avoid; page-break-after:avoid; color:#000; }
-  .bento, .landgrid, .tripgrid, .eqgrid, .milieucols { display:block !important; }
+  .k2 { color:#000 !important; }
+  .dashgrid, .kostengrid, .tripgrid, .homestappen, .regeloordeel { display:block !important; }
 
   /* ---------------- reisdocument (§11) ---------------- */
+  .docsectie { break-inside:auto; page-break-inside:auto; border:0 !important; }
+  .docsectie h2 { border-bottom:1px solid #000; padding-bottom:2pt; }
+  .doclijst li, .docwaarschuwingen li, .doctabel tr { break-inside:avoid; page-break-inside:avoid; }
+  .reisdocument { max-width:none; }
+  .landfoto { display:none !important; }
 
-  /* Een sectie hoort niet halverwege een kop af te breken, maar een lange
-     actielijst mag dat wél: die over twee bladen dwingen om hem heel te houden
-     levert een halflege pagina op. */
-  .docsectie { break-inside:auto; page-break-inside:auto; }
-  .docsectie h2 { border-bottom:1px solid #999; padding-bottom:2pt; }
-  .doclijst li, .docwaarschuwingen li, .doctabel tr {
-    break-inside:avoid; page-break-inside:avoid;
-  }
-
-  /* De kostentabel. De zekerheidskolom draagt een teken én een woord, want dit
-     blad heeft geen kleur om het verschil mee te maken. */
   .dokosten { width:100%; border-collapse:collapse; }
-  .dokosten td, .dokosten th { border-bottom:1px solid #ddd; padding:3pt 4pt;
-    vertical-align:top; text-align:left; }
-  .dokosten tr.dokkop th { border-bottom:1px solid #666; padding-top:8pt;
-    font:700 .95em/1.3 inherit; }
+  .dokosten td, .dokosten th { border-bottom:1px solid #ddd; padding:3pt 4pt; vertical-align:top; text-align:left; }
+  .dokosten tr.dokkop th { border-bottom:1px solid #666; padding-top:8pt; font:700 .95em/1.3 inherit; }
   .dokosten td:last-child { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
   .dokosten .dokzeker { white-space:nowrap; font-size:.82em; color:#333; }
-  .dokosten tfoot td { border-top:1.5pt solid #000; border-bottom:0;
-    padding-top:5pt; font-weight:700; }
+  .dokosten tfoot td { border-top:1.5pt solid #000; border-bottom:0; padding-top:5pt; font-weight:700; }
   .docnoot { font-size:.82em; color:#333; margin-top:4pt; }
 
   .docwaarschuwingen { list-style:none; margin:0; padding:0; }
   .docwaarschuwingen li { display:flex; gap:6pt; margin-bottom:5pt; line-height:1.45; }
-  .docwaarschuwingen .wteken { flex:0 0 auto; width:12pt; height:12pt; border:1pt solid #000;
-    border-radius:2px; text-align:center; font:700 9pt/12pt var(--f-mono); }
 
   @page { margin:16mm 14mm; }
 }

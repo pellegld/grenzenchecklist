@@ -44,7 +44,7 @@ var STALE_DAYS  = 240;
    De informatiearchitectuur uit §3: Reis · Acties · Kaart · Kosten · Regels ·
    Document, met home en wizard ervoor en de opgeslagen reizen erachter. */
 var VIEW = "home";
-var VIEW_ORDER = ["home", "wizard", "dashboard", "acties", "kaart", "kosten",
+var VIEW_ORDER = ["home", "wizard", "dashboard", "acties", "kaart", "kosten", "kalender",
                   "regels", "document", "onderweg", "reizen", "reis"];
 var LANDEN_ACTIEF = null;
 

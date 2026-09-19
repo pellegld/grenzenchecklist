@@ -99,6 +99,7 @@
 <div class="meersheet" id="meerpaneel" hidden>
   <div class="meerkaart" role="dialog" aria-modal="true" aria-labelledby="meerkop">
     <h2 id="meerkop" data-i18n="nav.meer">Meer</h2>
+    <button type="button" class="meerrij" data-view="kalender"><svg class="icon"><use href="#i-calendar"></use></svg><span data-i18n="nav.kalender">Wanneer rijden</span></button>
     <button type="button" class="meerrij" data-view="regels"><svg class="icon"><use href="#i-flag"></use></svg><span data-i18n="nav.regels">Regels per land</span></button>
     <button type="button" class="meerrij" data-view="document"><svg class="icon"><use href="#i-doc"></use></svg><span data-i18n="nav.document">Reisdocument</span></button>
     <button type="button" class="meerrij" data-view="onderweg"><svg class="icon"><use href="#i-locate"></use></svg><span data-i18n="nav.onderweg">Onderweg</span></button>
@@ -136,6 +137,9 @@
     </button>
     <button type="button" class="navitem" data-view="kosten">
       <svg class="icon"><use href="#i-payments"></use></svg> <span data-i18n="nav.kosten">Kosten</span>
+    </button>
+    <button type="button" class="navitem" data-view="kalender">
+      <svg class="icon"><use href="#i-calendar"></use></svg> <span data-i18n="nav.kalender">Wanneer rijden</span>
     </button>
     <button type="button" class="navitem" data-view="regels">
       <svg class="icon"><use href="#i-flag"></use></svg> <span data-i18n="nav.regels">Regels per land</span>
@@ -203,7 +207,7 @@
 <!-- ================= Kaart ================= -->
 <section class="view view-kaart" id="view-kaart" hidden>
   <section class="panel-route">
-    <h1 data-i18n="planner.titel">Route</h1>
+    <h1 data-i18n-kop="planner.titel">Route en kaart</h1>
 
     <div class="fields" id="planner" hidden>
       <div class="field">
@@ -311,6 +315,11 @@
 <!-- ================= Kosten ================= -->
 <section class="view view-page" id="view-kosten" hidden>
   <div id="kosten-wrap"></div>
+</section>
+
+<!-- ================= Wanneer rijden: de drukte-kalender ================= -->
+<section class="view view-page view-kalender" id="view-kalender" hidden>
+  <div id="kalender-wrap"></div>
 </section>
 
 <!-- ================= Regels per land ================= -->

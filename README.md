@@ -125,66 +125,90 @@ pagina bij de volgende build vanzelf mee.
 
 ## Vormgeving
 
-De app volgt een roadbook-esthetiek: donkerblauwe achtergrond, afgeronde panelen, één vet
-sans-serif door de hele hiërarchie, en monospace voor cijfers en sectienummers.
+De app volgt sinds september 2026 het ontwerp **"Wegenatlas"**: de app praat in
+verkeersborden en ziet eruit als een wegenatlas. De afweging staat in
+`DESIGN_VOORSTEL.md` (een eerdere richting, "Stil roadbook", is gebouwd en daarna verworpen
+omdat hij de generieke gebroken-wit-met-kaartjes-look opleverde), de afvinklijst in
+`ACCEPTATIE_DESIGN.md`.
 
-| rol | font | gebruik |
+Alle stijl staat in vier bestanden: `css/base.css` (tokens, thema's, reset, typografie),
+`css/components.css` (bordvormen, wegwijzer, knoppen, velden, bordjes, routepaneel,
+atlasblad), `css/pages.css` (per pagina) en `css/print.css`. De gegenereerde contentpagina's
+uit `build/build.mjs` laden dezelfde vier bestanden.
+
+### De statusschaal is de bordgrammatica
+
+Elke status is een bordvorm die een bestuurder al kent, en de vormen verschillen, dus de
+betekenis hangt nooit alleen aan kleur (§21):
+
+| bord | betekent | waar |
 |---|---|---|
-| koppen | Manrope 800 | `h1` (52 px), `h2` (26 px) |
-| kaartkoppen | Manrope 700 | groepstitels |
-| labels | Manrope 600 | kwalificaties, veldlabels, badges |
-| lopende tekst | Manrope 400 / 500 | body, checklistregels |
-| cijfers | JetBrains Mono 700 | statwaarden, prijzen, sectienummers |
+| blauw rond bord (gebod) | verplicht, actie, moet | `.statuschip.s-actie`, groepstekens, oordeel *mits* |
+| witte schijf met rode ring (verbod) | verboden, blokkade, verstreken | `.s-blokkade`, groep *eerst*, oordeel *nee* |
+| rode driehoek (waarschuwing) | let op, onzeker, onbekend | `.s-onbekend`, niveau *onzeker*, oordeel *controleer* |
+| groen vierkant | in orde, klaar, bevestigd | `.s-ok`, groep *klaar*, oordeel *ja* |
+| blauw vierkant met *i* | informatief | `.s-waarschuwing`, groep *let op* |
+| stippelcirkel | niet voor jou, niet meegerekend | groep *niet voor jouw kenteken*, kosten *niet meegerekend* |
 
-Palet: achtergrond `#0a0f18`, paneel `#121a26`, tekst `#eef2f8`, gedempt `#8996ab`, randen
-`rgba(238,242,248,.07)` op 0,8 px. Accenten: **teal `#35d6c0`** voor bedragen en actieve staat,
-amber `#e0b341` voor *let op*, oranje `#e07a49` voor blokkades, groen `#3fa877` voor *in orde*.
+De vormen hangen aan de bestaande tekens in de markup (`.teken`, `.zteken`, `.groepteken`,
+`.actiemerk`, `.wteken`); de renderers weten niets van vorm of kleur. Een chip is een klein
+wit bord met zwarte rand en bordletters; een deadline is een onderstreepte regel (geel,
+oranje als hij nadert, rood als de tijd op is); een prijs is een getal.
 
-Kaarten hebben een radius van 18 px, kleinere elementen 10 px.
+### Kleur
 
-Secties zijn geen dozen maar velden, gescheiden door een haarlijn, met een serif-kop links en een
-monospace nummer rechts (`01 — ROUTE`). Dat nummer komt uit `data-label` op de `h2` en wordt met
-`::after` gezet, dus het staat niet dubbel in de tekst.
+| token | dag | nacht | rol |
+|---|---|---|---|
+| `--paper` | `#F2EAD7` | `#15171B` | atlaspapier / asfaltdonker dashboard |
+| `--paper-2` | `#E7DDC3` | `#1E2127` | ingezonken vlakken |
+| `--paper-line` | `#C9BC9C` | `#3A3D44` | haarlijnen in het register |
+| `--ink` | `#141518` | `#F2EFE6` | koppen en tekst |
+| `--wit` | `#FFFFFF` | `#F7F5EE` | bordvlakken: een bord blijft wit met donkere letters (`--bord-tekst`), ook 's nachts |
+| `--blauw` | `#0F4C97` | `#2A66C4` | gebodsbord, wegwijzer, tolpunt |
+| `--groen` | `#0E7A45` | `#13804A` | in orde, bestemming, milieuzone op de kaart |
+| `--rood` | `#C8102E` | `#D5202E` | verbod, waarschuwing, de route op het atlasblad |
+| `--geel` | `#F5C518` | `#F7CD3A` | de afslagpijl: de ene dominante actie per scherm |
+| `--oranje` | `#E07B12` | `#F08A2A` | "druk" in de kalender, de wijzigingenkaart |
 
-**De hero** volgt de referentie: koptekst links, een omlijnd paneel rechts met drie cellen —
-monospace label boven, grote serif waarde eronder. Vanaf 900 px staan ze naast elkaar, daaronder
-gestapeld.
+Er is geen accentkleur naast de afslagpijl. In de nachtstand wordt het blauw feller, zoals
+een reflecterend bord; groen en rood blijven precies zo donker dat witte bordletters AA
+halen (gemeten: blauw 5,1:1, groen 4,6:1, rood 4,7:1; overdag 8,4, 5,4 en 5,9). Zwart op
+geel is 11,2:1, zwart op oranje 6,1:1; de grijze registerkoppen halen 5,6:1 op papier. De oude tokennamen (`--surface`, `--on-surface`,
+`--secondary`, `--amber`, `--navy`, …) bestaan als aliassen op dit palet.
 
-| cel | bron |
-|---|---|
-| Afstand | `ROUTE_RES.total` uit de route-analyse |
-| Tol, heen en terug | bovenkant van de kilometerschatting plus de tolpunten, maal twee |
-| Ingepakt | afgevinkte van de verplichte uitrusting |
+### Typografie
 
-Voor dat tolbedrag heeft elk tolpunt naast de leesbare `price` ook een optelbare `priceEur`. Die
-staat er alleen bij als het tarief hard is; ontbreekt hij, dan telt het punt niet mee en zet de
-app *"of meer"* achter het bedrag. Autotreinen tellen nooit mee — dat is een keuze, geen kost.
+Barlow Condensed (bordletters) voor koppen, labels en cijfers; Barlow voor lopende tekst.
+Beide staan lokaal (`fonts.css`, latin + latin-ext; condensed 700 en 800, regular 400, 600 en
+700), dus niets gaat naar Google en de app blijft offline werken. Opnieuw ophalen kan met
+`tools/build-fonts.ps1`.
 
-Afstand en tol kennen we alleen als de routeplanner gebruikt is. Bij een handmatige landenlijst
-tonen die cellen een streepje in plaats van een verzonnen getal.
+Koppen staan in kapitaal, condensed, strak op elkaar: h1 40 px op een telefoon en 52 px op
+een groot scherm; de registerkoppen (h2 in een `.dashkaart`, groepskoppen in het reisdocument)
+zijn 13 px met .18 em letterafstand. Lopende tekst is Barlow 16 px. Cijfers staan op
+afstandsborden: witte vlakken met een 3 px zwarte rand en condensed 800.
 
-**Maatvoering**, overgenomen uit de referentie: `--maxw` 1080 px met een `--gutter` van 28 px, dus
-1024 px inhoud. Het raster is drie kolommen van 332 px met een gap van 14 px — zowel voor de
-statkaarten in de hero als voor de checklistgroepen. Onder 980 px worden dat twee kolommen, onder
-660 px één, en de gutter zakt naar 20 px.
+**Tweekleurige koppen.** Een kop als "DIT MOET JE | REGELEN" draagt de handeling in inkt en de
+aanvulling in grijs. De splitsing zit in de vertaling: een `¦`-teken in de string
+(`js/i18n.js`), dat `kopHTML()` in `js/util.js` omzet in twee spans (`.k1`, `.k2`). `i18n()`
+haalt het teken weg voor platte tekst. Statische koppen in `index.html` gebruiken
+`data-i18n-kop`.
 
-Lopende tekst is begrensd op `--leesbreedte` (66 tekens), zodat notities in de landkaarten niet
-over de volle breedte uitlopen.
+### Vorm
 
-**Bewust alleen donker.** Het ontwerp is daarop gebouwd; er is geen lichte variant meer. De
-printstylesheet zet alles terug naar zwart op wit, inclusief de accentkleur.
-
-**Fonts staan lokaal.** Manrope en JetBrains Mono vallen onder de SIL Open Font License, dus zelf
-hosten mag. Beide zijn **variabele fonts**: één bestand per subset dekt het hele gewichtsbereik
-(Manrope 400–800, Mono 400–700). Dat scheelt fors — vier bestanden van samen 81 KB in plaats van
-acht statische instanties van 152 KB.
-
-Alleen de `latin` en `latin-ext` subsets zijn meegenomen; latin-ext is nodig voor namen als
-*dálniční známka*. Er gaat niets naar Google Fonts en de app blijft volledig offline werken.
-Opnieuw ophalen kan met `tools/build-fonts.ps1`.
-
-Let op bij dat script: de CSS van een variabele as geeft `font-weight: 400 800`. Dat bereik moet
-heel doorgegeven worden aan de `@font-face`, anders werkt maar één gewicht.
+- Geen kaarten met schaduw, geen pills, geen afgeronde hoeken (2 px). Blokken zijn
+  registerblokken: een 2 px lijn erboven, een bordletterkop, de inhoud eronder, gescheiden
+  door haarlijnen in de papierkleur. Een echt bord (afstandsbord, oordeel, reiskaart,
+  reisdocument) is een wit vlak met een 2 of 3 px zwarte rand.
+- De navigatie is een blauw snelwegbord met witte binnenrand: onderaan op een telefoon, als
+  hoge wegwijzer links op een groot scherm. De actieve bestemming is een wit vlak met een
+  pijlpunt.
+- De landen op de route staan als gestapelde wegwijzers (blauw, de bestemming groen) boven het
+  dashboard en op de reiskaarten van Mijn reizen.
+- Het atlasblad: crème papier met een kilometerraster, landen in papiertinten, de route als
+  rode hoofdweg met donkere rand, tolpunten blauw met €, milieuzones groen met Z, een zone
+  waar de auto niet in mag als witte schijf met rode ring.
+- Beweging alleen op `opacity` en `transform`, kort; `prefers-reduced-motion` zet alles uit.
 
 **Onderzoeksdatum data: 19 augustus 2026.** Elk land draagt een eigen `lastVerified`-datum die
 in de app zichtbaar is; is die ouder dan 240 dagen, dan markeert de app hem als verouderd.
@@ -801,9 +825,13 @@ betekent `needsVerification: true`.
 
 ### Wanneer rijden
 
-Een maandkalender met per dag een drukteniveau, plus een legenda en een waarschuwing voor de
-dag die eruit springt. Bladeren kan per maand; de kalender opent op de maand van je vertrekdatum
-en die dag krijgt een ring.
+De pagina *Wanneer rijden* (in de zijbalk en onder Meer; `js/calendar.js`): een maandkalender
+met per dag een drukteniveau en een teken (○ ◐ ● ✱ ■), een schakelaar heen/terug, een legenda,
+en onder het raster een kaart met de prognose van de gekozen dag: het niveau in een woord, de
+tekst uit de data, en of het een gepubliceerde prognose is of een afleiding uit een vuistregel.
+Bladeren kan per maand en met de pijltjestoetsen door het raster; de kalender opent op de maand
+van je vertrekdatum, je vertrekdag krijgt een accentring en je retourdag een inktring. Het
+dashboard toont de drukte op je vertrekdag als vierde cijfercel, met een klik naar de kalender.
 
 De data staat in `drukte.json` met **twee bronnen van waarheid, in deze volgorde**:
 
@@ -821,9 +849,10 @@ De richting boven de kalender (*richting zuid* / *richting noord*) komt uit `ana
 nu ook het breedtegraadverschil tussen begin- en eindpunt teruggeeft. Onder één graad verschil
 staat er neutraal *vertrekrichting*: oost–west zegt de Franse vertrekgolf weinig.
 
-Op een telefoon is een dagvakje 36 px. Daar past het label niet meer in, dus onder 640 px
-vervallen de labels en dragen de kleur en de legenda de betekenis. In print vervallen de
-achtergrondkleuren sowieso — daar krijgen de dagen een rand en blijft het label staan.
+Een dagvakje draagt geen label maar een teken, en dat teken past ook op een telefoon (52 px
+hoog, zeven naast elkaar). De kleur volgt de statusschaal van de app: enige drukte is groen,
+druk is amber, zeer druk is rood, een zwarte zaterdag is inkt. In print vervallen de
+achtergrondkleuren sowieso — daar krijgen de dagen een rand en blijft het teken staan.
 
 De inhoud wordt afgeleid uit de gestructureerde data, niet apart onderhouden:
 

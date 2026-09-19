@@ -1,136 +1,157 @@
 /* Basis: kleurtokens, thema's, reset en typografie.
-   
-   De tokens staan op :root en worden onder prefers-color-scheme omgezet, tenzij
-   de gebruiker zelf koos (dan staat data-theme op <html>). */
 
-/* Kinetic Route: licht dashboard met vaste zijbalk, Geist voor koppen/labels/
-   cijfers, Inter voor lopende tekst — dezelfde twee lettertypes als de Stitch-
-   mockups zelf. Self-hosted, geen CDN's —
-   zie fonts.css. Dit vervangt het donkere "roadbook"-thema van v1; zie
-   backup-20260828-huidige-site/ en de git-branch backup-voor-kinetic-route
-   voor de vorige versie. */
+   Ontwerp "Wegenatlas": de app praat in verkeersborden en ziet eruit als een
+   wegenatlas. Papier in plaats van gebroken wit, randen in plaats van
+   schaduwen, bordletters (Barlow Condensed) voor koppen en cijfers, en vier
+   bordvormen als statusschaal die elke bestuurder al kent:
+
+     blauw rond bord   verplicht, actie, moet          (gebod)
+     rode ring         verboden, blokkade, verstreken  (verbod)
+     rode driehoek     let op, onzeker, onbekend       (waarschuwing)
+     groen vierkant    in orde, klaar, bevestigd
+     stippelcirkel     niet voor jou, niet meegerekend
+
+   De vormen verschillen, dus de betekenis hangt nooit alleen aan kleur (§21).
+   De ene dominante actie per scherm is een gele afslagpijl; verder is er geen
+   accentkleur. De tokens staan op :root en worden onder prefers-color-scheme
+   omgezet, tenzij de gebruiker zelf koos (data-theme op <html>).
+
+   De oude tokennamen (--surface, --on-surface, --secondary, --amber, --navy, …)
+   blijven als aliassen bestaan: js/data.js en de gegenereerde contentpagina's
+   lezen ze. */
 :root{
-  --surface:#f7f9fb; --surface-dim:#d8dadc; --surface-bright:#f7f9fb;
-  --surface-lowest:#ffffff; --surface-low:#f2f4f6; --surface-c:#eceef0;
-  --surface-high:#e6e8ea; --surface-highest:#e0e3e5;
-  --on-surface:#191c1e; --on-surface-var:#45474c;
-  --outline:#75777d; --outline-var:#c5c6cd;
-  --primary:#091426; --on-primary:#ffffff; --primary-container:#1e293b; --on-primary-container:#8590a6;
-  --secondary:#0058be; --on-secondary:#ffffff; --secondary-container:#2170e4; --on-secondary-container:#fefcff;
-  --error:#ba1a1a; --error-container:#ffdad6; --on-error-container:#93000a;
-  --amber:#f59e0b; --amber-container:rgba(245,158,11,.10); --amber-line:rgba(245,158,11,.32);
-  --amber-ink:#7a5205;
-  --eco:#6b8e23;
-  /* Groen voor "in orde" en teal als rustig accent (§23). Ze staan los van
-     --secondary: dat is de knopkleur, en een status mag niet dezelfde kleur
-     hebben als iets waar je op kunt drukken. */
-  /* Iets donkerder dan het groen dat je op een vlak zou zetten: dit is ook
-     tekstkleur (het vinkje in "Mag ik hier rijden? Ja") en haalt zo 5,2:1. */
-  --ok:#28794d; --ok-container:rgba(40,121,77,.10); --ok-line:rgba(40,121,77,.3);
-  --teal:#0e7c7b; --teal-container:rgba(14,124,123,.08); --teal-line:rgba(14,124,123,.25);
-  --background:#f7f9fb;
-  --topbar-bg:rgba(247,249,251,.9);
-  --map-alt:#dfe6ea;
+  /* papier en inkt */
+  --paper:#F2EAD7; --paper-2:#E7DDC3; --paper-3:#DCD0B0; --paper-line:#C9BC9C;
+  --ink:#141518; --ink-2:#4A4A48; --ink-3:#5F5C55;
+  --ink-rgb:20,21,24;
 
-  /* Vaste merkkleur voor decoratieve donkere panelen (Milieuzones&Tol, landenhero,
-     tripbanner) — die blijven bewust altijd donkernavy, in beide thema's, dus
-     géén var(--primary): die wordt hieronder juist licht in dark mode. */
-  --navy:#091426; --navy-rgb:9,20,38;
-  /* Ook vast, zelfde reden: het wegdek van de reiservaring blijft altijd
-     donker asfalt met een halfdoorzichtige rand, in beide thema's. */
-  --asphalt:#2d3133; --asphalt-border:rgba(117,119,125,.35);
-  /* Vast, niet var(--error): die wordt in donkere modus een lichte zalmkleur
-     (tekst-op-donker), en een wit icoon daarop haalt geen contrast meer. De
-     incidentknop is een gevulde vlakke knop, dus vast donkerrood in beide
-     thema's, zoals --navy en --asphalt hierboven. */
-  --sos:#ba1a1a;
+  /* bordvlakken: een bord blijft wit met donkere letters, ook 's nachts */
+  --wit:#FFFFFF; --bord-tekst:#141518; --bord-tekst-2:#4A4A48;
 
-  --f-display:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --f-body:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --f-mono:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  /* bordkleuren */
+  --blauw:#0F4C97; --blauw-d:#0B3B75;
+  --groen:#0E7A45; --groen-d:#0A5C34;
+  --rood:#C8102E;  --rood-d:#8E0B21;
+  --geel:#F5C518;  --geel-d:#D9A80E;
+  --oranje:#E07B12;
 
-  --r-2xs:.125rem; --r-sm:.25rem; --r-md:.375rem; --r-lg:.5rem; --r-xl:.75rem; --r-full:9999px;
-  --sp-base:8px; --sp-xs:4px; --sp-sm:12px; --sp-md:24px; --sp-lg:40px; --sp-xl:64px; --sp-gutter:20px;
+  /* vast in beide thema's */
+  --sos:#C8102E; --asphalt:#2D3133; --asphalt-border:rgba(117,119,125,.35);
 
-  --shadow-1:0 4px 12px rgba(30,41,59,.05);
-  --shadow-2:0 8px 24px rgba(30,41,59,.12);
+  /* het atlasblad */
+  --map-bg:#EFE6CF; --map-bg-alt:#E6DDC2; --map-grid:#D7CDAF;
+  --map-land:#F4EDDA; --map-land-route:#E9E0C6; --map-line:#B9AC8A;
 
-  --sidebar-w:256px;
-  --route-panel-w:400px;
-  --topbar-h:56px;
-  --sp-margin-mobile:16px;
-  --sp-margin-desktop:32px;
+  --f-display:"Barlow Condensed","Arial Narrow","Roboto Condensed",Impact,sans-serif;
+  --f-body:"Barlow","Helvetica Neue",Arial,sans-serif;
+
+  --r:2px;
+  --sp-xs:4px; --sp-base:8px; --sp-sm:12px; --sp-md:24px; --sp-lg:40px; --sp-xl:64px;
+  --sp-gutter:20px; --sp-section:40px;
+  --sp-margin-mobile:18px; --sp-margin-desktop:40px;
+
+  --sidebar-w:240px; --route-panel-w:400px;
+  --topbar-h:64px; --bottomnav-h:70px; --sos-h:52px;
+
+  --focus:var(--blauw);
+  --select-chevron:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23141518' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+
+  /* ---- aliassen: de vorige tokennamen, gemapt op het atlaspalet ---- */
+  --bg:var(--paper); --surface:var(--wit); --surface-2:var(--paper-2); --line:var(--paper-line);
+  --card-line:var(--ink); --ink-soft:var(--ink-3);
+  --accent:var(--geel); --accent-hover:var(--geel-d); --accent-bright:var(--geel);
+  --accent-text:var(--blauw); --on-accent:#141518; --accent-rgb:15,76,151;
+  --st-no-ink:var(--rood);   --st-no-bg:var(--wit);     --st-no-line:var(--rood);
+  --st-unk-ink:var(--ink);   --st-unk-bg:var(--paper-2); --st-unk-line:var(--rood);
+  --st-must-ink:var(--blauw); --st-must-bg:var(--wit);  --st-must-line:var(--blauw);
+  --st-ok-ink:var(--groen);  --st-ok-bg:var(--wit);     --st-ok-line:var(--groen);
+  --st-soft-ink:var(--ink-3); --st-soft-line:var(--ink-3);
+  --shadow-1:none; --shadow-2:none;
+  --surface-lowest:var(--wit); --surface-low:var(--paper-2); --surface-c:var(--paper-2);
+  --surface-high:var(--paper-3); --surface-highest:var(--paper-line); --surface-dim:var(--paper-line);
+  --surface-bright:var(--wit);
+  --on-surface:var(--ink); --on-surface-var:var(--ink-2); --outline:var(--ink-3); --outline-var:var(--paper-line);
+  --primary:var(--ink); --on-primary:var(--paper); --primary-container:var(--ink); --on-primary-container:var(--paper);
+  --secondary:var(--blauw); --on-secondary:var(--wit); --secondary-container:var(--paper-2); --on-secondary-container:var(--ink);
+  --error:var(--rood); --error-container:var(--wit); --on-error-container:var(--rood);
+  --amber:var(--oranje); --amber-container:var(--paper-2); --amber-line:var(--oranje); --amber-ink:var(--ink);
+  --eco:var(--groen); --ok:var(--groen); --ok-container:var(--wit); --ok-line:var(--groen);
+  --teal:var(--blauw); --teal-container:var(--paper-2); --teal-line:var(--paper-line);
+  --background:var(--paper); --topbar-bg:var(--paper); --map-alt:var(--map-bg-alt);
+  --navy:var(--ink); --navy-rgb:var(--ink-rgb);
+  --f-mono:var(--f-display);
+  --r-2xs:2px; --r-sm:2px; --r-md:2px; --r-lg:2px; --r-xl:2px; --r-full:2px;
+  --r-input:2px; --r-card:2px; --r-sheet:2px; --r-pill:2px; --r-sign:2px;
 }
 
-/* Donker thema: volgt het systeem tenzij de gebruiker het handmatig instelt
-   (dan staat er data-theme="dark"/"light" op <html>, gezet door het
-   flits-vrije script bovenin <head> en door de toggle onder Instellingen).
-   --navy/--navy-rgb blijven bewust ongewijzigd: die zijn geen "thema", maar
-   een vaste merkkleur voor de donkere accentpanelen in beide standen. */
+/* Nachtstand: asfaltdonker dashboard. De borden blijven witte vlakken met
+   donkere letters — reflecterend, zoals langs de weg — en de bordkleuren
+   worden een tint feller zodat ze op donker net zo hard praten. */
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --surface:#0f1420; --surface-dim:#0a0e17; --surface-bright:#262f40;
-    --surface-lowest:#0a0e17; --surface-low:#161d2b; --surface-c:#1c2434;
-    --surface-high:#232c3f; --surface-highest:#2b3548;
-    --on-surface:#e5e8ee; --on-surface-var:#a7adbb;
-    --outline:#6b7383; --outline-var:#333d52;
-    --primary:#c3cef0; --on-primary:#16233d; --primary-container:#2a3650; --on-primary-container:#b7c2e6;
-    --secondary:#8ec2ff; --on-secondary:#003259; --secondary-container:#2f5f96; --on-secondary-container:#ffffff;
-    --error:#ffb4a9; --error-container:#7a0a0a; --on-error-container:#ffdad4;
-    --amber:#ffc267; --amber-container:rgba(255,194,103,.14); --amber-line:rgba(255,194,103,.4);
-    --amber-ink:#ffdca3;
-    --eco:#a0cf62;
-    --ok:#7bd6a2; --ok-container:rgba(123,214,162,.14); --ok-line:rgba(123,214,162,.34);
-    --teal:#4fd1c5; --teal-container:rgba(79,209,197,.12); --teal-line:rgba(79,209,197,.3);
-    --background:#0f1420;
-    --topbar-bg:rgba(15,20,32,.85);
-    --map-alt:#1a2233;
+    --paper:#15171B; --paper-2:#1E2127; --paper-3:#272B33; --paper-line:#3A3D44;
+    --ink:#F2EFE6; --ink-2:#CFCAB9; --ink-3:#8E8A7E; --ink-rgb:242,239,230;
+    --wit:#F7F5EE;
+    /* wit erop blijft AA: blauw 5,1:1, groen 4,6:1, rood 4,7:1 (gemeten) */
+    --blauw:#2A66C4; --blauw-d:#1F4F9A; --groen:#13804A; --groen-d:#0F663B;
+    --rood:#D5202E; --rood-d:#A5182A; --geel:#F7CD3A; --geel-d:#D9AE1C; --oranje:#F08A2A;
+    --map-bg:#1A1D23; --map-bg-alt:#20242C; --map-grid:#2A2E36; --map-land:#23272F; --map-land-route:#2E333D; --map-line:#4A5060;
+    --focus:var(--geel);
   }
 }
 :root[data-theme="dark"]{
-  --surface:#0f1420; --surface-dim:#0a0e17; --surface-bright:#262f40;
-  --surface-lowest:#0a0e17; --surface-low:#161d2b; --surface-c:#1c2434;
-  --surface-high:#232c3f; --surface-highest:#2b3548;
-  --on-surface:#e5e8ee; --on-surface-var:#a7adbb;
-  --outline:#6b7383; --outline-var:#333d52;
-  --primary:#c3cef0; --on-primary:#16233d; --primary-container:#2a3650; --on-primary-container:#b7c2e6;
-  --secondary:#8ec2ff; --on-secondary:#003259; --secondary-container:#2f5f96; --on-secondary-container:#ffffff;
-  --error:#ffb4a9; --error-container:#7a0a0a; --on-error-container:#ffdad4;
-  --amber:#ffc267; --amber-container:rgba(255,194,103,.14); --amber-line:rgba(255,194,103,.4);
-  --amber-ink:#ffdca3;
-  --eco:#a0cf62;
-  --ok:#7bd6a2; --ok-container:rgba(123,214,162,.14); --ok-line:rgba(123,214,162,.34);
-  --teal:#4fd1c5; --teal-container:rgba(79,209,197,.12); --teal-line:rgba(79,209,197,.3);
-  --background:#0f1420;
-  --topbar-bg:rgba(15,20,32,.85);
-  --map-alt:#1a2233;
+  --paper:#15171B; --paper-2:#1E2127; --paper-3:#272B33; --paper-line:#3A3D44;
+  --ink:#F2EFE6; --ink-2:#CFCAB9; --ink-3:#8E8A7E; --ink-rgb:242,239,230;
+  --wit:#F7F5EE;
+  --blauw:#2A66C4; --blauw-d:#1F4F9A; --groen:#13804A; --groen-d:#0F663B;
+  --rood:#D5202E; --rood-d:#A5182A; --geel:#F7CD3A; --geel-d:#D9AE1C; --oranje:#F08A2A;
+  --map-bg:#1A1D23; --map-bg-alt:#20242C; --map-grid:#2A2E36; --map-land:#23272F; --map-land-route:#2E333D; --map-line:#4A5060;
+  --focus:var(--geel);
 }
+
+/* ---------------- reset ---------------- */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--background);color:var(--on-surface);font:400 15px/1.55 var(--f-body);
-  -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:var(--f-display);color:var(--primary);margin:0}
-h1{font:700 1.5rem/1.25 var(--f-display);letter-spacing:-.01em;margin:0 0 var(--sp-md)}
-@media (min-width:760px){ h1{font-size:1.9rem} }
-h3{font:700 .8rem/1.3 var(--f-display);letter-spacing:.03em;text-transform:uppercase;
-  color:var(--on-surface-var);margin:0 0 var(--sp-sm)}
-p{margin:0}
-a{color:var(--secondary);text-decoration:none}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--outline-var);border-radius:99px}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.45 var(--f-body);
+  -webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 
-.icon{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;
+/* Het vangnet voor alles wat JS met het hidden-attribuut verbergt. */
+[hidden]{display:none !important}
+
+/* ---------------- typografie ----------------
+   Koppen in bordletters: condensed, kapitaal, strak op elkaar. Een kop kan
+   tweekleurig zijn (.k1 inkt, .k2 grijs) — kopHTML() in js/util.js. */
+h1,h2,h3,h4{font-family:var(--f-display);color:var(--ink);margin:0;text-transform:uppercase}
+h1{font-size:2.5rem;line-height:.95;font-weight:800;letter-spacing:.005em;margin:0 0 var(--sp-sm)}
+@media (min-width:760px){ h1{font-size:3.25rem} }
+h2{font-size:1.375rem;line-height:1.05;font-weight:800;letter-spacing:.01em}
+h3{font-size:.8125rem;line-height:1.2;font-weight:700;letter-spacing:.18em;color:var(--ink-3)}
+.k2{color:var(--ink-3);font-weight:inherit}
+p{margin:0}
+a{color:var(--ink);text-decoration:underline;text-decoration-thickness:2px;text-decoration-color:var(--geel);
+  text-underline-offset:3px}
+a:hover{text-decoration-color:currentColor}
+b,strong{font-weight:600}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--paper-line);border-radius:0}
+
+/* Vaste rollen naast de koppen. */
+.eyebrow{font:700 .75rem/1.2 var(--f-display);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.num{font-family:var(--f-display);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:0}
+.hint{font-size:.875rem;line-height:1.45;color:var(--ink-2)}
+.lead{font:500 1.0625rem/1.45 var(--f-body);color:var(--ink-2);max-width:56ch;margin:0 0 var(--sp-md)}
+
+.icon{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2.25;
   stroke-linecap:round;stroke-linejoin:round}
 .icon.sm{width:16px;height:16px}
 .icon.lg{width:32px;height:32px}
 
-/* Zichtbare focus, overal en met dezelfde vorm (§21). :focus-visible zodat een
-   muisklik geen ring achterlaat, maar toetsenbordnavigatie wel. */
-:focus-visible{outline:2px solid var(--secondary);outline-offset:2px;border-radius:var(--r-sm)}
+/* Zichtbare focus, overal en met dezelfde vorm (§21): een blauwe (bij nacht
+   gele) rand op afstand, hoekig zoals de rest. */
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 
-/* Alleen voor schermlezers: statuswoorden naast een icoon, zodat betekenis
-   nooit alleen aan kleur hangt (§21). */
+/* Alleen voor schermlezers: statuswoorden naast een teken (§21). */
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
 

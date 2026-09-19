@@ -83,7 +83,7 @@ function renderHome(){
   wrap.innerHTML =
     '<section class="hero">' +
       '<div class="herotekst">' +
-        "<h1>" + esc(i18n("home.hero")) + "</h1>" +
+        "<h1>" + kopHTML("home.hero") + "</h1>" +
         '<p class="lead">' + esc(i18n("home.sub")) + "</p>" +
         '<button type="button" class="btn primary groot" id="btn-plan">' +
           esc(i18n("home.cta")) + " " + iconUse("arrow-right") + "</button>" +

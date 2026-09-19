@@ -190,7 +190,7 @@ function renderActies(){
   var groepen = groepeerActies(tel.acties);
 
   wrap.innerHTML =
-    "<h1>" + esc(i18n("checklist.titel")) + "</h1>" +
+    "<h1>" + kopHTML("checklist.titel") + "</h1>" +
     '<div class="progresscard"><div class="prow"><span class="plbl">' +
       esc(i18n("checklist.voortgang")) + '</span>' +
       '<span class="pval">' + esc(i18n("checklist.gereed", { pct:pct })) + '</span></div>' +

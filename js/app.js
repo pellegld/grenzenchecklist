@@ -22,6 +22,7 @@ var RENDERS = {
     renderKaart();
   },
   kosten:    renderKosten,
+  kalender:  renderKalender,
   regels:    renderLandenInfo,
   document:  renderDocument,
   onderweg:  renderOnderweg,
@@ -391,6 +392,33 @@ function wire(){
   wireOnderweg();
   wireIncident();
 
+  /* ---------------- wanneer rijden: de drukte-kalender ---------------- */
+  var kal = document.getElementById("view-kalender");
+  kal.addEventListener("click", function(e){
+    var m = e.target.closest("[data-kal-maand]");
+    if(m){ kalenderMaand(Number(m.getAttribute("data-kal-maand"))); return; }
+    var r = e.target.closest("[data-kal-richting]");
+    if(r){ KAL_RICHTING = r.getAttribute("data-kal-richting"); renderKalender(); return; }
+    var d = e.target.closest("[data-kal-dag]");
+    if(d){ KAL_DAG = d.getAttribute("data-kal-dag"); renderKalender(); kalenderFocus(); }
+  });
+  kal.addEventListener("keydown", kalenderToets);
+
+  /* De stadschips in de milieukaart openen de popup van die zone op de kaart
+     (dezelfde popup als bij een tik op de marker, dus geen tweede waarheid). Op
+     een telefoon schuift de kaart eerst in beeld. */
+  document.getElementById("milieukaart").addEventListener("click", function(e){
+    var chip = e.target.closest("[data-zone]");
+    if(!chip) return;
+    if(!document.getElementById("routesvg")) renderKaart();
+    var id = chip.getAttribute("data-zone"), index = -1;
+    KAART.markers.forEach(function(m, k){ if(m.id === "zone-" + id) index = k; });
+    if(index === -1) return;
+    var vlak = document.querySelector(".panel-map");
+    if(vlak && window.innerWidth < 1024) vlak.scrollIntoView({ block:"start", behavior:"smooth" });
+    toonMarkerPopup(index);
+  });
+
   document.getElementById("view-reis").addEventListener("click", function(e){
     if(e.target.closest("#btn-reis-naar-planner")){ switchView("wizard"); return; }
     if(e.target.closest("#btn-reis-checklist")){ switchView("acties"); return; }
@@ -445,6 +473,12 @@ function boot(d){
 
   laadData("fuelprices.json").then(function(f){ FUELPRICES = f; if(VIEW === "kosten") render(); }).catch(function(){});
   laadChangelog();
+  /* De druktekalender: dezelfde laadketen als de rest van de regeldata. Zonder
+     bestand blijft de pagina staan met een uitleg in plaats van een lege maand. */
+  laadData("drukte.json").then(function(d){
+    DRUKTE = d;
+    if(VIEW === "kalender" || VIEW === "dashboard") render();
+  }).catch(function(){});
   if(journeyEnabled()) journeyStart().then(render);
 
   var sel = document.getElementById("home");

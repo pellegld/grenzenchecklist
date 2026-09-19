@@ -21,12 +21,31 @@
       lastVerified op elke actie, zie js/checklist.js); herkomstRegelHTML() is
       het ene punt waar dat straks een volle regel wordt. */
 
+/* ---------------- de route als verhaallijn ----------------
+   Elk land een halte op een lijn, met de kilometers die je erin aflegt (uit
+   de route-analyse; zonder berekende route alleen de naam). Staat boven het
+   dashboard en op de reiskaarten van Mijn reizen. De vlag is hier versiering:
+   de landnaam staat ernaast, dus hij is voor schermlezers verborgen. */
+function routelijnHTML(trip){
+  var landen = tripLanden(trip);
+  if(!landen.length) return "";
+  var res = tripAnalyse(trip);
+  return '<ol class="routelijn" aria-label="' + esc(i18n("planner.landenOpRoute")) + '">' +
+    landen.map(function(code){
+      var c = BY_CODE[code];
+      var km = res && res.km ? res.km[code] : null;
+      return '<li><span aria-hidden="true">' + flagHTML(c) + "</span>" +
+        '<span class="rl-naam">' + esc(c.name) + "</span>" +
+        (km != null && km >= 1
+          ? '<span class="rl-km">' + esc(getal(Math.round(km)) + " " + i18n("planner.km")) + "</span>"
+          : "") +
+      "</li>";
+    }).join("") + "</ol>";
+}
+
 /* ---------------- kop ---------------- */
 function dashboardKopHTML(trip){
   var landen = tripLanden(trip);
-  var vlaggen = landen.map(function(code){
-    return flagHTML(BY_CODE[code]);
-  }).join('<span class="pijl" aria-hidden="true">→</span>');
 
   var van = trip.origin ? trip.origin.naam : (landen[0] && BY_CODE[landen[0]].name) || "";
   var naar = trip.destination ? trip.destination.naam
@@ -34,7 +53,7 @@ function dashboardKopHTML(trip){
 
   return '<header class="dashkop">' +
     deelMeldingHTML() +
-    '<div class="dashvlaggen">' + vlaggen + "</div>" +
+    routelijnHTML(trip) +
     "<h1>" + esc(van) + (naar ? " → " + esc(naar) : "") + "</h1>" +
     '<p class="dashmeta">' + esc(reisPeriodeTekst(trip)) + "</p>" +
     '<p class="dashmeta">' + esc(voertuigSamenvatting(trip)) +
@@ -58,7 +77,7 @@ function dashboardVoortgangHTML(trip){
   ].filter(function(t){ return t.n > 0 || t.klasse === "s-ok" || t.klasse === "s-todo"; });
 
   return '<section class="dashkaart voortgang">' +
-    '<h2 class="groot">' + esc(i18n("dashboard.klaar", { pct:pct })) + "</h2>" +
+    '<h2 class="groot">' + kopHTML("dashboard.klaar", { pct:pct }) + "</h2>" +
     '<div class="progressbar" role="progressbar" aria-valuenow="' + pct +
       '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pct + '%"></i></div>' +
     '<ul class="statustellers">' + tellers.map(function(t){
@@ -98,7 +117,7 @@ function dashboardActiesHTML(trip){
   }));
 
   if(!blokkades.length && !open.length){
-    return '<section class="dashkaart"><h2>' + esc(i18n("dashboard.actiesKop")) + "</h2>" +
+    return '<section class="dashkaart dashacties"><h2>' + esc(i18n("dashboard.actiesKop")) + "</h2>" +
       '<p class="leeg">' + iconUse("check") + esc(i18n("dashboard.allesGeregeld")) + "</p></section>";
   }
 
@@ -109,7 +128,7 @@ function dashboardActiesHTML(trip){
       esc(i18nAantal("dashboard.nogMeer", rest)) + "</button>"
     : "";
 
-  return '<section class="dashkaart"><h2>' + esc(i18n("dashboard.actiesKop")) + "</h2>" +
+  return '<section class="dashkaart dashacties"><h2>' + esc(i18n("dashboard.actiesKop")) + "</h2>" +
     '<ul class="actielijst">' + lijst + "</ul>" + meer + "</section>";
 }
 
@@ -200,6 +219,10 @@ function dashboardCijfersHTML(trip){
        valt; deze cel zegt in één woord dat er iets uit te leggen is. */
     cel("payments", i18n("planner.geschatteKosten"),
         kostenWaarde || esc(i18n("kosten.nietTeBepalen")), "kosten") +
+    /* De drukte op je vertrekdag, uit de kalender — alleen als die geladen is. */
+    (kalVertrekdagTekst(trip) !== null
+      ? cel("calendar", i18n("kalender.vertrekdagKop"), kalVertrekdagTekst(trip), "kalender")
+      : "") +
   "</section>";
 }
 

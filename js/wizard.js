@@ -73,7 +73,7 @@ function wizardKnoppenHTML(nu, volgendeLabel){
 /* ---------------- stap 1: waar ---------------- */
 function wizWaarHTML(){
   return (
-    "<h1>" + esc(i18n("wizard.waar.kop")) + "</h1>" +
+    "<h1>" + kopHTML("wizard.waar.kop") + "</h1>" +
     '<p class="lead">' + esc(i18n("wizard.waar.uitleg")) + "</p>" +
     '<div class="wizveld"><div class="field">' +
       '<label for="wiz-from">' + iconUse("pin-start") + esc(i18n("planner.van")) + "</label>" +
@@ -96,7 +96,7 @@ function wizWaarHTML(){
 /* ---------------- stap 2: wanneer ---------------- */
 function wizWanneerHTML(){
   return (
-    "<h1>" + esc(i18n("wizard.wanneer.kop")) + "</h1>" +
+    "<h1>" + kopHTML("wizard.wanneer.kop") + "</h1>" +
     '<p class="lead">' + esc(i18n("wizard.wanneer.uitleg")) + "</p>" +
     '<div class="wizveld row2">' +
       '<div class="field"><label for="wiz-depart">' + esc(i18n("profiel.vertrekdatum")) + "</label>" +
@@ -137,7 +137,7 @@ function wizAutoHTML(){
                ["aanhanger", i18n("profiel.aanhanger")], ["camper", i18n("profiel.camper")]];
 
   return (
-    "<h1>" + esc(i18n("wizard.auto.kop")) + "</h1>" +
+    "<h1>" + kopHTML("wizard.auto.kop") + "</h1>" +
     '<p class="lead">' + esc(i18n("wizard.auto.uitleg")) + "</p>" +
     '<div class="wizveld raster">' +
       keuzeVeld("wiz-home", i18n("profiel.kentekenUit"), landen, veh.plateCountry,
@@ -188,7 +188,7 @@ function wizAnalyseHTML(){
   var bezig = WIZ_ANALYSE && WIZ_ANALYSE.bezig;
   var klaar = TRIP.metadata.geanalyseerd && !bezig && !WIZ_FOUT;
 
-  var kop = "<h1>" + esc(i18n(klaar ? "wizard.analyse.klaarKop" : "wizard.analyse.kop")) + "</h1>";
+  var kop = "<h1>" + kopHTML(klaar ? "wizard.analyse.klaarKop" : "wizard.analyse.kop") + "</h1>";
   var samenvatting =
     '<div class="wizsamenvatting">' +
       "<p><b>" + esc((TRIP.origin ? TRIP.origin.naam : "—") + " → " +

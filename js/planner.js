@@ -302,10 +302,14 @@ function renderMilieuzones(){
   var zones = tripZones(TRIP);
   if(!zones.length){ el.hidden = true; el.innerHTML = ""; return; }
   el.hidden = false;
-  var namen = zones.slice(0, 8).map(function(o){ return esc(o.zone.city); });
+  /* Elke chip is een knop naar de popup van die zone op de kaart (zie de
+     afhandelaar in js/app.js). */
+  var chips = zones.slice(0, 8).map(function(o){
+    return '<button type="button" class="mchip" data-zone="' + esc(o.zone.id) + '">' + esc(o.zone.city) + "</button>";
+  });
   el.innerHTML =
     '<div class="milieuhead">' + iconUse("eco") +
       "<div><h2 class=\"paneelkop\">" + esc(i18n("planner.milieuzones")) + "</h2>" +
       "<p>" + esc(i18n("planner.milieuzonesUitleg")) + "</p></div></div>" +
-    '<div class="milieuchips">' + namen.map(function(n){ return '<span class="mchip">' + n + "</span>"; }).join("") + "</div>";
+    '<div class="milieuchips">' + chips.join("") + "</div>";
 }

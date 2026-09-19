@@ -58,7 +58,7 @@ nl: {
   "nav.donkereModusOm": "Donkere modus omschakelen",
   "nav.help": "Help",
 
-  "planner.titel": "Route en kaart",
+  "planner.titel": "Route ¦ en kaart",
   "planner.van": "Van",
   "planner.naar": "Naar",
   "planner.vertrekplaats": "Vertrekplaats",
@@ -139,7 +139,7 @@ nl: {
   "kaart.uitzoomen": "Uitzoomen",
   "kaart.leeg": "Vul een van en naar in om de route te zien.",
 
-  "checklist.titel": "Dit moet je regelen",
+  "checklist.titel": "Dit moet je ¦ regelen",
   "checklist.voortgang": "Voortgang",
   "checklist.gereed": "{pct}% gereed",
   "checklist.documenten": "Documenten",
@@ -235,7 +235,7 @@ nl: {
   "landen.regio.Zuid": "Zuid",
   "landen.regio.Noord": "Noord",
 
-  "reizen.kop": "Mijn Reizen",
+  "reizen.kop": "Mijn ¦ reizen",
   "reizen.intro": "Beheer opgeslagen routes en controleer je voorbereidingen voor komende reizen.",
   "reizen.nieuweReis": "Nieuwe reis plannen",
   "reizen.planNieuwe": "Plan een nieuwe reis",
@@ -256,7 +256,7 @@ nl: {
   "trip.verwijderBevestig": "\"{naam}\" verwijderen? Dit kan niet ongedaan gemaakt worden.",
   "trip.naamPrompt": "Naam voor deze rit:",
 
-  "reis.kop": "Je reis, halte voor halte",
+  "reis.kop": "Je reis, ¦ halte voor halte",
   "reis.intro": "Scroll naar beneden om je reis te ervaren en de verplichtingen per land te ontdekken.",
   "reis.start": "Start",
   "reis.bestemming": "Bestemming",
@@ -318,6 +318,34 @@ nl: {
   "kalender.zuid": "richting zuid",
   "kalender.noord": "richting noord",
   "kalender.vertrek": "vertrekrichting",
+  "nav.kalender": "Wanneer rijden",
+  "kalender.kop": "Wanneer ¦ rijden?",
+  "kalender.intro": "Verwachte drukte op de noord-zuidas door Europa, {richting}. Gepubliceerde prognoses winnen van de vuistregels; kies een dag voor de uitleg.",
+  "kalender.heen": "Heenreis",
+  "kalender.terug": "Terugreis",
+  "kalender.richting": "Richting",
+  "kalender.vorigeMaand": "Vorige maand",
+  "kalender.volgendeMaand": "Volgende maand",
+  "kalender.weekdagen": "ma,di,wo,do,vr,za,zo",
+  "kalender.weekdagenVol": "maandag,dinsdag,woensdag,donderdag,vrijdag,zaterdag,zondag",
+  "kalender.vandaag": "vandaag",
+  "kalender.vertrekdag": "je vertrekdag",
+  "kalender.retourdag": "je retourdag",
+  "kalender.niveau.rustig": "Rustig",
+  "kalender.niveau.matig": "Enige drukte",
+  "kalender.niveau.druk": "Druk",
+  "kalender.niveau.zeerdruk": "Zeer druk",
+  "kalender.niveau.zwart": "Zwarte zaterdag",
+  "kalender.legenda": "Legenda",
+  "kalender.geenPrognose": "Buiten de bekende drukteperiodes: geen prognose, reken op een gewone dag.",
+  "kalender.afgeleid": "Afgeleid uit een vuistregel, geen gepubliceerde prognose.",
+  "kalender.prognose": "Gepubliceerde prognose.",
+  "kalender.bron": "Bron",
+  "kalender.bronnen": "Bronnen",
+  "kalender.gecontroleerd": "Laatst gecontroleerd op {datum}.",
+  "kalender.geenData": "De druktekalender kon niet geladen worden. Zonder bereik verschijnt hij zodra drukte.json één keer is opgehaald.",
+  "kalender.vertrekdagKop": "Drukte vertrekdag",
+  "kalender.geenDatum": "geen datum",
 
   /* ---------------- informatiearchitectuur (§3) ---------------- */
   "nav.reisPagina": "Reis",
@@ -338,7 +366,7 @@ nl: {
   "alg.periodeZelfdeMaand": "{van}–{tot} {maand} {jaar}",
 
   /* ---------------- homepage (§4) ---------------- */
-  "home.hero": "Ga voorbereid de grens over.",
+  "home.hero": "Ga voorbereid ¦ de grens over.",
   "home.sub": "Controleer in één minuut wat jij moet regelen voor je autorit door Europa.",
   "home.cta": "Plan mijn reis",
   "home.belofte.gratis": "Gratis",
@@ -362,7 +390,7 @@ nl: {
 
   /* ---------------- reisdashboard (§6) ---------------- */
   "dashboard.voortgang": "Voortgang",
-  "dashboard.klaar": "Je bent {pct}% klaar",
+  "dashboard.klaar": "Je bent ¦ {pct}% klaar",
   "dashboard.geregeld": "geregeld",
   /* Enkelvoud telt hier echt: "1 problemen" onder een blokkade leest als een
      bug, en dan geloof je de rest van het scherm ook niet meer. */
@@ -435,15 +463,15 @@ nl: {
   "wizard.verder.datum": "Verder naar de datum",
   "wizard.verder.auto": "Verder naar je auto",
   "wizard.verder.analyse": "Verder naar de analyse",
-  "wizard.waar.kop": "Waar ga je heen?",
+  "wizard.waar.kop": "Waar ¦ ga je heen?",
   "wizard.waar.uitleg": "Kies je vertrekplaats en je bestemming. De app bepaalt zelf door welke landen je rijdt.",
   "wizard.waar.hint": "Staat je plaats er niet bij, kies dan “online zoeken”. Je kunt de landen daarna altijd zelf bijstellen.",
   "wizard.waar.geenSteden": "De plaatsenlijst kon niet geladen worden. Je kunt in de laatste stap zelf de landen kiezen; de checklist werkt daar net zo goed op.",
-  "wizard.wanneer.kop": "Wanneer vertrek je?",
+  "wizard.wanneer.kop": "Wanneer ¦ vertrek je?",
   "wizard.wanneer.uitleg": "De datum bepaalt of winterbanden gelden en welke regels op je vertrekdag van kracht zijn.",
   "wizard.wanneer.hint": "De vertrekdatum heeft de app nodig: zonder die datum kan hij niet zeggen wát er wanneer geregeld moet zijn. De retourdatum is optioneel en wordt alleen gebruikt om je reis te tonen.",
   "wizard.retourdatum": "Retourdatum (optioneel)",
-  "wizard.auto.kop": "Jouw auto",
+  "wizard.auto.kop": "Jouw ¦ auto",
   "wizard.auto.uitleg": "Hiermee bepaalt de app of je de milieuzones in mag en welke uitrusting voor jou verplicht is.",
   "wizard.auto.kentekenHint": "Bepaalt welke uitrustingseisen voor jou gelden en waar je je moet registreren.",
   "wizard.auto.brandstofHint": "Rijd je een diesel-hybride, kies dan diesel: milieuzones kijken naar de verbrandingsmotor.",
@@ -452,8 +480,8 @@ nl: {
   "wizard.auto.gewicht": "Gewicht in kg",
   "wizard.auto.hoogte": "Hoogte in meter",
   "wizard.auto.optioneelHint": "Nog niet in gebruik voor de checklist. Ze worden bewaard bij je reis, voor tolregels die van hoogte of gewicht afhangen.",
-  "wizard.analyse.kop": "Analyseer mijn reis",
-  "wizard.analyse.klaarKop": "Jouw reis is klaar.",
+  "wizard.analyse.kop": "Analyseer ¦ mijn reis",
+  "wizard.analyse.klaarKop": "Jouw reis ¦ is klaar.",
   "wizard.analyse.start": "Analyseer mijn reis",
   "wizard.analyse.opnieuw": "Opnieuw analyseren",
   "wizard.analyse.klaarZin": "Je persoonlijke checklist staat klaar.",
@@ -486,7 +514,7 @@ nl: {
   "wizard.fout.algemeenTekst": "Er ging iets mis: {reden}. Controleer de plaatsnamen en probeer het opnieuw, of kies de landen zelf.",
 
   /* ---------------- kostenpagina ---------------- */
-  "kosten.kop": "Kosten onderweg",
+  "kosten.kop": "Kosten ¦ onderweg",
   "kosten.geschat": "Geschatte kosten heen en terug",
   "kosten.totaalRetour": "Totaal heen en terug",
   "kosten.geenBedragTotaal": "Er valt op deze route niets op te tellen.",
@@ -822,7 +850,7 @@ en: {
   "nav.donkereModusOm": "Toggle dark mode",
   "nav.help": "Help",
 
-  "planner.titel": "Route and map",
+  "planner.titel": "Route ¦ and map",
   "planner.van": "From",
   "planner.naar": "To",
   "planner.vertrekplaats": "Starting point",
@@ -903,7 +931,7 @@ en: {
   "kaart.uitzoomen": "Zoom out",
   "kaart.leeg": "Fill in a from and to to see the route.",
 
-  "checklist.titel": "This is what you need to arrange",
+  "checklist.titel": "This is what ¦ you need to arrange",
   "checklist.voortgang": "Progress",
   "checklist.gereed": "{pct}% done",
   "checklist.documenten": "Documents",
@@ -999,7 +1027,7 @@ en: {
   "landen.regio.Zuid": "South",
   "landen.regio.Noord": "North",
 
-  "reizen.kop": "My Trips",
+  "reizen.kop": "My ¦ trips",
   "reizen.intro": "Manage saved routes and check your preparations for upcoming trips.",
   "reizen.nieuweReis": "Plan a new trip",
   "reizen.planNieuwe": "Plan a new trip",
@@ -1020,7 +1048,7 @@ en: {
   "trip.verwijderBevestig": "Delete \"{naam}\"? This cannot be undone.",
   "trip.naamPrompt": "Name for this trip:",
 
-  "reis.kop": "Your trip, stop by stop",
+  "reis.kop": "Your trip, ¦ stop by stop",
   "reis.intro": "Scroll down to travel through your trip and discover the obligations per country.",
   "reis.start": "Start",
   "reis.bestemming": "Destination",
@@ -1082,6 +1110,34 @@ en: {
   "kalender.zuid": "southbound",
   "kalender.noord": "northbound",
   "kalender.vertrek": "departure direction",
+  "nav.kalender": "When to drive",
+  "kalender.kop": "When ¦ to drive?",
+  "kalender.intro": "Expected traffic on the north–south axis through Europe, {richting}. Published forecasts win over rules of thumb; pick a day for the explanation.",
+  "kalender.heen": "Outbound",
+  "kalender.terug": "Return",
+  "kalender.richting": "Direction",
+  "kalender.vorigeMaand": "Previous month",
+  "kalender.volgendeMaand": "Next month",
+  "kalender.weekdagen": "Mo,Tu,We,Th,Fr,Sa,Su",
+  "kalender.weekdagenVol": "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday",
+  "kalender.vandaag": "today",
+  "kalender.vertrekdag": "your departure day",
+  "kalender.retourdag": "your return day",
+  "kalender.niveau.rustig": "Quiet",
+  "kalender.niveau.matig": "Some traffic",
+  "kalender.niveau.druk": "Busy",
+  "kalender.niveau.zeerdruk": "Very busy",
+  "kalender.niveau.zwart": "Black Saturday",
+  "kalender.legenda": "Legend",
+  "kalender.geenPrognose": "Outside the known busy periods: no forecast, expect an ordinary day.",
+  "kalender.afgeleid": "Derived from a rule of thumb, not a published forecast.",
+  "kalender.prognose": "Published forecast.",
+  "kalender.bron": "Source",
+  "kalender.bronnen": "Sources",
+  "kalender.gecontroleerd": "Last checked on {datum}.",
+  "kalender.geenData": "The traffic calendar could not be loaded. Without coverage it appears once drukte.json has been fetched once.",
+  "kalender.vertrekdagKop": "Traffic on departure day",
+  "kalender.geenDatum": "no date",
 
   /* ---------------- information architecture (§3) ---------------- */
   "nav.reisPagina": "Trip",
@@ -1102,7 +1158,7 @@ en: {
   "alg.periodeZelfdeMaand": "{van}–{tot} {maand} {jaar}",
 
   /* ---------------- home page (§4) ---------------- */
-  "home.hero": "Cross the border prepared.",
+  "home.hero": "Cross the border ¦ prepared.",
   "home.sub": "Check in one minute what you need to arrange for your drive through Europe.",
   "home.cta": "Plan my trip",
   "home.belofte.gratis": "Free",
@@ -1126,7 +1182,7 @@ en: {
 
   /* ---------------- trip dashboard (§6) ---------------- */
   "dashboard.voortgang": "Progress",
-  "dashboard.klaar": "You are {pct}% ready",
+  "dashboard.klaar": "You are ¦ {pct}% ready",
   "dashboard.geregeld": "done",
   "dashboard.acties.een": "action",
   "dashboard.acties.meer": "actions",
@@ -1197,15 +1253,15 @@ en: {
   "wizard.verder.datum": "Next: the dates",
   "wizard.verder.auto": "Next: your car",
   "wizard.verder.analyse": "Next: the analysis",
-  "wizard.waar.kop": "Where are you going?",
+  "wizard.waar.kop": "Where ¦ are you going?",
   "wizard.waar.uitleg": "Pick your starting point and your destination. The app works out which countries you drive through.",
   "wizard.waar.hint": "If your town is not listed, choose “search online”. You can always adjust the countries afterwards.",
   "wizard.waar.geenSteden": "The place list could not be loaded. You can choose the countries yourself in the last step; the checklist works just as well that way.",
-  "wizard.wanneer.kop": "When are you leaving?",
+  "wizard.wanneer.kop": "When ¦ are you leaving?",
   "wizard.wanneer.uitleg": "The date decides whether winter tyres apply and which rules are in force on your departure day.",
   "wizard.wanneer.hint": "The app needs the departure date: without it, it cannot say what has to be arranged when. The return date is optional and is only used to show your trip.",
   "wizard.retourdatum": "Return date (optional)",
-  "wizard.auto.kop": "Your car",
+  "wizard.auto.kop": "Your ¦ car",
   "wizard.auto.uitleg": "This tells the app whether you may enter the low-emission zones and which equipment is mandatory for you.",
   "wizard.auto.kentekenHint": "Decides which equipment rules apply to you and where you have to register.",
   "wizard.auto.brandstofHint": "Driving a diesel hybrid? Choose diesel: low-emission zones look at the combustion engine.",
@@ -1214,8 +1270,8 @@ en: {
   "wizard.auto.gewicht": "Weight in kg",
   "wizard.auto.hoogte": "Height in metres",
   "wizard.auto.optioneelHint": "Not used by the checklist yet. They are stored with your trip, for toll rules that depend on height or weight.",
-  "wizard.analyse.kop": "Analyse my trip",
-  "wizard.analyse.klaarKop": "Your trip is ready.",
+  "wizard.analyse.kop": "Analyse ¦ my trip",
+  "wizard.analyse.klaarKop": "Your trip ¦ is ready.",
   "wizard.analyse.start": "Analyse my trip",
   "wizard.analyse.opnieuw": "Analyse again",
   "wizard.analyse.klaarZin": "Your personal checklist is waiting.",
@@ -1248,7 +1304,7 @@ en: {
   "wizard.fout.algemeenTekst": "Something went wrong: {reden}. Check the place names and try again, or pick the countries yourself.",
 
   /* ---------------- costs page ---------------- */
-  "kosten.kop": "Costs on the way",
+  "kosten.kop": "Costs ¦ on the way",
   "kosten.geschat": "Estimated costs there and back",
   "kosten.totaalRetour": "Total there and back",
   "kosten.geenBedragTotaal": "There is nothing on this route we can add up.",
@@ -1563,7 +1619,10 @@ en: {
    Nederlands en niet op de sleutel zelf: een half vertaalde taal moet leesbaar
    blijven. Ontbreekt hij ook daar, dan verschijnt de sleutel — dat is een bug
    en die hoort zichtbaar te zijn. */
-function i18n(sleutel, params){
+/* De ruwe vertaling, inclusief het ¦-teken waarmee een kop in twee kleuren
+   gesplitst wordt (kopHTML() in js/util.js). Alleen die helper leest dit;
+   de rest van de app gebruikt i18n() hieronder, zonder teken. */
+function i18nRuw(sleutel, params){
   var tabel = VERTALINGEN[TAAL] || VERTALINGEN.nl;
   var tekst = tabel[sleutel];
   if(tekst === undefined) tekst = VERTALINGEN.nl[sleutel];
@@ -1572,6 +1631,10 @@ function i18n(sleutel, params){
   return tekst.replace(/\{(\w+)\}/g, function(heel, naam){
     return params[naam] === undefined || params[naam] === null ? "" : String(params[naam]);
   });
+}
+
+function i18n(sleutel, params){
+  return i18nRuw(sleutel, params).replace(/\s*¦\s*/g, " ");
 }
 
 /* Meervoud. Alleen "één" tegenover "de rest" — dat dekt Nederlands en Engels.
@@ -1616,6 +1679,11 @@ function pasTaalToe(){
   var kaarten = [
     ["data-i18n",             function(el, tekst){ el.textContent = tekst; }],
     ["data-i18n-html",        function(el, tekst){ el.innerHTML = tekst; }],
+    /* Een statische kop in twee kleuren; de helper staat in js/util.js en is
+       er altijd zodra dit draait (pasTaalToe wordt pas na het laden van alle
+       scripts aangeroepen). */
+    ["data-i18n-kop",         function(el, tekst){
+      el.innerHTML = typeof kopHTML === "function" ? kopHTML(el.getAttribute("data-i18n-kop")) : tekst; }],
     ["data-i18n-placeholder", function(el, tekst){ el.setAttribute("placeholder", tekst); }],
     ["data-i18n-aria",        function(el, tekst){ el.setAttribute("aria-label", tekst); }],
     ["data-i18n-title",       function(el, tekst){ el.setAttribute("title", tekst); }]
