@@ -28,7 +28,7 @@ var STATUS_TEKEN = {
 function statusChipHTML(status){
   return '<span class="statuschip s-' + esc(status) + '">' +
     '<span class="teken" aria-hidden="true">' + STATUS_TEKEN[status] + "</span>" +
-    esc(i18n("status." + status)) + "</span>";
+    '<span class="sw">' + esc(i18n("status." + status)) + "</span></span>";
 }
 
 /* §13: vier niveaus, met de controledatum erbij zodra hij bekend is.

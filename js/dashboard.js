@@ -44,6 +44,15 @@ function routelijnHTML(trip){
 }
 
 /* ---------------- kop ---------------- */
+/* De reis in één regel, voor de topstrook: "Utrecht — Salzburg". */
+function reisNaamKort(trip){
+  var landen = tripLanden(trip);
+  var van = trip.origin ? trip.origin.naam : (landen[0] && BY_CODE[landen[0]].name) || "";
+  var naar = trip.destination ? trip.destination.naam
+           : (landen.length > 1 ? BY_CODE[landen[landen.length - 1]].name : "");
+  return van + (naar ? " \u2014 " + naar : "");
+}
+
 function dashboardKopHTML(trip){
   var landen = tripLanden(trip);
 
@@ -52,8 +61,6 @@ function dashboardKopHTML(trip){
            : (landen.length > 1 ? BY_CODE[landen[landen.length - 1]].name : "");
 
   return '<header class="dashkop">' +
-    deelMeldingHTML() +
-    routelijnHTML(trip) +
     "<h1>" + esc(van) + (naar ? " → " + esc(naar) : "") + "</h1>" +
     '<p class="dashmeta">' + esc(reisPeriodeTekst(trip)) + "</p>" +
     '<p class="dashmeta">' + esc(voertuigSamenvatting(trip)) +
@@ -77,15 +84,13 @@ function dashboardVoortgangHTML(trip){
   ].filter(function(t){ return t.n > 0 || t.klasse === "s-ok" || t.klasse === "s-todo"; });
 
   return '<section class="dashkaart voortgang">' +
-    '<h2 class="groot">' + kopHTML("dashboard.klaar", { pct:pct }) + "</h2>" +
+    "<h2>" + kopHTML("dashboard.klaar", { pct:pct }) + "</h2>" +
     '<div class="progressbar" role="progressbar" aria-valuenow="' + pct +
       '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pct + '%"></i></div>' +
     '<ul class="statustellers">' + tellers.map(function(t){
       return '<li class="' + t.klasse + '">' + iconUse(t.icoon) +
         "<b>" + t.n + "</b> <span>" + esc(t.label) + "</span></li>";
     }).join("") + "</ul>" +
-    '<button type="button" class="btn primary wide" data-view="acties">' +
-      esc(i18n("dashboard.naarActies")) + " " + iconUse("arrow-right") + "</button>" +
   "</section>";
 }
 
@@ -93,19 +98,25 @@ function dashboardVoortgangHTML(trip){
    Blokkades bovenaan, daarna de openstaande acties op deadline. Dezelfde
    actielijst als op de actiepagina (js/actions.js), alleen ingekort: het
    dashboard toont wat er nu speelt, de actiepagina het geheel. */
+/* Een registerregel: het bord links, de tekst, en rechts de prijs als die
+   bekend is, met de vlag eronder. Het statuswoord blijft voor de schermlezer. */
 function actieRegelHTML(a){
   var land = a.landen[0];
+  var prijs = a.prijs
+    ? '<span class="prijs">' + esc(a.prijs.vanaf ? i18n("actie.prijsVanaf") + " " : "") +
+      "&euro;" + euroTekst(a.prijs.bedrag) + "</span>"
+    : "";
   return '<li class="actierij s-' + esc(a.status) + '">' +
-    (land ? flagHTML(land) : iconUse("globe")) +
+    '<span class="actiestatus">' +
+      '<span class="teken" aria-hidden="true">' + STATUS_TEKEN[a.status] + "</span>" +
+      '<span class="sr">' + esc(i18n("status." + a.status)) + "</span></span>" +
     '<div class="actietekst">' +
       '<span class="wat">' + esc(a.wat) + "</span>" +
       (a.waarom ? '<span class="waarom">' + esc(a.waarom) + "</span>" : "") +
       (a.deadline ? '<span class="deadlinechip u-' + esc(a.deadline.urgentie) + '">' +
         esc(deadlineTekst(a.deadline)) + "</span>" : "") +
     "</div>" +
-    '<span class="actiestatus">' +
-      '<span class="teken" aria-hidden="true">' + STATUS_TEKEN[a.status] + "</span>" +
-      esc(i18n("status." + a.status)) + "</span>" +
+    '<span class="actierechts">' + prijs + (land ? flagHTML(land) : "") + "</span>" +
   "</li>";
 }
 
@@ -121,15 +132,22 @@ function dashboardActiesHTML(trip){
       '<p class="leeg">' + iconUse("check") + esc(i18n("dashboard.allesGeregeld")) + "</p></section>";
   }
 
-  var lijst = blokkades.concat(open.slice(0, 5)).map(actieRegelHTML).join("");
+  var getoond = blokkades.concat(open.slice(0, 5));
+  var lijst = getoond.map(actieRegelHTML).join("");
   var rest = open.length - Math.min(open.length, 5);
   var meer = rest > 0
     ? '<button type="button" class="tekstknop" data-view="acties">' +
       esc(i18nAantal("dashboard.nogMeer", rest)) + "</button>"
     : "";
 
-  return '<section class="dashkaart dashacties"><h2>' + esc(i18n("dashboard.actiesKop")) + "</h2>" +
-    '<ul class="actielijst">' + lijst + "</ul>" + meer + "</section>";
+  /* De kop draagt de telling ("3 van 11") en onder de lijst staat de gele
+     afslag naar alle acties: het register en zijn wegwijzer. */
+  return '<section class="dashkaart dashacties"><h2>' + esc(i18n("dashboard.actiesKop")) +
+      '<span class="regtel">' + esc(i18n("dashboard.telling", { n:getoond.length, totaal:acties.length })) + "</span></h2>" +
+    '<ul class="actielijst">' + lijst + "</ul>" + meer +
+    '<button type="button" class="btn primary wide" data-view="acties">' +
+      esc(i18n("dashboard.naarActies")) + " " + iconUse("arrow-right") + "</button>" +
+  "</section>";
 }
 
 /* ---------------- toevoeging 1: het boetekans-totaal ----------------
@@ -281,15 +299,19 @@ function renderDashboard(){
   if(!wrap || !TRIP || !DATA) return;
   if(!tripIsKlaar(TRIP)){ wrap.innerHTML = dashboardLeegHTML(); return; }
 
+  /* In de volgorde van een atlasblad: eerst het afstandsbord, dan de route
+     als wegwijzers, dan de reis zelf, dan het register met wat je moet doen. */
   wrap.innerHTML =
+    deelMeldingHTML() +
+    dashboardCijfersHTML(TRIP) +
+    routelijnHTML(TRIP) +
     dashboardKopHTML(TRIP) +
     '<div class="dashgrid">' +
       '<div class="dashkolom">' +
-        dashboardVoortgangHTML(TRIP) +
         dashboardActiesHTML(TRIP) +
+        dashboardVoortgangHTML(TRIP) +
       "</div>" +
       '<div class="dashkolom">' +
-        dashboardCijfersHTML(TRIP) +
         boetekansHTML(TRIP) +
         '<section class="dashkaart snelkoppelingen">' +
           '<button type="button" class="snelrij" data-view="regels">' + iconUse("flag") +

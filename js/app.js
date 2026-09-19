@@ -37,6 +37,34 @@ function render(){
   verversSosKnop();
   var fn = RENDERS[VIEW];
   if(fn) fn();
+  zetTopstrook();
+}
+
+/* De topstrook op een telefoon is de kop van een atlasblad: onder het merk de
+   reis waar dit scherm over gaat, rechts in een bladvakje het ene getal dat
+   hier telt — op het dashboard hoeveel procent klaar is, op de actiepagina
+   hoeveel er nog open staan. Zonder reis staat er de ondertitel van de app. */
+function zetTopstrook(){
+  var sub = document.getElementById("topsub"), blad = document.getElementById("topblad");
+  if(!sub || !blad) return;
+  var reis = (typeof TRIP !== "undefined" && TRIP && DATA && tripIsKlaar(TRIP)) ? reisNaamKort(TRIP) : "";
+  var tekst = reis || i18n("app.tagline"), label = "", waarde = "";
+  if(reis && VIEW === "dashboard"){
+    var t = checklistTelling(TRIP);
+    label = i18n("topstrook.klaar");
+    waarde = (t.totaal ? Math.round(t.gedaan / t.totaal * 100) : 0) + " %";
+  }else if(reis && VIEW === "acties"){
+    var a = actieTelling(TRIP);
+    label = i18n("topstrook.nog");
+    waarde = String(a.open);
+    if(TRIP.departureDate) tekst += " \u00b7 " + fmtDateKort(TRIP.departureDate);
+  }else if(VIEW === "home" || VIEW === "wizard"){
+    tekst = i18n("app.tagline");
+  }
+  sub.textContent = tekst;
+  document.getElementById("topblad-lbl").textContent = label;
+  document.getElementById("topblad-val").textContent = waarde;
+  blad.hidden = !label;
 }
 
 /* ---------------- view-switching ---------------- */

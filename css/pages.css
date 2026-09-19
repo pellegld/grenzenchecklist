@@ -13,9 +13,11 @@
 /* Een "kaart" is in de atlas een registerblok: een dikke lijn erboven, een
    kleine bordletterkop, en de inhoud eronder. Geen doos, geen schaduw. */
 .dashkaart{border-top:2px solid var(--ink);padding:10px 0 0;margin-bottom:var(--sp-section);background:none}
-.dashkaart h2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px;
-  font:700 .8125rem/1.2 var(--f-display);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.dashkaart h2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 6px;
+  font:800 .8125rem/1.2 var(--f-display);letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
 .dashkaart h2 .icon{display:none}
+.dashkaart h2 .k2,.dashkaart h2 .regtel{color:var(--ink-3);font-weight:700}
+.dashkaart h2 .regtel{margin-left:auto;letter-spacing:.1em}
 .dashkaart h2.groot{font:800 2.5rem/.95 var(--f-display);letter-spacing:.005em;color:var(--ink);margin-bottom:var(--sp-sm);display:block}
 @media (min-width:760px){ .dashkaart h2.groot{font-size:3rem} }
 .dashkaart>.hint{margin-bottom:10px}
@@ -83,6 +85,10 @@
 .verderkaart .btn{flex:0 0 auto}
 
 .hero{display:flex;flex-direction:column;gap:var(--sp-lg);margin:var(--sp-md) 0 var(--sp-section)}
+/* 's Nachts is het tweede deel van de kop geel, als een afslagpijl in het
+   donker; overdag zou geel op papier te bleek zijn (1,5:1). */
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .hero h1 .k2{color:var(--geel)} }
+:root[data-theme="dark"] .hero h1 .k2{color:var(--geel)}
 @media (min-width:1000px){
   .hero{flex-direction:row;align-items:center;gap:var(--sp-xl);margin-top:var(--sp-lg)}
   .hero>*{flex:1 1 0;min-width:0}
@@ -196,7 +202,9 @@
    Reisdashboard (§6)
    ================================================================ */
 .dashkop{margin-bottom:var(--sp-md)}
-.dashkop h1{margin:0 0 4px}
+.dashkop h1{margin:0 0 4px;font-size:2rem}
+#dashboard-wrap>.cijfergrid{margin:0 0 var(--sp-md)}
+#dashboard-wrap>.routelijn{margin-bottom:var(--sp-md)}
 .dashmeta{font:500 .9375rem/1.5 var(--f-body);color:var(--ink-2)}
 .dashkop .dashmeta:first-of-type{font:700 1rem/1.3 var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
 .dashmeta .tekstknop{margin-left:4px}
@@ -213,15 +221,18 @@
 
 .dashkaart.dashacties{margin-bottom:var(--sp-section)}
 #dashboard-wrap .actielijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.actierij{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--paper-line)}
-.actierij:last-child{border-bottom:0}
-.actierij .flag{margin-top:3px}
+.actierij{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--paper-line)}
+.actierij .actiestatus{border:0;padding:0;min-height:0;background:none;margin-top:1px}
+.actierij .actiestatus .teken{width:30px;height:30px;font-size:.9375rem}
+.actierij .actierechts{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto;margin-top:3px}
+.actierij .prijs{font:700 .9375rem/1 var(--f-display);letter-spacing:.02em;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums}
+.actierij .flag{width:22px;height:15px}
 .actierij>.icon{color:var(--ink-2);margin-top:2px}
 .actietekst{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
 .actietekst .wat{font:600 1.0625rem/1.25 var(--f-body);color:var(--ink)}
 .actietekst .waarom{font:400 .875rem/1.4 var(--f-body);color:var(--ink-2)}
 .actietekst .deadlinechip{align-self:flex-start;margin-top:5px}
-.actierij .actiestatus{flex:0 0 auto;margin-top:1px}
+.dashacties .btn.primary{margin-top:var(--sp-sm)}
 .dashkaart .leeg{display:flex;align-items:center;gap:8px;font:500 .9375rem/1.4 var(--f-body);color:var(--ink-2)}
 .dashkaart .leeg .icon{color:var(--groen)}
 #dashboard-wrap .tekstknop{margin-top:var(--sp-sm)}
@@ -293,6 +304,7 @@
 /* ================================================================
    Acties (§7, §8, §13, §16): het register
    ================================================================ */
+#checklist-wrap h1{font-size:2rem}
 .progresscard{position:sticky;top:var(--topbar-h);z-index:5;background:var(--paper);border-bottom:2px solid var(--ink);
   padding:6px 0 10px;margin:0 0 var(--sp-md)}
 @media (min-width:1024px){ .progresscard{top:0;padding-top:0} }
@@ -305,11 +317,11 @@
 .actiegroep{margin-bottom:var(--sp-section)}
 .actiegroep>details>summary{list-style:none;cursor:pointer}
 .actiegroep>details>summary::-webkit-details-marker{display:none}
-.groepkop{display:flex;flex-direction:column;gap:4px;margin-bottom:6px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
-.groepkop h2{display:flex;align-items:center;gap:10px;margin:0;font:800 1.375rem/1 var(--f-display);letter-spacing:.03em}
-.groepteken{width:28px;height:28px;font-size:.9375rem}
-.groeptel{margin-left:auto;font:800 1rem/1 var(--f-display);color:var(--ink-3);font-variant-numeric:tabular-nums}
-.groepuitleg{font:400 .875rem/1.4 var(--f-body);color:var(--ink-2);max-width:66ch;padding-left:38px}
+.groepkop{display:flex;flex-direction:column;gap:4px;margin-bottom:0;padding:10px 0 6px;border-top:2px solid var(--ink)}
+.groepkop h2{display:flex;align-items:center;gap:10px;margin:0;font:800 .8125rem/1.2 var(--f-display);letter-spacing:.18em;text-transform:uppercase}
+.groepteken{display:none}
+.groeptel{margin-left:auto;font:700 .8125rem/1 var(--f-display);letter-spacing:.1em;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.groepuitleg{font:400 .875rem/1.4 var(--f-body);color:var(--ink-2);max-width:66ch}
 .actiegroep>details>summary .groepkop{margin-bottom:0}
 .actiegroep>details>summary .groepkop h2::after{content:"+";margin-left:4px;width:22px;height:22px;flex:0 0 auto;
   border:2px solid var(--ink);display:inline-flex;align-items:center;justify-content:center;font:800 .9375rem/1 var(--f-display)}
@@ -319,11 +331,21 @@
 /* De actie: een registerregel. Alleen een blokkade of een onbekende krijgt
    een eigen bord eromheen. */
 #checklist-wrap .actielijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.actiekaart{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--paper-line);background:none}
-.actiekaart:last-child{border-bottom:0}
-.actiekaart.s-blokkade{background:var(--wit);border:3px solid var(--rood);color:var(--bord-tekst);padding:12px;margin:6px 0}
+.actiekaart{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--paper-line);background:none}
+/* Het bord rechts: de statuschip uit de metaregel verhuist naar de rechterkant
+   van de regel, alleen het teken zichtbaar, het woord voor de schermlezer. */
+.actiekaart .actiehoofd{order:1}
+.actiekaart .actiemeta .statuschip{position:absolute;right:0;top:12px;border:0;padding:0;min-height:0;background:none;gap:0}
+.actiekaart .actiemeta .statuschip .teken{width:30px;height:30px;font-size:.9375rem}
+.actiekaart .actiemeta .statuschip .sw{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.actiekaart .actiemerk~.actiehoofd .statuschip{display:none}
+.actiekaart{position:relative;padding-right:42px}
+.actiekaart .actiemeta:has(.statuschip:only-child){display:none}
+.actiekaart.s-blokkade{background:var(--wit);border:3px solid var(--rood);color:var(--bord-tekst);padding:12px 42px 12px 12px;margin:6px 0}
+.actiekaart.s-blokkade .actiemeta .statuschip{right:8px}
 .actiekaart.s-blokkade .actietitel,.actiekaart.s-blokkade .actieuitleg,.actiekaart.s-blokkade .waaromtekst{color:var(--bord-tekst)}
-.actiekaart.s-onbekend{background:var(--paper-2);border-left:4px solid var(--rood);padding:12px 12px 12px 14px;margin:6px 0;border-bottom:0}
+.actiekaart.s-onbekend{background:var(--paper-2);border-left:4px solid var(--rood);padding:12px 42px 12px 14px;margin:6px 0;border-bottom:0}
+.actiekaart.s-onbekend .actiemeta .statuschip{right:8px}
 .actiekaart.af .actietitel span{text-decoration:line-through;color:var(--ink-3)}
 .actievink{appearance:none;-webkit-appearance:none;width:26px;height:26px;flex:0 0 auto;margin:1px 0 0;cursor:pointer;
   border:2.5px solid var(--bord-tekst);background:var(--wit);border-radius:0}
@@ -362,17 +384,24 @@
 #kaartlaag{transition:none}
 .land{fill:var(--map-land);stroke:var(--map-line);stroke-width:1;vector-effect:non-scaling-stroke}
 .land.op-route{fill:var(--map-land-route);stroke:var(--ink-3)}
-/* De route als rode hoofdweg met donkere rand, zoals in een Michelin-atlas. */
-.routeline-glow{fill:none;stroke:var(--rood-d);stroke-width:9;stroke-linecap:round;stroke-linejoin:round;opacity:1}
-.routeline{fill:none;stroke:var(--rood);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+/* De route als rode hoofdweg met donkere rand en een gestippelde middenstreep,
+   zoals in een Michelin-atlas. De dikte staat in schermpixels
+   (non-scaling-stroke): inzoomen maakt de weg breder in de wereld, niet op
+   het scherm. */
+.routeline-glow{fill:none;stroke:var(--rood-d);stroke-width:10;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.routeline{fill:none;stroke:var(--rood);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.routeline-midden{fill:none;stroke:#FFD9A0;stroke-width:1.5;stroke-dasharray:8 8;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+
+/* Markers op schermformaat (pasHitVlakkenAan() schaalt ze): een stip van
+   negen pixels voor begin en eind, elf met een letter voor tol en zone. */
 .marker{cursor:pointer}
 .mhit{fill:transparent;cursor:pointer}
 .marker .mring{fill:var(--wit);opacity:1}
 .marker .mdot{fill:var(--blauw);stroke:var(--wit);stroke-width:2.5}
-.marker .mteken{text-anchor:middle;font:800 12px/1 var(--f-display);fill:var(--wit);pointer-events:none;user-select:none}
+.marker .mteken{text-anchor:middle;font:800 13px/1 var(--f-display);fill:var(--wit);pointer-events:none;user-select:none}
 .marker:hover .mring,.marker:focus-visible .mring{fill:var(--geel)}
 .marker:focus-visible{outline:none}
-.m-start .mdot{fill:var(--wit);stroke:var(--bord-tekst);stroke-width:3.5}
+.m-start .mdot{fill:var(--wit);stroke:var(--bord-tekst);stroke-width:3}
 .m-eind .mdot{fill:var(--bord-tekst);stroke:var(--wit);stroke-width:3}
 .m-tol .mdot{fill:var(--blauw)}
 .m-optioneel .mdot{fill:var(--ink-3)}
@@ -380,15 +409,32 @@
 .m-zonebad .mdot{fill:var(--wit);stroke:var(--rood);stroke-width:4}
 .m-zonebad .mteken{fill:var(--bord-tekst)}
 
+/* Het naambordje naast de stip: een wit vlak met zwarte rand zoals een
+   plaatsnaam in een atlas; groen voor een milieuzone, rood als deze auto er
+   niet in mag. Tolpunten krijgen hun naam alleen op een breed scherm — op een
+   telefoon zouden ze de route bedekken. */
+.mlabel rect{fill:var(--wit);stroke:var(--bord-tekst);stroke-width:2}
+.mlabel text{font:700 14px/1 var(--f-display);letter-spacing:.06em;fill:var(--bord-tekst);pointer-events:none;user-select:none}
+.m-zone .mlabel rect{stroke:var(--groen)}
+.m-zone .mlabel text{fill:var(--groen)}
+.m-zonebad .mlabel rect{stroke:var(--rood)}
+.m-zonebad .mlabel text{fill:var(--rood)}
+.m-tol .mlabel{display:none}
+@media (min-width:1024px){ .m-tol .mlabel{display:block} }
+
+/* De legenda: route, markertypen en de schaalbalk in één wit bordje. */
 .kaartlegenda{position:absolute;left:var(--sp-sm);bottom:var(--sp-sm);z-index:8;pointer-events:none;list-style:none;margin:0;
   padding:7px 10px;display:flex;flex-wrap:wrap;gap:4px 12px;background:var(--wit);border:2px solid var(--bord-tekst);
-  max-width:calc(100% - 2 * var(--sp-sm))}
-.kaartlegenda li{display:flex;align-items:center;gap:6px;font:700 .6875rem/1.3 var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--bord-tekst)}
+  max-width:calc(100% - 68px)}
+.kaartlegenda li{display:flex;align-items:center;gap:6px;font:700 .75rem/1.3 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--bord-tekst)}
+.lroute{display:inline-block;width:18px;height:6px;background:var(--rood);border:1px solid var(--rood-d);flex:0 0 auto}
 .lmarker{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;flex:0 0 auto;
   font:800 .625rem/1 var(--f-display);color:var(--wit);background:var(--blauw)}
 .lmarker.m-optioneel{background:var(--ink-3)}
 .lmarker.m-zone{background:var(--groen)}
 .lmarker.m-zonebad{background:var(--wit);color:var(--bord-tekst);box-shadow:inset 0 0 0 3px var(--rood)}
+.lschaal{font-variant-numeric:tabular-nums}
+.lschaal i{display:inline-block;height:7px;width:40px;border:2px solid var(--bord-tekst);border-top:0;flex:0 0 auto;margin-top:-4px}
 
 /* De popup: een wit bord bij de marker; op een telefoon een blad onderaan. */
 .kaartpopup{position:absolute;z-index:12;width:min(19rem,calc(100% - 16px));background:var(--wit);border:2px solid var(--bord-tekst);

@@ -74,9 +74,13 @@
 
 <div id="app">
 
+<!-- De topstrook: de kop van een atlasblad. Onder het merk de reis waar dit
+     scherm over gaat, rechts het ene getal dat hier telt (zetTopstrook() in
+     js/app.js), en de twee schakelaars. -->
 <nav class="topbar">
-  <button type="button" class="brand" data-view="home" data-i18n="app.naam">Grenschecklist</button>
+  <button type="button" class="brand" data-view="home"><span data-i18n="app.naam">Grenschecklist</span><small class="topsub" id="topsub"></small></button>
   <span class="topbar-acties">
+    <span class="topblad" id="topblad" hidden><span class="tblbl" id="topblad-lbl"></span><b id="topblad-val"></b></span>
     <button type="button" class="taalknop" id="taal-toggle-mobiel"
             aria-label="Taal" data-i18n-aria="taal.kies">NL</button>
     <button type="button" class="icon-toggle" id="dark-toggle-mobiel" aria-label="Donkere modus omschakelen" data-i18n-aria="nav.donkereModusOm">
@@ -207,7 +211,10 @@
 <!-- ================= Kaart ================= -->
 <section class="view view-kaart" id="view-kaart" hidden>
   <section class="panel-route">
-    <h1 data-i18n-kop="planner.titel">Route en kaart</h1>
+    <div class="kaartkop">
+      <h1 data-i18n-kop="planner.titel">Route en kaart</h1>
+      <span class="kaartcodes" id="kaartcodes"></span>
+    </div>
 
     <div class="fields" id="planner" hidden>
       <div class="field">

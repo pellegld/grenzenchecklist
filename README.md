@@ -206,8 +206,20 @@ haalt het teken weg voor platte tekst. Statische koppen in `index.html` gebruike
 - De landen op de route staan als gestapelde wegwijzers (blauw, de bestemming groen) boven het
   dashboard en op de reiskaarten van Mijn reizen.
 - Het atlasblad: crème papier met een kilometerraster, landen in papiertinten, de route als
-  rode hoofdweg met donkere rand, tolpunten blauw met €, milieuzones groen met Z, een zone
-  waar de auto niet in mag als witte schijf met rode ring.
+  rode hoofdweg met donkere rand en gestippelde middenstreep (in schermpixels, dus inzoomen
+  maakt hem niet dikker), tolpunten blauw met €, milieuzones groen met Z, een zone waar de
+  auto niet in mag als witte schijf met rode ring. Elke plaats krijgt een naambordje (wit met
+  zwarte rand, groen voor een zone, rood voor een verboden zone); `plaatsNaambordjes()` in
+  `js/map.js` legt ze zo neer dat ze niet over elkaar of buiten het blad vallen. De legenda
+  draagt een schaalbalk die met de zoom meebeweegt. De kop van het routepaneel toont rechts de
+  landcodes ("NL · DE · AT") en de veldnamen VAN en NAAR staan ín het veld.
+- De topstrook op een telefoon is de kop van een atlasblad: onder het merk de reis, rechts een
+  bladvakje met het ene getal dat op dit scherm telt (KLAAR 9 % op het dashboard, NOG 10 op de
+  actiepagina; `zetTopstrook()` in `js/app.js`).
+- Het dashboard leest als een atlasblad: afstandsbord, wegwijzers, de reis, dan het register
+  "Dit moet je regelen" met de telling rechts, het bord links en de prijs rechts per regel, en
+  eronder de gele afslag. Op de actiepagina staat het vinkje links en het bord rechts; deadlines
+  zijn korte bordletters met gele (of rode) onderstreping: "UITERLIJK 22 SEP".
 - Beweging alleen op `opacity` en `transform`, kort; `prefers-reduced-motion` zet alles uit.
 
 **Onderzoeksdatum data: 19 augustus 2026.** Elk land draagt een eigen `lastVerified`-datum die
@@ -643,7 +655,7 @@ pagina bestond, is dat nog steeds.
 
 ```
 🇦🇹 Vignet kopen voor Oostenrijk
-   ! Actie · 📅 Regel dit uiterlijk 2 september 2026 · Vanaf € 9,60
+   ! Actie · 📅 Uiterlijk 2 sep · Vanaf € 9,60
    Digitaal via de ASFINAG-webshop of app, of als sticker bij tankstations…
    ⚠ Niet zeker — controleer de officiële bron. Prijzen worden jaarlijks
      geïndexeerd. Officiële website →
@@ -687,7 +699,7 @@ zoeken en niets vonden.
 
 Elke actie kan een deadline krijgen, teruggerekend vanaf `departureDate` (§8):
 
-> 🔴 Vandaag regelen · 🟠 Regel dit uiterlijk 7 juli · Dit had al geregeld moeten zijn
+> 🔴 Vandaag regelen · 🟠 Uiterlijk 7 jul · Dit had al geregeld moeten zijn
 
 **Dit zijn richttijden van de app.** Ze zeggen hoeveel voorbereiding iets kost, niet wanneer de
 wet iets eist, en de pagina zegt dat er met zoveel woorden bij. Een datum die eruitziet als een

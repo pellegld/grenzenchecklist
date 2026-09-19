@@ -303,6 +303,7 @@ nl: {
 
   "alg.vlag": "Vlag {land}",
   "alg.maanden": "januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december",
+  "alg.maandenKort": "jan,feb,mrt,apr,mei,jun,jul,aug,sep,okt,nov,dec",
   "alg.datum": "{dag} {maand} {jaar}",
   "alg.locale": "nl-NL",
 
@@ -401,6 +402,9 @@ nl: {
   "dashboard.waarschuwingen": "let op",
   "dashboard.naarActies": "Bekijk alle acties",
   "dashboard.actiesKop": "Dit moet je regelen",
+  "dashboard.telling": "{n} van {totaal}",
+  "topstrook.klaar": "Klaar",
+  "topstrook.nog": "Nog",
   "dashboard.allesGeregeld": "Alles op deze route is afgevinkt.",
   "dashboard.nogMeer.een": "Nog 1 actie bekijken",
   "dashboard.nogMeer.meer": "Nog {n} acties bekijken",
@@ -633,7 +637,7 @@ nl: {
   /* ---------------- deadlines (§8) ---------------- */
   "deadline.vandaag": "Vandaag regelen",
   "deadline.verstreken": "Dit had al geregeld moeten zijn",
-  "deadline.uiterlijk": "Regel dit uiterlijk {datum}",
+  "deadline.uiterlijk": "Uiterlijk {datum}",
   "deadline.richttijd": "richttijd van de app",
   "deadline.uitleg": "De datums hieronder zijn richttijden van de app, gerekend vanaf je vertrekdatum: ze zeggen hoeveel voorbereiding iets kost, niet wanneer de wet iets eist.",
 
@@ -710,6 +714,7 @@ nl: {
   "kaart.omschrijving": "Kaart van je route van {van} naar {naar}, door {landen} landen, met de tolpunten en milieuzones erlangs.",
   "kaart.start": "Vertrek",
   "kaart.eind": "Bestemming",
+  "kaart.legendaRoute": "Route",
   "kaart.type.start": "Vertrekpunt",
   "kaart.type.eind": "Bestemming",
   "kaart.type.tol": "Tolpunt",
@@ -1095,6 +1100,7 @@ en: {
 
   "alg.vlag": "Flag of {land}",
   "alg.maanden": "January,February,March,April,May,June,July,August,September,October,November,December",
+  "alg.maandenKort": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
   "alg.datum": "{dag} {maand} {jaar}",
   "alg.locale": "en-GB",
 
@@ -1191,6 +1197,9 @@ en: {
   "dashboard.waarschuwingen": "note",
   "dashboard.naarActies": "See all actions",
   "dashboard.actiesKop": "This is what you need to arrange",
+  "dashboard.telling": "{n} of {totaal}",
+  "topstrook.klaar": "Done",
+  "topstrook.nog": "Left",
   "dashboard.allesGeregeld": "Everything on this route is ticked off.",
   "dashboard.nogMeer.een": "See 1 more action",
   "dashboard.nogMeer.meer": "See {n} more actions",
@@ -1421,7 +1430,7 @@ en: {
   /* ---------------- deadlines (§8) ---------------- */
   "deadline.vandaag": "Arrange today",
   "deadline.verstreken": "This should already have been arranged",
-  "deadline.uiterlijk": "Arrange by {datum}",
+  "deadline.uiterlijk": "By {datum}",
   "deadline.richttijd": "guide time from the app",
   "deadline.uitleg": "The dates below are guide times from the app, counted back from your departure date: they say how much preparation something takes, not when the law requires it.",
 
@@ -1498,6 +1507,7 @@ en: {
   "kaart.omschrijving": "Map of your route from {van} to {naar}, through {landen} countries, with the toll points and low-emission zones along it.",
   "kaart.start": "Departure",
   "kaart.eind": "Destination",
+  "kaart.legendaRoute": "Route",
   "kaart.type.start": "Starting point",
   "kaart.type.eind": "Destination",
   "kaart.type.tol": "Toll point",

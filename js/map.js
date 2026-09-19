@@ -327,14 +327,40 @@ var MARKER_VORM = {
    markers dicht bij elkaar waren er twee niet meer aan te klikken. Met alle
    vlakken onderop staat elke stip altijd bovenop zijn eigen vlak: precies
    mikken werkt altijd, en de slack eromheen valt naar de dichtstbijzijnde. */
+/* Het naambordje bij een marker: een wit vlak met zwarte rand, zoals een
+   plaatsnaam in een atlas. Alleen de kern van de naam ("Ruhrgebied", niet
+   "Ruhrgebied (Duisburg, Bochum)"), en een naam die al op het blad staat komt
+   er niet nog eens op: begin- en zonemarker van dezelfde stad delen er één.
+   Waar het bordje komt te staan beslist pasHitVlakkenAan(), in schermpixels;
+   de breedte is een schatting op het aantal tekens, want SVG kent geen
+   automatische tekstbreedte bij het opbouwen. */
+function markerLabelHTML(m){
+  if(!m.titel || m.type === "optioneel") return "";
+  var t = String(m.titel).split(/[(,·]/)[0].trim();
+  if(t.length > 18) t = t.slice(0, 17).trim() + "…";
+  t = t.toUpperCase();
+  if(KAART.labelsGezien[t]) return "";
+  KAART.labelsGezien[t] = 1;
+  var w = Math.round(t.length * 7.4 + 16), h = 20;
+  return '<g class="mlabel" aria-hidden="true" data-w="' + w + '" transform="translate(18,-10)">' +
+    '<rect width="' + w + '" height="' + h + '"></rect>' +
+    '<text x="' + (w / 2) + '" y="14" text-anchor="middle">' + esc(t) + "</text></g>";
+}
+
+/* De marker tekent zich op schermformaat, niet in viewBox-eenheden: op een
+   telefoon is de kaart bijna drie keer uitgeschaald en zou een stip van elf
+   eenheden vier pixels zijn. pasHitVlakkenAan() zet de schaal in de transform
+   (data-x/data-y bewaren de plek), na elke tekening, zoomstap en maatwissel. */
 function markerHTML(m, i){
   var vorm = MARKER_VORM[m.type] || MARKER_VORM.tol;
   return '<g class="marker m-' + m.type + '" data-marker="' + i + '" role="button" tabindex="0"' +
     ' aria-label="' + esc(m.titel + " — " + m.subtitel) + '"' +
+    ' data-x="' + m.x.toFixed(1) + '" data-y="' + m.y.toFixed(1) + '"' +
     ' transform="translate(' + m.x.toFixed(1) + "," + m.y.toFixed(1) + ')">' +
     '<circle class="mring" r="' + (vorm.r + 3) + '"></circle>' +
     '<circle class="mdot" r="' + vorm.r + '"></circle>' +
     (vorm.teken ? '<text class="mteken" y="4">' + vorm.teken + "</text>" : "") +
+    markerLabelHTML(m) +
     "</g>";
 }
 
@@ -384,6 +410,9 @@ function renderKaart(){
   var bbox = routeBbox(coords);
   var proj = projectieVoor(bbox[0], bbox[1], bbox[2], bbox[3], overlayInset());
   var view = bbox;
+  /* Hoeveel viewBox-eenheden honderd kilometer zijn, voor de schaalbalk in de
+     legenda: een graad breedte is 111,32 km, en de projectie is daarin lineair. */
+  KAART.units100 = Math.abs(proj(bbox[0], bbox[1])[1] - proj(bbox[0], bbox[1] + 100 / 111.32)[1]);
 
   var step = Math.max(1, Math.floor(coords.length / 700));
   var pts = [];
@@ -394,6 +423,7 @@ function renderKaart(){
   }).join(" ");
 
   KAART.markers = kaartMarkers(TRIP, proj);
+  KAART.labelsGezien = {};
 
   host.innerHTML =
     '<svg id="routesvg" viewBox="0 0 ' + MAP_VB_W + " " + MAP_VB_H + '"' +
@@ -408,8 +438,11 @@ function renderKaart(){
          is gewoon SVG en werkt overal hetzelfde. */
       '<g id="kaartlaag">' +
         landenPaden(proj, view) +
+        /* Drie lagen: de donkere wegrand, het rode wegdek en de gestippelde
+           middenstreep — de route als hoofdweg in een atlas. */
         '<path d="' + d + '" class="routeline-glow"></path>' +
         '<path d="' + d + '" class="routeline"></path>' +
+        '<path d="' + d + '" class="routeline-midden"></path>' +
         '<g class="markerhits" aria-hidden="true">' +
           KAART.markers.map(markerHitHTML).join("") + "</g>" +
         '<g class="markers">' + KAART.markers.map(markerHTML).join("") + "</g>" +
@@ -421,6 +454,9 @@ function renderKaart(){
   pasHitVlakkenAan();
 }
 
+/* De legenda: de route, de markertypen die op deze kaart staan, en een
+   schaalbalk. De balk krijgt zijn breedte in pasHitVlakkenAan(), want die
+   hangt van de schermmaat en de zoom af. */
 function kaartLegendaHTML(){
   var soorten = [];
   var gezien = {};
@@ -429,12 +465,16 @@ function kaartLegendaHTML(){
     gezien[m.type] = 1;
     soorten.push(m.type);
   });
-  if(!soorten.length) return "";
-  return '<ul class="kaartlegenda">' + soorten.map(function(t){
-    return '<li><span class="lmarker m-' + t + '" aria-hidden="true">' +
-      ((MARKER_VORM[t] || {}).teken || "") + "</span>" +
-      esc(i18n("kaart.type." + (t === "zonebad" ? "zonebad" : t))) + "</li>";
-  }).join("") + "</ul>";
+  return '<ul class="kaartlegenda">' +
+    '<li><span class="lroute" aria-hidden="true"></span>' + esc(i18n("kaart.legendaRoute")) + "</li>" +
+    soorten.map(function(t){
+      return '<li><span class="lmarker m-' + t + '" aria-hidden="true">' +
+        ((MARKER_VORM[t] || {}).teken || "") + "</span>" +
+        esc(i18n("kaart.type." + (t === "zonebad" ? "zonebad" : t))) + "</li>";
+    }).join("") +
+    '<li class="lschaal"><i id="kaartschaal-balk" aria-hidden="true"></i>' +
+      '<span id="kaartschaal-tekst">100 km</span></li>' +
+  "</ul>";
 }
 
 /* ---------------- popup ----------------
@@ -485,7 +525,8 @@ function positioneerPopup(index){
   var host = document.getElementById("mapwrap");
   var marker = document.querySelector('#mapwrap .marker[data-marker="' + index + '"]');
   if(!el || !host || !marker) return;
-  var mr = marker.getBoundingClientRect(), hr = host.getBoundingClientRect();
+  var stip = marker.querySelector(".mdot") || marker;
+  var mr = stip.getBoundingClientRect(), hr = host.getBoundingClientRect();
   var breedte = el.offsetWidth || 260, hoogte = el.offsetHeight || 160;
 
   var x = mr.left + mr.width / 2 - hr.left - breedte / 2;
@@ -523,9 +564,71 @@ function schermNaarViewBox(){
    venster van maat verandert. Een cap op de afstand tot de buren is niet nodig:
    de vlakken liggen onder de stippen. */
 function pasHitVlakkenAan(){
-  var r = Math.max(14, 22 * schermNaarViewBox() / KAART.zoom).toFixed(1);
+  var f = schermNaarViewBox(), s = f / KAART.zoom;
+  var r = Math.max(14, 22 * s).toFixed(1);
   [].forEach.call(document.querySelectorAll("#kaartlaag .mhit"), function(c){
     c.setAttribute("r", r);
+  });
+  /* De markers zelf op schermformaat (zie markerHTML). */
+  var markers = document.querySelectorAll("#kaartlaag .marker");
+  [].forEach.call(markers, function(g){
+    g.setAttribute("transform", "translate(" + g.getAttribute("data-x") + "," + g.getAttribute("data-y") +
+      ") scale(" + s.toFixed(3) + ")");
+  });
+  plaatsNaambordjes(markers, f);
+  /* De schaalbalk: honderd kilometer, of de helft zo vaak als nodig om onder
+     de 220 schermpixels te blijven bij inzoomen. */
+  var balk = document.getElementById("kaartschaal-balk");
+  var tekst = document.getElementById("kaartschaal-tekst");
+  if(balk && tekst && KAART.units100){
+    var km = 100, px = KAART.units100 / f * KAART.zoom;
+    while(px > 220 && km > 10){ km /= 2; px /= 2; }
+    balk.style.width = Math.max(8, Math.round(px)) + "px";
+    tekst.textContent = getal(km) + " km";
+  }
+}
+
+/* De naambordjes neerleggen: rechts van de stip, links als de stip in het
+   rechter derde van het blad staat, en een regel lager als het bordje anders
+   over een stip of een eerder bordje zou vallen. Gerekend in schermpixels,
+   want zo groot zijn ze; de onderlinge afstand van de stippen hangt af van de
+   zoom, dus dit gebeurt na elke zoomstap opnieuw. */
+function plaatsNaambordjes(markers, f){
+  var host = document.getElementById("mapwrap");
+  if(!host || !markers.length) return;
+  var hr = host.getBoundingClientRect();
+  if(!hr.width) return; /* de kaart staat verborgen; bij het tonen komt dit terug */
+  var bezet = [], punten = [];
+  function overlapt(a, b){
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
+  function buitenBlad(r){
+    return r.x < 4 || r.y < 4 || r.x + r.w > hr.width - 4 || r.y + r.h > hr.height - 4;
+  }
+  /* Eerst alle stippen meten, op het scherm, met zoom en verschuiving erin. */
+  [].forEach.call(markers, function(g, i){
+    var stip = g.querySelector(".mdot"), sr = stip ? stip.getBoundingClientRect() : null;
+    var p = sr ? [sr.left + sr.width / 2 - hr.left, sr.top + sr.height / 2 - hr.top] : [0, 0];
+    punten[i] = p;
+    bezet.push({ x:p[0] - 13, y:p[1] - 13, w:26, h:26 });
+  });
+  [].forEach.call(markers, function(g, i){
+    var lab = g.querySelector(".mlabel");
+    if(!lab) return;
+    var p = punten[i], w = parseFloat(lab.getAttribute("data-w")), h = 20;
+    var rechts = p[0] < hr.width * 0.62;
+    var kanten = rechts ? [18, -(18 + w)] : [-(18 + w), 18];
+    var keus = null;
+    for(var stap = 0; stap < 4 && !keus; stap++){
+      var dy = stap === 0 ? -10 : (stap % 2 ? 14 : -34) * Math.ceil(stap / 2);
+      for(var k = 0; k < kanten.length && !keus; k++){
+        var r = { x:p[0] + kanten[k], y:p[1] + dy, w:w, h:h };
+        if(!buitenBlad(r) && !bezet.some(function(b){ return overlapt(r, b); })) keus = { dx:kanten[k], dy:dy, r:r };
+      }
+    }
+    if(!keus) keus = { dx:kanten[0], dy:-10, r:{ x:p[0] + kanten[0], y:p[1] - 10, w:w, h:h } };
+    bezet.push(keus.r);
+    lab.setAttribute("transform", "translate(" + keus.dx + "," + keus.dy + ")");
   });
 }
 

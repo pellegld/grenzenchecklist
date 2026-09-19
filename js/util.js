@@ -19,6 +19,14 @@ function fmtDate(iso){
   var m = i18n("alg.maanden").split(",");
   return i18n("alg.datum", { dag:Number(p[2]), maand:m[Number(p[1])-1], jaar:p[0] });
 }
+/* "10 okt": voor de topstrook, waar een hele datum niet past. */
+function fmtDateKort(iso){
+  if(!iso) return "";
+  var p = String(iso).split("-");
+  if(p.length !== 3) return iso;
+  var m = i18n("alg.maandenKort").split(",");
+  return Number(p[2]) + " " + m[Number(p[1]) - 1];
+}
 function daysSince(iso){
   var t = Date.parse(iso);
   if(isNaN(t)) return null;

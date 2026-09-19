@@ -264,6 +264,9 @@ function renderDashboardStats(){
   var el = document.getElementById("stat-cards");
   if(!el || !TRIP) return;
   var res = tripAnalyse(TRIP);
+  /* De landcodes rechts van de kop, zoals "NL · DE · AT" op een atlasblad. */
+  var codes = document.getElementById("kaartcodes");
+  if(codes) codes.textContent = res ? tripLanden(TRIP).join(" · ") : "";
   if(!res){ el.hidden = true; el.innerHTML = ""; return; }
   el.hidden = false;
 

@@ -10,6 +10,58 @@ zelfde gedrag als vóór het herontwerp, alleen anders getekend.
 
 ---
 
+## Derde ronde, dezelfde dag: het atlasblad precies als de mockup
+
+Na de tweede ronde was het oordeel "nog niet zo precies als de mockup, vooral de kaart".
+Nagelopen tegen `mockup-wegenatlas.html` (scherm voor scherm, 375 px licht en donker,
+1024 px licht) en bijgewerkt:
+
+**Kaart (§9).** De route is nu een hoofdweg in drie lagen — donkere rand, rood wegdek,
+gestippelde lichte middenstreep — in schermpixels (`vector-effect:non-scaling-stroke`),
+dus inzoomen maakt hem niet dikker. Markers tekenen op schermformaat (`pasHitVlakkenAan()`
+zet de schaal in de transform) in plaats van in viewBox-eenheden, waardoor ze op een
+telefoon niet meer tot vier pixels krompen. Elke plaats krijgt een naambordje: wit met
+zwarte rand, groen voor een milieuzone, rood als deze auto er niet in mag
+(`markerLabelHTML()`); `plaatsNaambordjes()` legt ze rechts van de stip, links in het
+rechter derde van het blad, een regel hoger of lager als ze anders over een stip of een
+eerder bordje vallen, en nooit buiten het blad. Namen worden ingekort tot de kern
+("Ruhrgebied", niet "Ruhrgebied (Duisburg, Bochum)") en een naam die al op het blad staat
+komt er niet nog eens op. Tolpunten krijgen hun naam alleen op ≥ 1024 px. De legenda toont
+route, markertypen en een schaalbalk die zich aan de zoom aanpast (100 km, gehalveerd zolang
+hij breder dan 220 px zou worden). De kop van het paneel is "ROUTE EN KAART" met rechts de
+landcodes ("NL · DE · AT", `#kaartcodes`), de veldnamen VAN en NAAR staan ín het veld
+rechts, en het afstandsbord heeft drie cellen naast elkaar. De popup verankert op de stip,
+niet op stip-plus-bordje.
+
+**Topstrook (mobiel).** Onder het merk de reis ("UTRECHT — SALZBURG"), rechts een
+bladvakje met het ene getal dat op dit scherm telt: KLAAR 9 % op het dashboard, NOG 10 op
+de actiepagina (`zetTopstrook()` in js/app.js, na elke render). Zonder reis staat er de
+ondertitel van de app. De taal- en nachtknop blijven ernaast.
+
+**Dashboard (§6).** Volgorde als op het atlasblad: afstandsbord, wegwijzers per land, de
+reis (kop, periode, voertuig, wijzig, deel), dan het register "DIT MOET JE REGELEN" met de
+telling rechts ("5 van 11"), regels met het bord links en de prijs en vlag rechts, en
+eronder de gele afslag "Bekijk alle acties". De voortgangsbalk met tellers staat daaronder
+zonder grote kop. Op 1000 px+ dezelfde twee kolommen als eerst.
+
+**Acties (§7).** Groepskoppen als registerkoppen (klein, gespatieerd, telling rechts,
+lijn erboven), het vinkje links en het bord rechts (`.statuschip` uit de metaregel wordt
+rechts gepositioneerd; het statuswoord blijft voor de schermlezer, `.sw`). Regels zonder
+vinkje (blokkade, waarschuwing, niet voor jou) houden hun bord links en krijgen er geen
+tweede rechts. Deadlines zijn nu bordletters in kapitaal met gele (of rode) onderstreping
+en korter: "UITERLIJK 22 SEP" (`fmtDateKort()`, `alg.maandenKort`); dat verandert ook de
+tekst in de aria-beschrijving van het vinkje.
+
+**Home (nachtstand).** Het tweede deel van de kop is 's nachts geel, zoals in de mockup;
+overdag blijft het grijs (geel op papier is 1,5:1).
+
+**Nagelopen:** dashboard, kaart, acties, home op 375 px licht en donker; dashboard en
+kaart op 1024 px; console zonder nieuwe fouten (alleen de bekende endpoint-404's);
+`node build/build.mjs --sw` voor een nieuwe cacheversie. Niet in de mockup en ongewijzigd:
+kosten, kalender, regels, document, onderweg, reizen, reiservaring.
+
+---
+
 ## Tweede ronde, dezelfde dag: "Wegenatlas"
 
 Het "Stil roadbook"-ontwerp uit de secties hieronder is na oplevering verworpen: het leverde

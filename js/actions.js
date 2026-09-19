@@ -100,7 +100,7 @@ function deadlineTekst(d){
   if(!d) return "";
   if(d.urgentie === "verstreken") return i18n("deadline.verstreken");
   if(d.urgentie === "vandaag") return i18n("deadline.vandaag");
-  return i18n("deadline.uiterlijk", { datum: fmtDate(d.iso) });
+  return i18n("deadline.uiterlijk", { datum: fmtDateKort(d.iso) });
 }
 
 /* ================= prijzen =================
