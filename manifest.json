@@ -1,0 +1,19 @@
+{
+  "name": "Grenschecklist — je auto-reisassistent voor Europa",
+  "short_name": "Grenschecklist",
+  "description": "Controleer in één minuut wat jij moet regelen voor je autorit door Europa: vignetten, milieuzones, tol en verplichte spullen, per land met de officiële bron.",
+  "lang": "nl",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F2EAD7",
+  "theme_color": "#F2EAD7",
+  "categories": ["travel", "navigation", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

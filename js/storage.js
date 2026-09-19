@@ -24,6 +24,10 @@ function toepassenThema(){
   if(t === "dark" || t === "light") document.documentElement.setAttribute("data-theme", t);
   else document.documentElement.removeAttribute("data-theme");
   var donker = huidigThema() === "dark";
+  /* De kleur van de browserbalk (theme-color in index.html) volgt het papier:
+     een media-query op de meta zou de eigen keuze van de gebruiker negeren. */
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", donker ? "#15171B" : "#F2EAD7");
   /* Twee schakelaars: onder Instellingen in de zijbalk en in het Meer-paneel op
      mobiel. Ze staan altijd in dezelfde stand, ook als je de andere gebruikt. */
   ["dark-toggle", "dark-toggle-meer"].forEach(function(id){

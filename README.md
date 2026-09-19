@@ -222,6 +222,22 @@ haalt het teken weg voor platte tekst. Statische koppen in `index.html` gebruike
   zijn korte bordletters met gele (of rode) onderstreping: "UITERLIJK 22 SEP".
 - Beweging alleen op `opacity` en `transform`, kort; `prefers-reduced-motion` zet alles uit.
 
+### Icoon, manifest en deelplaatje
+
+Het app-icoon is het blauwe wegwijzerbord met witte binnenrand en de gele afslagpijl:
+`favicon.svg` is de bron, `tools/build-icons.py` (Pillow) tekent dezelfde vorm als
+`icons/icon-192.png`, `icons/icon-512.png`, `icons/icon-maskable-512.png` (vlak blauw tot de
+rand, pijl in de veilige zone), `icons/apple-touch-icon.png`, `favicon.ico` (16/32/48) en het
+deelplaatje `og-image.png` (1200 × 630, tekst in Arial Narrow Bold, de terugvalletter van de
+app). `manifest.json` maakt de app installeerbaar (standalone, papierkleur als achtergrond);
+`index.html` en de contentpagina's linken manifest, iconen, `meta description` en Open Graph.
+De `theme-color` volgt het gekozen thema (`toepassenThema()` in `js/storage.js`). `404.html`
+is het blad-niet-gevonden in atlasstijl; Netlify serveert het voor elk onbekend pad.
+
+Het deelplaatje staat in `index.html` met een relatief pad; Open Graph wil een absolute URL,
+dus zet die (en een `canonical`) zodra het domein bekend is, samen met `SITE_URL` voor de
+contentpagina's.
+
 **Onderzoeksdatum data: 19 augustus 2026.** Elk land draagt een eigen `lastVerified`-datum die
 in de app zichtbaar is; is die ouder dan 240 dagen, dan markeert de app hem als verouderd.
 

@@ -416,6 +416,15 @@ ${hreflang}<link rel="alternate" type="application/atom+xml" title="Grenscheckli
 <meta property="og:title" content="${esc(titel)}">
 <meta property="og:description" content="${esc(beschrijving)}">
 <meta property="og:url" content="${esc(canonical)}">
+<meta property="og:image" content="${SITE_URL}/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F2EAD7">
+<link rel="manifest" href="${rel}manifest.json">
+<link rel="icon" href="${rel}favicon.ico" sizes="32x32">
+<link rel="icon" href="${rel}favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="${rel}icons/apple-touch-icon.png">
 <link rel="stylesheet" href="${rel}fonts.css">
 <link rel="stylesheet" href="${rel}css/base.css">
 <link rel="stylesheet" href="${rel}css/components.css">
@@ -1106,7 +1115,7 @@ async function bouwVersie(){
  * die routes — zie de commentaren daar. */
 const SW_MAPPEN = ["css", "js", "fonts", "images/Landbanner"];
 const SW_LOSSE = [
-  "./", "./index.html", "./fonts.css",
+  "./", "./index.html", "./fonts.css", "./manifest.json", "./favicon.svg",
   "./countries.json", "./cities.json", "./borders.json", "./zones.json", "./drukte.json",
   "./fuelprices.json", "./meta/changelog.json",
 ];

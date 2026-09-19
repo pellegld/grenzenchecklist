@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Het app-icoon: een blauw wegwijzerbord met witte binnenrand en de gele
+       afslagpijl. tools/build-icons.py tekent dezelfde vorm als PNG. -->
+  <rect width="100" height="100" rx="16" fill="#0F4C97"/>
+  <rect x="7" y="7" width="86" height="86" rx="10" fill="none" stroke="#FFFFFF" stroke-width="3.5"/>
+  <g transform="rotate(-45 50 50)" fill="#F5C518">
+    <rect x="20" y="43.5" width="38" height="13"/>
+    <polygon points="55,29 55,71 82,50"/>
+  </g>
+</svg>
