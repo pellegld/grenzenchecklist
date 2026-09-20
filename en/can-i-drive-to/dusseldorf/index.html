@@ -21,6 +21,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#F2EAD7">
+<script src="../../../js/thema-vroeg.js"></script>
 <link rel="manifest" href="../../../manifest.json">
 <link rel="icon" href="../../../favicon.ico" sizes="32x32">
 <link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
@@ -55,45 +56,12 @@
 </form>
 <div id="check-result" hidden></div>
 <noscript><p class="hint">This check needs JavaScript. Without JavaScript, you'll find the fixed thresholds above and on the <a href="../../../en/environmental-zone-dusseldorf/">Dusseldorf environmental-zone page</a>.</p></noscript>
-<script>
-var ZONE = {"city":"Dusseldorf","name":"Umweltzone Dusseldorf","threshold":{"diesel":4,"petrol":1},"rule":"Groene Umweltplakette vereist.","note":""};
-var CHECK_LANG = "en";
-</script>
+<script type="application/json" id="magik-data">{"zone":{"city":"Dusseldorf","name":"Umweltzone Dusseldorf","threshold":{"diesel":4,"petrol":1},"rule":"Groene Umweltplakette vereist.","note":""},"lang":"en","fuelLabel":{"petrol":"petrol","diesel":"diesel","lpg":"lpg","cng":"cng","ev":"electric"},"onbekendeEuronorm":"unknown emission standard","antwoordGebaseerdOp":"Answer based on:","kentekenUit":"registered in"}</script>
 <script src="../../../js/i18n.js"></script>
 <script src="../../../js/util.js"></script>
 <script src="../../../js/vehicle.js"></script>
 <script src="../../../js/geo.js"></script>
-<script>
-(function(){
-  "use strict";
-  if(typeof CHECK_LANG !== "undefined") TAAL = CHECK_LANG;
-  function paramsUit(){
-    var q = new URLSearchParams(location.search);
-    return { fuel: q.get("fuel"), euro: q.get("euro"), plate: q.get("plate") };
-  }
-  function toon(){
-    var q = paramsUit();
-    if(!q.fuel) return;
-    var f = document.getElementById("f-fuel"); if(f && q.fuel) f.value = q.fuel;
-    var e = document.getElementById("f-euro"); if(e && q.euro !== null) e.value = q.euro;
-    var pl = document.getElementById("f-plate"); if(pl && q.plate) pl.value = q.plate;
-
-    var trip = { vehicle: { fuel: q.fuel, euro: q.euro ? Number(q.euro) : null, plateCountry: q.plate || "NL" } };
-    var v = zoneStadVerdict(ZONE, trip);
-    var el = document.getElementById("check-result");
-    var brandstofLabel = {"petrol":"petrol","diesel":"diesel","lpg":"lpg","cng":"cng","ev":"electric"}[q.fuel] || q.fuel;
-    var euroLabel = q.euro ? "Euro " + q.euro : "unknown emission standard";
-    el.hidden = false;
-    el.innerHTML =
-      '<div class="oordeel o-' + (v.level === "bad" ? "nee" : v.level === "ok" ? "ja" : v.level === "todo" ? "mits" : "check") + '">' +
-      '<span class="teken" aria-hidden="true">' + { ok:"&#10003;", bad:"&#10007;", todo:"!", unknown:"?" }[v.level] + '</span>' +
-      '<b>' + esc(v.text) + '</b></div>' +
-      '<p class="hint">' + "Answer based on:" + ' ' + esc(brandstofLabel) + ', ' + esc(euroLabel) +
-      (q.plate ? ", " + "registered in" + " " + esc(q.plate) : "") + '.</p>';
-  }
-  document.addEventListener("DOMContentLoaded", toon);
-})();
-</script>
+<script src="../../../js/magik-pagina.js"></script>
 <h2>Sources</h2>
 <ul class="bronnenlijst"><li><a href="https://www.adac.de/verkehr/abgas-diesel-fahrverbote/umweltzonen/" target="_blank" rel="noopener">Official source <span aria-hidden="true">&rarr;</span></a></li></ul>
 <p class="hint">Last checked on August 19, 2026. Rules change; check the official source shortly before you leave.</p>

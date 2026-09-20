@@ -238,6 +238,31 @@ Het deelplaatje staat in `index.html` met een relatief pad; Open Graph wil een a
 dus zet die (en een `canonical`) zodra het domein bekend is, samen met `SITE_URL` voor de
 contentpagina's.
 
+## Online zetten (Netlify)
+
+De site is statisch; `netlify.toml` zet de publicatiemap op de repo-root, zonder build-stap.
+Koppel de GitHub-repo eenmalig in Netlify (Add new site, Import an existing project), daarna
+deployt elke push naar `main` vanzelf. Vóór het publiceren: `SITE_URL=https://jouw-domein npm run build`,
+zodat sitemap, robots, feed, canonical en Open Graph naar het echte domein wijzen, en het
+`og:image`-pad in `index.html` absoluut maken.
+
+**Beveiligingsheaders.** `netlify.toml` stuurt op elke pagina een Content-Security-Policy die
+alleen eigen scriptbestanden toelaat (`script-src 'self'`, dus geen inline script), eigen
+stijlen plus inline style-attributen, eigen plaatjes en `data:`-URI's, en verbindingen naar de
+eigen origin en de twee routediensten (`connect-src`). Verder `X-Content-Type-Options`,
+`X-Frame-Options` en `frame-ancestors 'none'`, `Referrer-Policy`, een `Permissions-Policy`
+die locatie tot de eigen site beperkt, en HSTS. Daarom staan het themascript
+(`js/thema-vroeg.js`) en het script van de mag-ik-pagina's (`js/magik-pagina.js`, met de zone
+als JSON-datablok `#magik-data`) in aparte bestanden. Wissel je van routedienst of zet je een
+proxy op een ander domein, pas dan `connect-src` aan. Lokaal testen kan met een server die
+het `[[headers]]`-blok uit `netlify.toml` meestuurt; een 404 van de proxy-ping is normaal,
+een regel die begint met "Refused to" niet.
+
+**Routedienst.** Zonder proxy gebruikt de app de OSRM-demoserver en Nominatim: prima voor een
+testgroep, niet voor druk verkeer (zie §Diensten en §De meegeleverde proxy). Op Netlify draait
+de meegeleverde Cloudflare-proxy niet; zet hem als Worker op een eigen domein onder `/api/*`,
+of zet de twee functies om naar Netlify Functions.
+
 **Onderzoeksdatum data: 19 augustus 2026.** Elk land draagt een eigen `lastVerified`-datum die
 in de app zichtbaar is; is die ouder dan 240 dagen, dan markeert de app hem als verouderd.
 

@@ -60,6 +60,23 @@ kaart op 1024 px; console zonder nieuwe fouten (alleen de bekende endpoint-404's
 `node build/build.mjs --sw` voor een nieuwe cacheversie. Niet in de mockup en ongewijzigd:
 kosten, kalender, regels, document, onderweg, reizen, reiservaring.
 
+**Nagekomen (20 september).** Drie meldingen uit de gebruikerstest:
+- *Twee scrollbalken op "Reis".* Twee oorzaken op een groot scherm. De `.sr`-tekst voor
+  schermlezers in de registerregels is absoluut gepositioneerd; omdat `.view-page` (het
+  scrollvak van 100vh) zelf niet gepositioneerd was, lag die tekst tegen het document aan en
+  stak hij eronderuit: venster 950 px hoog bij 800 px beeld. `.view-page{position:relative}`
+  lost dat op. Daarnaast was de wegwijzer 920 px hoog en kreeg hij onder 920 px beeldhoogte
+  een eigen scrollbalk; onder 900 px is hij nu compacter (800/800 bij 800 px). Gemeten:
+  dashboard, acties, kaart, kosten, reiservaring, home op 1280 × 800 en 1280 × 620.
+- *Delen werkte niet.* De klikluisteraar voor de deelknop stond alleen op het reisdocument;
+  de knop op het dashboard deed niets. Nu één luisteraar op het document voor `.deelknop`.
+  Getest: klik → klembord (of het kopieervenster als de browser dat weigert) → link openen
+  → de reis komt erbij in Mijn reizen en het dashboard toont hem.
+- *"Wat deze app niet doet" op elke pagina.* Als inklapbaar blad onderaan elke view
+  (`plaatsEerlijkVoet()` in js/app.js, één knooppunt dat meeverhuist), met de privacyregel
+  en de onderzoeksdatum. Niet op home (staat er al voluit), de wizard en de reiservaring;
+  niet in de afdruk.
+
 ---
 
 ## Tweede ronde, dezelfde dag: "Wegenatlas"

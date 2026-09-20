@@ -238,7 +238,9 @@ function deelReis(knop){
    herlaadbeurt terugkomt is geen melding maar meubilair. */
 function deelMeldingHTML(){
   if(!DEEL_MELDING) return "";
-  DEEL_MELDING = false;
+  /* Niet hier op false zetten: het dashboard rendert na een import nog een
+     keer (de route wordt berekend) en dan was de melding al weg voordat
+     iemand hem las. switchView() in js/app.js wist hem zodra je verder gaat. */
   return '<p class="deelmelding">' + iconUse("share") + " " +
     esc(i18n("deel.ontvangen")) + "</p>";
 }

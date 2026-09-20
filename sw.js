@@ -9,7 +9,7 @@
 
    Bump CACHE bij een release waarin je oude bestanden echt wil opruimen. */
 
-var CACHE = "grenschecklist-v33";
+var CACHE = "grenschecklist-v35";
 /* ASSETS wordt gegenereerd door build/build.mjs (npm run build:sw). Voeg je met
    de hand een bestand toe, draai die dan; anders staat het nieuwe bestand wel op
    de server maar niet in de offline cache, en dat merk je pas zonder bereik.
@@ -50,12 +50,14 @@ var ASSETS = [
   "./js/i18n.js",
   "./js/incident.js",
   "./js/journey.js",
+  "./js/magik-pagina.js",
   "./js/map.js",
   "./js/pages.js",
   "./js/planner.js",
   "./js/routeProvider.js",
   "./js/share.js",
   "./js/storage.js",
+  "./js/thema-vroeg.js",
   "./js/trip.js",
   "./js/trips.js",
   "./js/util.js",

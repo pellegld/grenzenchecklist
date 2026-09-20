@@ -388,6 +388,7 @@ nl: {
   "home.eerlijkKop": "Wat deze app niet doet",
   "home.eerlijkTekst": "Geen enkel bedrag of regel wordt verzonnen. Weet de app iets niet, dan staat dat er, met een link naar de officiële bron. Dit is een geheugensteun, geen juridisch advies.",
   "home.eerlijkDatum": "Alle landen zijn nagezocht op {datum}.",
+  "home.eerlijkPrivacy": "Wat je browser verlaat: bij een routeberekening gaan vertrek en bestemming als coördinaten naar de routedienst (nu de OSRM-demoserver) en bij online zoeken je zoekterm naar Nominatim van OpenStreetMap, met je IP-adres, zoals bij elke webaanvraag. Verder blijft alles in je browser: geen account, geen cookies, geen meetscripts.",
 
   /* ---------------- reisdashboard (§6) ---------------- */
   "dashboard.voortgang": "Voortgang",
@@ -1185,6 +1186,7 @@ en: {
   "home.eerlijkKop": "What this app does not do",
   "home.eerlijkTekst": "No amount or rule is invented. If the app does not know something, it says so and links to the official source. This is a memory aid, not legal advice.",
   "home.eerlijkDatum": "All countries were researched on {datum}.",
+  "home.eerlijkPrivacy": "What leaves your browser: when a route is calculated, origin and destination go as coordinates to the routing service (currently the OSRM demo server), and an online search sends your query to OpenStreetMap's Nominatim, with your IP address, as with any web request. Everything else stays in your browser: no account, no cookies, no analytics.",
 
   /* ---------------- trip dashboard (§6) ---------------- */
   "dashboard.voortgang": "Progress",

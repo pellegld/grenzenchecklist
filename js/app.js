@@ -38,6 +38,33 @@ function render(){
   var fn = RENDERS[VIEW];
   if(fn) fn();
   zetTopstrook();
+  plaatsEerlijkVoet();
+}
+
+/* "Wat deze app niet doet" onderaan elke pagina, als inklapbaar blad: wat de
+   app niet verzint, wat je browser verlaat, en wanneer de landen zijn
+   nagezocht. Eén knooppunt dat na elke render naar de actieve view verhuist,
+   zodat het buiten de innerHTML van de renderers blijft. Home heeft het blok
+   al voluit, de wizard is een formulier en de reiservaring een rijdende weg;
+   die drie slaan we over. */
+function plaatsEerlijkVoet(){
+  var voet = document.getElementById("eerlijkvoet");
+  var overslaan = VIEW === "home" || VIEW === "wizard" || VIEW === "reis" || !DATA;
+  if(overslaan){ if(voet) voet.remove(); return; }
+  if(!voet){
+    voet = document.createElement("details");
+    voet.id = "eerlijkvoet";
+    voet.className = "eerlijkvoet";
+  }
+  voet.innerHTML = "<summary>" + esc(i18n("home.eerlijkKop")) + "</summary>" +
+    "<p>" + esc(i18n("home.eerlijkTekst")) + "</p>" +
+    "<p>" + esc(i18n("home.eerlijkPrivacy")) + "</p>" +
+    '<p class="hint">' + esc(i18n("home.eerlijkDatum", {
+      datum: DATA.meta && DATA.meta.researchDate ? fmtDate(DATA.meta.researchDate) : "—" })) + "</p>";
+  var doel = VIEW === "kaart"
+    ? document.querySelector("#view-kaart .panel-route")
+    : document.getElementById("view-" + VIEW);
+  if(doel && voet.parentNode !== doel) doel.appendChild(voet);
 }
 
 /* De topstrook op een telefoon is de kop van een atlasblad: onder het merk de
@@ -71,6 +98,9 @@ function zetTopstrook(){
 function switchView(naam, geenHash){
   if(VIEW_ORDER.indexOf(naam) === -1) naam = "home";
   stopJourneyScroll(); // alleen actief terwijl VIEW==="reis"; render() start 'm zo nodig weer op
+  /* De melding "deze reis is met je gedeeld" blijft staan zolang je op het
+     dashboard bent en verdwijnt zodra je ergens anders heen gaat. */
+  if(naam !== "dashboard" && typeof DEEL_MELDING !== "undefined") DEEL_MELDING = false;
   VIEW = naam;
   VIEW_ORDER.forEach(function(v){
     var sec = document.getElementById("view-" + v);
@@ -360,8 +390,15 @@ function wire(){
   /* ---------------- reisdocument ---------------- */
   document.getElementById("view-document").addEventListener("click", function(e){
     if(e.target.closest("#btn-print")) window.print();
-    var deel = e.target.closest("#btn-deel");
-    if(deel){ deelReis(deel); return; }
+  });
+
+  /* ---------------- delen ----------------
+     De deelknop staat op het dashboard én in het reisdocument; één luisteraar
+     op het document vangt ze allebei (eerder alleen die in het document, en
+     dan deed de knop op het dashboard niets). */
+  document.addEventListener("click", function(e){
+    var deel = e.target.closest(".deelknop");
+    if(deel) deelReis(deel);
   });
 
   /* ---------------- kaartpagina: profielvelden ---------------- */

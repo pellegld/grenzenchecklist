@@ -90,6 +90,7 @@
   .doclijst li, .docwaarschuwingen li, .doctabel tr { break-inside:avoid; page-break-inside:avoid; }
   .reisdocument { max-width:none; }
   .landfoto { display:none !important; }
+  .eerlijkvoet { display:none !important; }
 
   .dokosten { width:100%; border-collapse:collapse; }
   .dokosten td, .dokosten th { border-bottom:1px solid #ddd; padding:3pt 4pt; vertical-align:top; text-align:left; }

@@ -421,6 +421,7 @@ ${hreflang}<link rel="alternate" type="application/atom+xml" title="Grenscheckli
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#F2EAD7">
+<script src="${rel}js/thema-vroeg.js"></script>
 <link rel="manifest" href="${rel}manifest.json">
 <link rel="icon" href="${rel}favicon.ico" sizes="32x32">
 <link rel="icon" href="${rel}favicon.svg" type="image/svg+xml">
@@ -746,9 +747,14 @@ function magIkPagina(zone, land, basis, lang){
   const eigenSlug = `${TOPIC.magIk[lang]}/${basis}`;
   const titel = t.magIkTitel(stad);
   const beschrijving = t.magIkDesc(stad, zone.name);
-  const zoneJson = JSON.stringify({
-    city: zone.city, name: zone.name, threshold: zone.threshold || null,
-    rule: zone.rule || "", note: zone.note || "",
+  /* De zone en de vertaalde etiketten gaan als JSON-datablok mee; het script
+     zelf staat in js/magik-pagina.js. Een inline script zou de
+     Content-Security-Policy (netlify.toml) niet doorlaten. */
+  const magikJson = JSON.stringify({
+    zone: { city: zone.city, name: zone.name, threshold: zone.threshold || null,
+            rule: zone.rule || "", note: zone.note || "" },
+    lang, fuelLabel: t.fuelLabel, onbekendeEuronorm: t.onbekendeEuronorm,
+    antwoordGebaseerdOp: t.antwoordGebaseerdOp, kentekenUit: t.kentekenUit,
   }).replace(/</g, "\\u003c");
 
   const fuelOpties = t.fuelOpties.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join("");
@@ -780,45 +786,12 @@ function magIkPagina(zone, land, basis, lang){
 ${form}
 <div id="check-result" hidden></div>
 <noscript><p class="hint">${t.magIkNoscript(stad, zoneStadHref)}</p></noscript>
-<script>
-var ZONE = ${zoneJson};
-${lang === "en" ? 'var CHECK_LANG = "en";' : ""}
-</script>
+<script type="application/json" id="magik-data">${magikJson}</script>
 <script src="${rel}js/i18n.js"></script>
 <script src="${rel}js/util.js"></script>
 <script src="${rel}js/vehicle.js"></script>
 <script src="${rel}js/geo.js"></script>
-<script>
-(function(){
-  "use strict";
-  if(typeof CHECK_LANG !== "undefined") TAAL = CHECK_LANG;
-  function paramsUit(){
-    var q = new URLSearchParams(location.search);
-    return { fuel: q.get("fuel"), euro: q.get("euro"), plate: q.get("plate") };
-  }
-  function toon(){
-    var q = paramsUit();
-    if(!q.fuel) return;
-    var f = document.getElementById("f-fuel"); if(f && q.fuel) f.value = q.fuel;
-    var e = document.getElementById("f-euro"); if(e && q.euro !== null) e.value = q.euro;
-    var pl = document.getElementById("f-plate"); if(pl && q.plate) pl.value = q.plate;
-
-    var trip = { vehicle: { fuel: q.fuel, euro: q.euro ? Number(q.euro) : null, plateCountry: q.plate || "NL" } };
-    var v = zoneStadVerdict(ZONE, trip);
-    var el = document.getElementById("check-result");
-    var brandstofLabel = ${JSON.stringify(t.fuelLabel)}[q.fuel] || q.fuel;
-    var euroLabel = q.euro ? "Euro " + q.euro : ${JSON.stringify(t.onbekendeEuronorm)};
-    el.hidden = false;
-    el.innerHTML =
-      '<div class="oordeel o-' + (v.level === "bad" ? "nee" : v.level === "ok" ? "ja" : v.level === "todo" ? "mits" : "check") + '">' +
-      '<span class="teken" aria-hidden="true">' + { ok:"&#10003;", bad:"&#10007;", todo:"!", unknown:"?" }[v.level] + '</span>' +
-      '<b>' + esc(v.text) + '</b></div>' +
-      '<p class="hint">' + ${JSON.stringify(t.antwoordGebaseerdOp)} + ' ' + esc(brandstofLabel) + ', ' + esc(euroLabel) +
-      (q.plate ? ", " + ${JSON.stringify(t.kentekenUit)} + " " + esc(q.plate) : "") + '.</p>';
-  }
-  document.addEventListener("DOMContentLoaded", toon);
-})();
-</script>`;
+<script src="${rel}js/magik-pagina.js"></script>`;
 
   return {
     slug: eigenSlug,

@@ -100,6 +100,7 @@ function renderHome(){
       homeStappenHTML() + "</section>" +
     '<section class="homeblok eerlijk"><h2>' + esc(i18n("home.eerlijkKop")) + "</h2>" +
       "<p>" + esc(i18n("home.eerlijkTekst")) + "</p>" +
+      "<p>" + esc(i18n("home.eerlijkPrivacy")) + "</p>" +
       '<p class="hint">' + esc(i18n("home.eerlijkDatum", {
         datum: DATA && DATA.meta ? fmtDate(DATA.meta.researchDate) : "—" })) + "</p>" +
     "</section>";
